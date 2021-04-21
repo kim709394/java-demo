@@ -1,4 +1,4 @@
-package com.kim.common.freeswitch.cli;
+package com.kim.freeswitch.cli;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

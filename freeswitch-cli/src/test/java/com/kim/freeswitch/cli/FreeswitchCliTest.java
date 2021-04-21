@@ -1,4 +1,4 @@
-package com.kim.common.freeswitch.cli;
+package com.kim.freeswitch.cli;
 
 import lombok.Data;
 import org.freeswitch.esl.client.inbound.Client;
