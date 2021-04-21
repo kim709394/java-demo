@@ -25,10 +25,12 @@
             <groupId>org.freeswitch.esl.client</groupId>
             <artifactId>org.freeswitch.esl.client</artifactId>
         </dependency>
+        <!--lombok-->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
         </dependency>
+
     </dependencies>
 
 

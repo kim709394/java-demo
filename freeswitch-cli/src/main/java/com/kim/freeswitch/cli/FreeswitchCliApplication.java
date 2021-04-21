@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
  * @author huangjie
- * @description
+ * @description  freeswitch客户端
  * @date 2021-1-4
  */
 @SpringBootApplication
