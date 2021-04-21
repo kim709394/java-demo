@@ -39,7 +39,7 @@ public class ExecCmdUtil {
     }
 
     private static String readProcess(InputStream in){
-        try ( LineNumberReader print=new LineNumberReader(new InputStreamReader(in))){
+        try ( LineNumberReader print=new LineNumberReader(new InputStreamReader(in,"GBK"))){
             StringBuffer sb = new StringBuffer();
             String line;
             while ((line = print.readLine()) != null) {
