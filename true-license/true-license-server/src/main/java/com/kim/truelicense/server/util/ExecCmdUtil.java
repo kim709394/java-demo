@@ -1,4 +1,4 @@
-package com.kim.common.util;
+package com.kim.truelicense.server.util;
 
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -24,7 +24,6 @@ public class ExecCmdUtil {
      */
     public static String exec(String... cmd) throws IOException {
         Process process = null;
-        String result="";
         if(System.getProperty("os.name").indexOf("Windows")!=-1){
             if (cmd != null && cmd.length == 1) {
                 process = Runtime.getRuntime().exec(cmd[0]);
@@ -35,6 +34,7 @@ public class ExecCmdUtil {
             cmd = ArrayUtils.addAll(new String[]{"/bin/sh", "-c"}, cmd);
             process = Runtime.getRuntime().exec(cmd);
         }
+
         String print=readProcess(process.getInputStream());
         String err=readProcess(process.getErrorStream());
         return print+" "+err;
