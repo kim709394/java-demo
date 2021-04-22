@@ -45,6 +45,8 @@
         <apache.pool2.version>2.8.0</apache.pool2.version>
         <guava.version>28.2-jre</guava.version>
         <truelicense.version>1.33</truelicense.version>
+        <jpython.version>2.7.1</jpython.version>
+        <pdfbox.version>2.0.12</pdfbox.version>
     </properties>
 
     <dependencyManagement>
@@ -229,6 +231,18 @@
                 <groupId>de.schlichtherle.truelicense</groupId>
                 <artifactId>truelicense-core</artifactId>
                 <version>${truelicense.version}</version>
+            </dependency>
+            <!--Jython-->
+            <dependency>
+                <groupId>org.python</groupId>
+                <artifactId>jython-standalone</artifactId>
+                <version>${jpython.version}</version>
+            </dependency>
+            <!--pdfbox包-->
+            <dependency>
+                <artifactId>pdfbox</artifactId>
+                <groupId>org.apache.pdfbox</groupId>
+                <version>${pdfbox.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

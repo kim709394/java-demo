@@ -1,7 +1,9 @@
 package com.kim.common;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -41,6 +43,18 @@ public class CollectionTest {
             System.out.println(entry.getKey());
         }
 
+    }
+
+    /**
+     * 合并数组
+     * */
+    @Test
+    public void mergeArr(){
+
+        String[] arr1=new String[]{"1","2"};
+        String[] arr2=new String[]{"3"};
+        String[] arr3 = ArrayUtils.addAll(arr1, arr2);
+        Arrays.stream(arr3).forEach(System.out::println);
     }
 
 

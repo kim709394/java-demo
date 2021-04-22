@@ -11,12 +11,23 @@ import org.junit.Test;
  */
 public class ZipTest {
 
+    /**
+     * 压缩
+     * */
     @Test
     public void compressFile() throws ZipException {
         ZipFile zip=new ZipFile("d:/testZip.zip");
         zip.addFile("d:/test3.jpg");
         System.out.println(zip.getFile().getName());
+    }
 
+    /**
+     * 解压
+     * */
+    @Test
+    public void extract() throws ZipException {
+        ZipFile zip=new ZipFile("d:/testZip.zip");
+        zip.extractAll("d:/testZip");
     }
 
 
