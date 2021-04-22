@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kim.truelicense.common.ConfigParam;
 import com.kim.truelicense.common.CustomKeyStoreParam;
 import de.schlichtherle.license.*;
+import lombok.extern.slf4j.Slf4j;
 import net.lingala.zip4j.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 
@@ -15,6 +16,7 @@ import java.util.prefs.Preferences;
  * @description 证书安装业务类
  * @date 2019/12/4
  */
+@Slf4j
 public class LicenseInstallerBean {
 
 
@@ -37,7 +39,7 @@ public class LicenseInstallerBean {
             licenseManager = new ClientLicenseManager(licenseParam,clientMachineParam);
             licenseManager.uninstall();
             LicenseContent licenseContent = licenseManager.install(new File(getLicensePath() + "clientLicense/license.lic"));
-            //Log.info("证书认证通过，安装成功");
+            log.info("证书认证通过，安装成功");
         } catch (Exception e) {
             e.printStackTrace();
             throw new AuthorizedException("证书认证失败:" + e + " " + e.getMessage());

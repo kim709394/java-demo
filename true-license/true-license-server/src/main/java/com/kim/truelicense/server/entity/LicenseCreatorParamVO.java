@@ -19,7 +19,7 @@ public class LicenseCreatorParamVO {
     /**客户名称*/
     private String customerName;
 
-    /**私钥库密码库，必须包含数字和字母*/
+    /**公钥钥库密码库，必须包含数字和字母*/
     private String storePass;
 
     /**私钥密码,必须包含数字和字母*/

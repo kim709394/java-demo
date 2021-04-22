@@ -23,8 +23,7 @@ public class ExecCmdUtil {
      * @return String 返回打印信息
      */
     public static String exec(String... cmd) throws IOException {
-        Process process = null;
-        String result="";
+        Process process ;
         if(System.getProperty("os.name").indexOf("Windows")!=-1){
             if (cmd != null && cmd.length == 1) {
                 process = Runtime.getRuntime().exec(cmd[0]);

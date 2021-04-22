@@ -36,6 +36,7 @@ public class GenerateLicenseTest {
         extraModel.setCpuAmount(16);
         extraModel.setGpuAmount(16);
         extraModel.setMacAddress("2c:4d:54:65:d2:12");
+        paramVO.setLicenseExtraModel(extraModel);
         licenseCreateService.generateLicense(paramVO);
     }
 

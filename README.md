@@ -18,3 +18,7 @@ java应用下的各种api、工具类、第三方jar包使用、框架，等等�
 - #### ThreadTest             线程
 - #### ZipTest                zip压缩包处理
 ### freeswitch-cli    软电话交换引擎(PBX)客户端
+### true-license   证书生成和安装，用于检测被部署应用的客户机的一些参数或者有效期是否合法,[查看使用说明](./TRUE-LICENSE.md)
+- #### true-license-server   服务端，用于生成证书
+- #### true-license-common   公共类库
+- #### true-license-client   客户端，用于部署在客户机的应用，检测客户机参数和证书有效期是否合法
