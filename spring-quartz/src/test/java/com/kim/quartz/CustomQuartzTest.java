@@ -21,7 +21,7 @@ public class CustomQuartzTest {
     //注入定时任务管理工厂，该工厂可以随时管理定时任务，并且已交由spring管理
     @Autowired
     private SchedulerFactoryBean schedulerFactoryBean;
-    
+
     /**
      * 服务启动自动配置定时任务的方式，适合简单的业务，这种方式不能在中途对定时
      * 任务进行取消和变更，有时项目中会有中途需要变更定时任务的业务场景，因此下面
