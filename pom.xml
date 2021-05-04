@@ -16,6 +16,7 @@
         <module>true-license/true-license-client</module>
         <module>true-license/true-license-server</module>
         <module>spring-quartz</module>
+        <module>grpc-java</module>
     </modules>
     <properties>
         <project.version>1.0-SNAPSHOT</project.version>
@@ -52,6 +53,7 @@
         <itextpdf.asian.version>5.2.0</itextpdf.asian.version>
         <poi.version>5.0.0</poi.version>
         <poi.ooxml.version>5.0.0</poi.ooxml.version>
+        <grpc.version>1.25.0</grpc.version>
     </properties>
 
     <dependencyManagement>
@@ -269,6 +271,22 @@
                 <groupId>org.apache.poi</groupId>
                 <artifactId>poi-ooxml</artifactId>
                 <version>${poi.ooxml.version}</version>
+            </dependency>
+            <!--grpc-->
+            <dependency>
+                <groupId>io.grpc</groupId>
+                <artifactId>grpc-netty-shaded</artifactId>
+                <version>${grpc.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.grpc</groupId>
+                <artifactId>grpc-protobuf</artifactId>
+                <version>${grpc.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.grpc</groupId>
+                <artifactId>grpc-stub</artifactId>
+                <version>${grpc.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

@@ -1,0 +1,28 @@
+syntax = "proto3";   //指定proto版本为proto3
+//普通模式:请求-响应
+option java_multiple_files = true;  //是否为多文件
+option java_package = "com.kim.grpc.service";  //指定生成的java类的包名
+option java_outer_classname = "Grpc";           //随意指定
+option objc_class_prefix = "Common";            //随意指定
+
+package service;   //包名与上面保持一致
+
+// 定义一个服务类
+service Greeter {
+  // 定义一个方法作为服务端和客户端的交互
+  rpc SayHello (HelloRequest) returns (HelloReply) {}
+}
+//protobuf参数数据类型和格式自行研究
+//  请求类，设置请求参数
+//参数中的=1，=2，=3是指参数定义顺序，由上至下
+message HelloRequest {
+  string name = 1;
+  bytes input=2;//文件流传输格式
+  bool flag=3;  //布尔值传入类型
+}
+
+// 返回类，设置返回参数
+//参数中的=1，=2，=3是指参数定义顺序，由上至下
+message HelloReply {
+  string message = 1;
+}
