@@ -15,7 +15,7 @@ gRPC和restful API都提供了一套通信机制，用于server/client模型通�
 # 使用
 ## 1、pom.xml文件添加依赖和插件
 ```xml
-        <dependency>
+        <dependencies>
     <!--grpc-->
             <dependency>
                 <groupId>io.grpc</groupId>
@@ -32,7 +32,7 @@ gRPC和restful API都提供了一套通信机制，用于server/client模型通�
                 <artifactId>grpc-stub</artifactId>
                 <version>1.25.0</version>
             </dependency>
-        </dependency>
+        </dependencies>
     <build>
         <!--grpc插件-->
         <extensions>
