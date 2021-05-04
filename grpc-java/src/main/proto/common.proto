@@ -2,7 +2,7 @@ syntax = "proto3";   //指定proto版本为proto3
 //普通模式:请求-响应
 option java_multiple_files = true;  //是否为多文件
 option java_package = "com.kim.grpc.service";  //指定生成的java类的包名
-option java_outer_classname = "Grpc";           //随意指定
+option java_outer_classname = "Grpc";           //java输出grpc的类名
 option objc_class_prefix = "Common";            //随意指定
 
 package service;   //包名与上面保持一致

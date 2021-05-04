@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+option java_multiple_files = true;  //是否为多文件
+option java_package = "com.kim.grpc.service.custom.stream";  //生成的java类的包名
+option java_outer_classname = "Grpc";
+option objc_class_prefix = "CustomStream";
+
+package service;
+
+// 定义一个服务类
+service CustomStream {
+    // Sends a StreamGreeter  客户端流式调用
+    rpc transport (stream HelloStreamRequest) returns (HelloStreamReply) {}
+}
+
+// 请求类
+message HelloStreamRequest {
+    string name = 1;
+}
+
+// 返回类
+message HelloStreamReply {
+    Person message = 1;
+
+    message Person{
+        string name=1;
+        int32 age=2;
+    }
+
+
+
+}
