@@ -17,6 +17,7 @@
         <module>true-license/true-license-server</module>
         <module>spring-quartz</module>
         <module>grpc-java</module>
+        <module>mongodb-java</module>
     </modules>
     <properties>
         <project.version>1.0-SNAPSHOT</project.version>
@@ -54,6 +55,7 @@
         <poi.version>5.0.0</poi.version>
         <poi.ooxml.version>5.0.0</poi.ooxml.version>
         <grpc.version>1.25.0</grpc.version>
+        <mongo.version>1.0.0.RELEASE</mongo.version>
     </properties>
 
     <dependencyManagement>
@@ -287,6 +289,12 @@
                 <groupId>io.grpc</groupId>
                 <artifactId>grpc-stub</artifactId>
                 <version>${grpc.version}</version>
+            </dependency>
+            <!--个性化进行的一些参数配置支持包-->
+            <dependency>
+                <groupId>com.spring4all</groupId>
+                <artifactId>mongodb-plus-spring-boot-starter</artifactId>
+                <version>${mongo.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
