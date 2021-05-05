@@ -34,3 +34,4 @@ java应用下的各种api、工具类、第三方jar包使用、框架，等等�
 - #### true-license-client   客户端，用于部署在客户机的应用，检测客户机参数和证书有效期是否合法
 ### spring-quartz    quartz定时器demo
 ### grpc-java        grpc集成java的demo,[使用说明](./GRPC-JAVA.md)
+### mongodb-java     springboot.data.mongodb&&mongodb.plus demo
