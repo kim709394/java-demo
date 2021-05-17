@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+option java_multiple_files = true;  //是否为多文件
+option java_package = "com.kim.grpc.service.server.stream";  //生成的java类的包名
+option java_outer_classname = "Grpc";
+option objc_class_prefix = "ServerStream";
+
+package service;
+
+// 定义一个服务类
+service ServerStream {
+    // Sends a StreamGreeter  服务端流式调用
+    rpc transport (ServerStreamRequest) returns (stream ServerStreamReply) {}
+}
+
+// 请求类
+message ServerStreamRequest {
+    string name = 1;
+}
+
+// 返回类
+message ServerStreamReply {
+    Person message = 1;
+
+    message Person{
+        string name=1;
+        int32 age=2;
+    }
+
+
+
+}

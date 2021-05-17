@@ -97,6 +97,36 @@
             <artifactId>pdfbox</artifactId>
             <groupId>org.apache.pdfbox</groupId>
         </dependency>
+        <!--解决pdfbox转换成图片时有黑点问题-->
+        <dependency>
+            <groupId>com.github.jai-imageio</groupId>
+            <artifactId>jai-imageio-jpeg2000</artifactId>
+            <version>1.4.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.levigo.jbig2</groupId>
+            <artifactId>levigo-jbig2-imageio</artifactId>
+            <version>2.0</version>
+        </dependency>
+        <!--itext-->
+        <dependency>
+            <groupId>com.itextpdf</groupId>
+            <artifactId>itextpdf</artifactId>
+        </dependency>
+        <!-- 解决页码有中文字符时，无法正常显示的问题 -->
+        <dependency>
+            <groupId>com.itextpdf</groupId>
+            <artifactId>itext-asian</artifactId>
+        </dependency>
+        <!--poi-->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+        </dependency>
         <!--java连接ssh工具包-->
         <dependency>
             <groupId>com.jcraft</groupId>

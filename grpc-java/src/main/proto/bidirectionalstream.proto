@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+option java_multiple_files = true;  //是否为多文件
+option java_package = "com.kim.grpc.service.bidirectional.stream";  //生成的java类的包名
+option java_outer_classname = "Grpc";
+option objc_class_prefix = "BidirectionalStream";
+
+package service;
+
+// 定义一个服务类
+service BidirectionalStream {
+    // Sends a StreamGreeter  双向流式调用
+    rpc transport (stream BidirectionalStreamRequest) returns (stream BidirectionalStreamReply) {}
+}
+
+// 请求类
+message BidirectionalStreamRequest {
+    string name = 1;
+}
+
+// 返回类
+message BidirectionalStreamReply {
+    Person message = 1;
+
+    message Person{
+        string name=1;
+        int32 age=2;
+    }
+
+
+
+}
