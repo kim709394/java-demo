@@ -97,5 +97,10 @@
             <artifactId>pdfbox</artifactId>
             <groupId>org.apache.pdfbox</groupId>
         </dependency>
+        <!--java连接ssh工具包-->
+        <dependency>
+            <groupId>com.jcraft</groupId>
+            <artifactId>jsch</artifactId>
+        </dependency>
     </dependencies>
 </project>

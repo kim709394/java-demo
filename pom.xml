@@ -47,6 +47,7 @@
         <truelicense.version>1.33</truelicense.version>
         <jpython.version>2.7.1</jpython.version>
         <pdfbox.version>2.0.12</pdfbox.version>
+        <jsch.version>0.1.54</jsch.version>
     </properties>
 
     <dependencyManagement>
@@ -243,6 +244,12 @@
                 <artifactId>pdfbox</artifactId>
                 <groupId>org.apache.pdfbox</groupId>
                 <version>${pdfbox.version}</version>
+            </dependency>
+            <!--jsch,java连接ssh工具包-->
+            <dependency>
+                <groupId>com.jcraft</groupId>
+                <artifactId>jsch</artifactId>
+                <version>${jsch.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
