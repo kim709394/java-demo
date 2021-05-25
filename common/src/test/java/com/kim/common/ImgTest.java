@@ -39,6 +39,8 @@ public class ImgTest {
         }
     }
 
+
+
     /**
      * 拼接图片url:
      * data:base64,img;+base64String(只适合小文件)
@@ -48,6 +50,7 @@ public class ImgTest {
 
         InputStream in = this.getClass().getClassLoader().getResourceAsStream("img/test1.jpg");
         String base64 = Base64.getEncoder().encodeToString(IOUtils.toByteArray(in));
+        byte[] img = Base64.getDecoder().decode(base64);
         System.out.println(base64);
     }
 
