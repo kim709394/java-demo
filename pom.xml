@@ -18,6 +18,7 @@
         <module>spring-quartz</module>
         <module>grpc-java</module>
         <module>mongodb-java</module>
+        <module>spring-springmvc</module>
     </modules>
     <properties>
         <project.version>1.0-SNAPSHOT</project.version>

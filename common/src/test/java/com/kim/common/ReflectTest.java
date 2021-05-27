@@ -101,6 +101,17 @@ public class ReflectTest {
 
     }
 
+    private String methodReturn(){
+        return "yes";
+    }
+
+    /**
+     * 通过反射获取类的方法值返回值
+     * */
+    @Test
+    public void testMethod(){
+
+    }
 
 
 
