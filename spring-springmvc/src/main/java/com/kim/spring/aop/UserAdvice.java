@@ -5,6 +5,9 @@ import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import java.lang.reflect.Method;
 
 /**
  * @Author kim
@@ -78,15 +81,24 @@ public class UserAdvice {
         System.out.println("方法名:"+joinPoint.getSignature().getName());
         //获取参数列表
         Object[] args = joinPoint.getArgs();
-        for (Object o: args
-             ) {
-            System.out.println(o);
+        //转换参数为class类型
+        Class<?>[] argTypes=new Class<?>[args.length];
+        for (int i=0;i<args.length;i++) {
+            System.out.println(args[i]);
+            argTypes[i]=args[i].getClass();
         }
         //获取目标类
         Object target = joinPoint.getTarget();
         System.out.println(target);
         String kind = joinPoint.getKind();
         System.out.println(kind);
+        Class declaringType = joinPoint.getSignature().getDeclaringType();
+        System.out.println("目标类:"+declaringType);
+        //获取目标方法
+        Method method = joinPoint.getTarget().getClass().getMethod(joinPoint.getSignature().getName(), argTypes);
+        //获取目标方法上的注解
+        RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+        System.out.println(requestMapping);
         //执行目标方法，可控制目标方法是否执行
         Object rtn = joinPoint.proceed();
         System.out.println("按原目标方法执行,返回值:"+rtn);

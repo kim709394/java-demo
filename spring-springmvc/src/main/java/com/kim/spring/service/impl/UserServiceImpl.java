@@ -3,6 +3,9 @@ package com.kim.spring.service.impl;
 import com.kim.spring.entity.UserDO;
 import com.kim.spring.service.UserService;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.Mapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
  * @Author kim
@@ -40,6 +43,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @RequestMapping("/hello")
     public UserDO around(String name) {
         UserDO userDO=new UserDO();
         userDO.setAge(18);
