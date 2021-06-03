@@ -20,6 +20,7 @@ java应用下的各种api、工具类、第三方jar包使用、框架，等等�
 - #### CmdTest                java执行cmd/sh命令
 - #### JschTest               java连接ssh工具包  
 - #### GenerateO2OTest        使用idea插件generateO2O生成实体类属性拷贝方法例子
+- #### CopyObjectTest         对象拷贝例子
 #### 工具类  com.kim.common.util
 - ##### AesUtil         Aes对称算法加解密
 - ##### ExecCmdUtil     java执行cmd/sh命令
