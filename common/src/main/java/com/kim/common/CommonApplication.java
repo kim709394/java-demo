@@ -1,5 +1,6 @@
 package com.kim.common;
 
+import com.kim.common.annotation.EnableMyAnnotation;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -9,6 +10,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * 通用工具类、api、demo
  */
 @SpringBootApplication
+@EnableMyAnnotation
 public class CommonApplication {
 
     public static void main(String[] args) {
