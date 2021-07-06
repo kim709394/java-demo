@@ -58,6 +58,7 @@
         <grpc.version>1.25.0</grpc.version>
         <mongo.version>1.0.0.RELEASE</mongo.version>
         <jsch.version>0.1.54</jsch.version>
+        <jlayer.version>1.0.1</jlayer.version>
     </properties>
 
     <dependencyManagement>
@@ -303,6 +304,11 @@
                 <groupId>com.jcraft</groupId>
                 <artifactId>jsch</artifactId>
                 <version>${jsch.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>javazoom</groupId>
+                <artifactId>jlayer</artifactId>
+                <version>${jlayer.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

@@ -132,5 +132,10 @@
             <groupId>com.jcraft</groupId>
             <artifactId>jsch</artifactId>
         </dependency>
+        <!--java播放音频文件包-->
+        <dependency>
+            <groupId>javazoom</groupId>
+            <artifactId>jlayer</artifactId>
+        </dependency>
     </dependencies>
 </project>

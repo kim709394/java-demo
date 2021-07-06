@@ -22,7 +22,8 @@ java应用下的各种api、工具类、第三方jar包使用、框架，等等�
 - #### GenerateO2OTest        使用idea插件generateO2O生成实体类属性拷贝方法例子
 - #### CopyObjectTest         对象拷贝例子
 - #### AnnotationTest         注解测试 
-- #### NetTest                网络编程，udp、tcp、socket、http等  
+- #### NetTest                网络编程，udp、tcp、socket、http等
+- #### MediaPlayerTest        媒体播放api，mp3、wav等    
 #### 工具类  com.kim.common.util
 - ##### AesUtil         Aes对称算法加解密
 - ##### ExecCmdUtil     java执行cmd/sh命令
