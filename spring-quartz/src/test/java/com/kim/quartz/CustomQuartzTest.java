@@ -10,7 +10,7 @@ import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
- * @author huangjie
+ * @author kim
  * @description  灵活自定义定时任务
  * @date 2021-5-3
  */
