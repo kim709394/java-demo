@@ -62,6 +62,7 @@
         <httpclient.version>4.5.12</httpclient.version>
         <httpclientmime.version>4.4</httpclientmime.version>
         <okhttp.version>4.9.1</okhttp.version>
+        <guava.cache.version>30.1.1-jre</guava.cache.version>
     </properties>
 
     <dependencyManagement>
@@ -331,6 +332,12 @@
                 <groupId>com.squareup.okhttp3</groupId>
                 <artifactId>okhttp</artifactId>
                 <version>${okhttp.version}</version>
+            </dependency>
+            <!--guava cache-->
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${guava.cache.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
