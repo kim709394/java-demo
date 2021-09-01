@@ -54,7 +54,7 @@ public class NetTest {
     public void udpClient() throws Exception{
 
         //定义服务端的地址和端口号
-        InetAddress address=InetAddress.getByName("localhost");
+        InetAddress address=InetAddress.getByName("101.34.74.116");
         int port=8800;
         byte[] data="你好，我是udp客户端".getBytes("UTF-8");
         //创建数据报文，封装发送数据
