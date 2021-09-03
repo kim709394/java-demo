@@ -63,6 +63,7 @@
         <httpclientmime.version>4.4</httpclientmime.version>
         <okhttp.version>4.9.1</okhttp.version>
         <guava.cache.version>30.1.1-jre</guava.cache.version>
+        <rocketmq.client.version>4.3.0</rocketmq.client.version>
     </properties>
 
     <dependencyManagement>
@@ -338,6 +339,12 @@
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
                 <version>${guava.cache.version}</version>
+            </dependency>
+            <!--rocketmq-client-->
+            <dependency>
+                <groupId>org.apache.rocketmq</groupId>
+                <artifactId>rocketmq-client</artifactId>
+                <version>${rocketmq.client.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
