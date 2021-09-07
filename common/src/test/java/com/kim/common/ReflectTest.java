@@ -1,15 +1,12 @@
 package com.kim.common;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kim.common.service.GenericityInterface;
 import com.kim.common.service.impl.Genericity;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.junit.Test;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.junit.jupiter.api.Test;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.io.File;
 import java.io.IOException;

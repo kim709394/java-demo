@@ -2,7 +2,7 @@ package com.kim.common;
 
 import net.lingala.zip4j.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * @Author kim

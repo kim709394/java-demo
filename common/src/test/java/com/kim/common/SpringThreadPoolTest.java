@@ -1,18 +1,15 @@
 package com.kim.common;
 
 import com.kim.common.service.impl.SpringRun;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
  * @Author kim
  * @Since 2021/4/21
  * spring线程池测试
  */
-@RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = CommonApplication.class)
 public class SpringThreadPoolTest {
 

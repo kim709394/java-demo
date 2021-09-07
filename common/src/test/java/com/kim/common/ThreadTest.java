@@ -1,7 +1,7 @@
 package com.kim.common;
 
 import com.google.common.util.concurrent.RateLimiter;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

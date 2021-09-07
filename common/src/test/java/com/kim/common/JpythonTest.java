@@ -1,7 +1,7 @@
 package com.kim.common;
 
 import com.kim.common.util.ExecCmdUtil;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.python.core.PyFunction;
 import org.python.core.PyInteger;
 import org.python.core.PyObject;

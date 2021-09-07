@@ -1,7 +1,7 @@
 package com.kim.common;
 
 import com.kim.common.annotation.MyAnnotation;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
 

@@ -2,9 +2,8 @@ package com.kim.common;
 
 import com.kim.common.service.LamService;
 import lombok.Data;
-import org.junit.Before;
-import org.junit.Test;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -55,7 +54,7 @@ public class Jdk8LambdaAndStreamTest {
 
     private List<Cat> cats;
 
-    @Before
+    @BeforeAll
     public void initCats(){
         if(cats == null || cats.size() == 0){
             cats = new ArrayList();

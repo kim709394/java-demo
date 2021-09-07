@@ -3,7 +3,7 @@ package com.kim.common;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kim.common.entity.*;
 import org.apache.commons.lang3.SerializationUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * @Author kim

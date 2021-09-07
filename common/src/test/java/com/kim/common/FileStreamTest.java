@@ -1,11 +1,10 @@
 package com.kim.common;
 
 import com.kim.common.consts.FileType;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.util.FileCopyUtils;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;

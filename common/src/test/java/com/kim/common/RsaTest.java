@@ -1,7 +1,7 @@
 package com.kim.common;
 
 import com.kim.common.util.RsaUtil;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Map;
 

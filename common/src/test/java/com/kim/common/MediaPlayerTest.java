@@ -2,7 +2,7 @@ package com.kim.common;
 
 import javazoom.jl.decoder.JavaLayerException;
 import javazoom.jl.player.Player;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.sound.sampled.*;
 import java.io.File;

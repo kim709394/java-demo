@@ -26,6 +26,7 @@ java应用下的各种api、工具类、第三方jar包使用、框架，等等�
 - #### MediaPlayerTest                      媒体播放api，mp3、wav等
 - #### GuavaCacheTest                       guava缓存demo    
 - #### RocketMQClientTest                   连接rocketmq的java客户端
+- #### Junit5Test                           Junit5单元测试框架
 #### 工具类  com.kim.common.util
 - ##### AesUtil                             Aes对称算法加解密
 - ##### ExecCmdUtil                         java执行cmd/sh命令

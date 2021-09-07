@@ -4,7 +4,7 @@ import net.coobird.thumbnailator.Thumbnails;
 import net.coobird.thumbnailator.geometry.Positions;
 import net.coobird.thumbnailator.resizers.BicubicResizer;
 import org.apache.commons.io.IOUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.util.FileCopyUtils;
 
 import javax.imageio.ImageIO;

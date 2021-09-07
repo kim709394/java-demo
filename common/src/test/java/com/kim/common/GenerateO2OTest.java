@@ -2,7 +2,7 @@ package com.kim.common;
 
 import com.kim.common.entity.A;
 import com.kim.common.entity.B;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 
