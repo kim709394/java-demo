@@ -19,6 +19,9 @@ public class Junit5Test {
      *
      * @BeforeEach：在每个单元测试方法执行前都执行一遍
      * @BeforeAll：在每个单元测试方法执行前执行一遍（只执行一次）
+     * @AfterAll:每个单元测试方法执行之后执行一遍(只执行一次)
+     * @AfterEach:每个单元测试方法之后执行一遍
+     * 使用以上注解方法的话要在测试类上加此注解:@TestInstance(TestInstance.Lifecycle.PER_CLASS)
      * @DisplayName("商品入库测试")：用于指定单元测试的名称
      * @Disabled：当前单元测试置为无效，即单元测试时跳过该测试
      * @RepeatedTest(n)：重复性测试，即执行n次

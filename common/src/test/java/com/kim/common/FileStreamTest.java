@@ -1,12 +1,20 @@
 package com.kim.common;
 
 import com.kim.common.consts.FileType;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.util.FileCopyUtils;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,6 +24,37 @@ import java.util.Map;
  * 文件流操作
  */
 public class FileStreamTest {
+
+
+    @Test
+    @DisplayName("获取类路径下的文件")
+    public void getClassPathResources() throws IOException {
+        //java原生方式获取
+        InputStream resourceAsStream = this.getClass().getClassLoader().getResourceAsStream("img/test1.jpg");
+        Enumeration<URL> resources = this.getClass().getClassLoader().getResources("img/test1.jpg");
+        File file=null;
+        UrlResource resource=null;
+        while(resources.hasMoreElements()){
+            URL url = resources.nextElement();
+            resource = new UrlResource(url);
+        }
+        if(System.getProperty("os.name").indexOf("Windows")!=-1){
+            //windows下可以直接获取文件
+            file=resource.getFile();
+        }else{
+            //linux下只能获取流，要获取文件可以写到一个临时文件
+            InputStream inputStream = resource.getInputStream();
+        }
+        //spring工具类提供
+        ResourcePatternResolver resourcePatternResolver = new PathMatchingResourcePatternResolver();
+        Resource[] res = resourcePatternResolver.getResources(
+                ResourcePatternResolver.CLASSPATH_ALL_URL_PREFIX + "/img/test1.jpg");
+        for(Resource r: res){
+            InputStream in = r.getInputStream();
+        }
+
+
+    }
 
     /**
      * 文件流分段
