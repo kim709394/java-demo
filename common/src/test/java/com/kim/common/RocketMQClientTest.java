@@ -1,5 +1,6 @@
 package com.kim.common;
 
+import jnr.ffi.Struct;
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
 import org.apache.rocketmq.client.consumer.listener.ConsumeConcurrentlyContext;
 import org.apache.rocketmq.client.consumer.listener.ConsumeConcurrentlyStatus;
@@ -116,6 +117,21 @@ public class RocketMQClientTest {
         }
     }
 
+    /**
+     * 顺序消息发送和消费，rocketmq默认是轮询对指定topic绑定的所有队列分别发送消息，
+     * 消费消息的时候，是并发接收，因此是不会按严格顺序进行发送和消费的。
+     * 顺序消息的机制就是让发送方和消费方都选择同一个队列进行发送和消费消息。
+     * 全部消息都在同一个队列进行发送和消费就是全局顺序消费
+     * 分别选择不同的队列进行发送和消费则是分区顺序消费
+     * */
+    @Test
+    @DisplayName("顺序消息发送")
+    public void sendOrderly(){
+
+    }
+
+
+
     @Nested
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     @DisplayName("消费者测试")
@@ -134,6 +150,7 @@ public class RocketMQClientTest {
         @AfterEach
         public void consumerStart() throws MQClientException {
             this.consumer.start();
+            while(true){}
         }
 
         @Test
@@ -141,11 +158,15 @@ public class RocketMQClientTest {
         public void consumeMsg() throws MQClientException {
 
             //订阅指定的topic和tag消息，第二个参数是tag的模糊匹配，*表示订阅全部，也支持tag1 || tag2 || tag3格式
-            consumer.subscribe("TopicTest","TagD");
+            consumer.subscribe("TopicTest","*");
+            //并发地监听消息，消息将会并发接收
             consumer.registerMessageListener(new MessageListenerConcurrently() {
                 @Override
                 public ConsumeConcurrentlyStatus consumeMessage(List<MessageExt> msgs, ConsumeConcurrentlyContext context) {
                     System.out.printf("%s Receive New Messages: %s %n", Thread.currentThread().getName(), msgs);
+                    msgs.stream().forEach(messageExt -> {
+                        System.out.println(new String(messageExt.getBody()));
+                    });
                     // 标记该消息已经被成功消费
                     return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
                 }
