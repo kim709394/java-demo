@@ -2,17 +2,18 @@ package com.kim.common;
 
 import jnr.ffi.Struct;
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
-import org.apache.rocketmq.client.consumer.listener.ConsumeConcurrentlyContext;
-import org.apache.rocketmq.client.consumer.listener.ConsumeConcurrentlyStatus;
-import org.apache.rocketmq.client.consumer.listener.MessageListenerConcurrently;
+import org.apache.rocketmq.client.consumer.listener.*;
 import org.apache.rocketmq.client.exception.MQBrokerException;
 import org.apache.rocketmq.client.exception.MQClientException;
 import org.apache.rocketmq.client.producer.DefaultMQProducer;
+import org.apache.rocketmq.client.producer.MessageQueueSelector;
 import org.apache.rocketmq.client.producer.SendCallback;
 import org.apache.rocketmq.client.producer.SendResult;
 import org.apache.rocketmq.common.CountDownLatch2;
+import org.apache.rocketmq.common.consumer.ConsumeFromWhere;
 import org.apache.rocketmq.common.message.Message;
 import org.apache.rocketmq.common.message.MessageExt;
+import org.apache.rocketmq.common.message.MessageQueue;
 import org.apache.rocketmq.remoting.common.RemotingHelper;
 import org.apache.rocketmq.remoting.exception.RemotingException;
 import org.junit.jupiter.api.*;
@@ -126,7 +127,29 @@ public class RocketMQClientTest {
      * */
     @Test
     @DisplayName("顺序消息发送")
-    public void sendOrderly(){
+    public void sendOrderly() throws UnsupportedEncodingException, InterruptedException, RemotingException, MQClientException, MQBrokerException {
+
+        for(int i=0;i<10;i++){
+            Message msg=new Message("OrderMsg","tagA","key"+i,("hello orderMsg"+i).getBytes(RemotingHelper.DEFAULT_CHARSET));
+            /**
+             * 发送顺序消息，最后一个参数是传入给队列选择器方法的参数,即在select(List<MessageQueue> list, Message message, Object arg)
+             * 方法里面的作为第三个参数arg传入
+             * 在同一个队列的消息生产和消费将会顺序进行
+             */
+            SendResult sendResult = producer.send(msg, new MessageQueueSelector() {
+                @Override
+                public MessageQueue select(List<MessageQueue> list, Message message, Object arg) {
+                    int queueId = (int) arg;
+                    return list.get(queueId);
+                }
+            }, 0);
+            System.out.println(String.format("SendResult status:%s, queueId:%d, msg:%d",
+                    sendResult.getSendStatus(),
+                    sendResult.getMessageQueue().getQueueId(),
+                    new String(msg.getBody())
+                    )
+            );
+        }
 
     }
 
@@ -169,6 +192,26 @@ public class RocketMQClientTest {
                     });
                     // 标记该消息已经被成功消费
                     return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
+                }
+            });
+
+        }
+
+        @Test
+        @DisplayName("顺序消费消息")
+        public void consumeMsgOrderly() throws MQClientException {
+            consumer.subscribe("OrderMsg","*");
+            //设置第一次启动的时候是从队列头还是队列尾开始消费，非第一次启动的话则是从上次消费的位置继续往下消费，这里设置从头到尾消费
+            consumer.setConsumeFromWhere(ConsumeFromWhere.CONSUME_FROM_FIRST_OFFSET);
+            consumer.registerMessageListener(new MessageListenerOrderly() {
+                @Override
+                public ConsumeOrderlyStatus consumeMessage(List<MessageExt> msgs, ConsumeOrderlyContext context) {
+                    //自动提交事务
+                    context.setAutoCommit(true);
+                    msgs.stream().forEach(msg -> {
+                        System.out.println("consumeThread=" + Thread.currentThread().getName() + "  queueId=" + msg.getQueueId() + ", content:" + new String(msg.getBody()));
+                    });
+                    return ConsumeOrderlyStatus.SUCCESS;
                 }
             });
 
