@@ -1,6 +1,5 @@
 package com.kim.common;
 
-import jnr.ffi.Struct;
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
 import org.apache.rocketmq.client.consumer.listener.*;
 import org.apache.rocketmq.client.exception.MQBrokerException;
@@ -19,7 +18,8 @@ import org.apache.rocketmq.remoting.exception.RemotingException;
 import org.junit.jupiter.api.*;
 
 import java.io.UnsupportedEncodingException;
-import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -31,7 +31,6 @@ import java.util.concurrent.TimeUnit;
 public class RocketMQClientTest {
 
     private DefaultMQProducer producer;
-
 
 
     @BeforeEach
@@ -86,20 +85,20 @@ public class RocketMQClientTest {
         int msgCount = 10;
         CountDownLatch2 countDownLatch2 = new CountDownLatch2(msgCount);
         for (int i = 0; i < msgCount; i++) {
-            Message msg=new Message("AsyncTopic", "tagA", "key" + i, ("asyncMsg" + i).getBytes(RemotingHelper.DEFAULT_CHARSET));
+            Message msg = new Message("AsyncTopic", "tagA", "key" + i, ("asyncMsg" + i).getBytes(RemotingHelper.DEFAULT_CHARSET));
             int finalI = i;
             producer.send(msg, new SendCallback() {
                 @Override
                 public void onSuccess(SendResult sendResult) {
                     //发送成功
-                    System.out.println("第"+finalI+"条消息发送成功");
+                    System.out.println("第" + finalI + "条消息发送成功");
                     System.out.printf("%s%n", sendResult);
                 }
 
                 @Override
                 public void onException(Throwable e) {
                     //发送失败
-                    System.out.println("第"+ finalI +"条消息发送失败");
+                    System.out.println("第" + finalI + "条消息发送失败");
                     e.printStackTrace();
                 }
             });
@@ -111,8 +110,8 @@ public class RocketMQClientTest {
     @Test
     @DisplayName("单向发送消息")
     public void sendOneway() throws UnsupportedEncodingException, RemotingException, MQClientException, InterruptedException {
-        for(int i=0;i<10;i++){
-            Message msg=new Message("SendOneway","tagA","key"+i,("oneway"+i).getBytes(RemotingHelper.DEFAULT_CHARSET));
+        for (int i = 0; i < 10; i++) {
+            Message msg = new Message("SendOneway", "tagA", "key" + i, ("oneway" + i).getBytes(RemotingHelper.DEFAULT_CHARSET));
             //单向发送，不管是否发送成功，没有任何返回结果
             producer.sendOneway(msg);
         }
@@ -124,13 +123,13 @@ public class RocketMQClientTest {
      * 顺序消息的机制就是让发送方和消费方都选择同一个队列进行发送和消费消息。
      * 全部消息都在同一个队列进行发送和消费就是全局顺序消费
      * 分别选择不同的队列进行发送和消费则是分区顺序消费
-     * */
+     */
     @Test
     @DisplayName("顺序消息发送")
     public void sendOrderly() throws UnsupportedEncodingException, InterruptedException, RemotingException, MQClientException, MQBrokerException {
 
-        for(int i=0;i<10;i++){
-            Message msg=new Message("OrderMsg","tagA","key"+i,("hello orderMsg"+i).getBytes(RemotingHelper.DEFAULT_CHARSET));
+        for (int i = 0; i < 10; i++) {
+            Message msg = new Message("OrderMsg", "tagC", "key" + i, ("hello orderMsg" + i).getBytes(RemotingHelper.DEFAULT_CHARSET));
             /**
              * 发送顺序消息，最后一个参数是传入给队列选择器方法的参数,即在select(List<MessageQueue> list, Message message, Object arg)
              * 方法里面的作为第三个参数arg传入
@@ -143,37 +142,136 @@ public class RocketMQClientTest {
                     return list.get(queueId);
                 }
             }, 0);
-            System.out.println(String.format("SendResult status:%s, queueId:%d, msg:%d",
-                    sendResult.getSendStatus(),
-                    sendResult.getMessageQueue().getQueueId(),
-                    new String(msg.getBody())
-                    )
-            );
+            System.out.println(String.format("SendResult status:%s, queueId:%d, msg:%s", sendResult.getSendStatus(), sendResult.getMessageQueue().getQueueId(), new String(msg.getBody())));
         }
 
     }
 
+    @Test
+    @DisplayName("发送延时消息")
+    public void sendMsgDelay() throws UnsupportedEncodingException, InterruptedException, RemotingException, MQClientException, MQBrokerException {
+        for (int i = 0; i < 10; i++) {
+            Message message = new Message("DelayMsg", "tagB", "key" + i, ("delayMsg" + i).getBytes(RemotingHelper.DEFAULT_CHARSET));
+            /**
+             * 发送消息延时等级，参考下面这个配置类messageDelayLevel属性
+             * org.apache.rocketmq.store.config.MessageStoreConfig
+             * 目前仅支持以下这么多延时等级，从1~18等级依次对应
+             * 1s 5s 10s 30s 1m 2m 3m 4m 5m 6m 7m 8m 9m 10m 20m 30m 1h 2h
+             * 这里以等级3为例
+             * */
+            message.setDelayTimeLevel(3);
+            //同步发送消息
+            producer.send(message);
+            System.out.println(("key" + i + "的发送时间:") + new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date()));
+        }
+    }
 
+    @Test
+    @DisplayName("批量发送消息")
+    public void sendBatchMsgs() throws UnsupportedEncodingException, InterruptedException, RemotingException, MQClientException, MQBrokerException {
+
+        List<Message> messages = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            messages.add(new Message("BatchMsg", "tagA", "key" + i, ("batchMsg" + i).getBytes(RemotingHelper.DEFAULT_CHARSET)));
+        }
+        producer.send(messages);
+    }
+
+    /**
+     * 批量消息列表分割
+     * 批量发送消息能显著提高传递小消息的性能。限制是这些批量消息应该有相同的topic，相同的waitStoreMsgOK，
+     * 而且不能是延时消息。此外，这一批消息的总大小不应超过4MB。
+     * 复杂度只有当你发送大批量时才会增长，你可能不确定它是否超过了大小限制（4MB）
+     * 因此，需要将批量消息集合里面的单个大于4MB的消息过滤掉，以及将集合里面分割成不大于4MB的消息子集合
+     * 再逐一进行发送
+     */
+    public static class MsgSplitter implements Iterator<List<Message>> {
+
+        private static final Integer maxCapacity = 1024 * 1024 * 4;
+        private Integer offset;
+        private List<Message> messages;
+
+        public MsgSplitter(List<Message> messages) {
+            this.messages = messages;
+        }
+
+        @Override
+        public boolean hasNext() {
+
+            return offset < messages.size();
+        }
+
+        @Override
+        public List<Message> next() {
+            int tmpTotalSize=0;
+            List<Message> splitList=new ArrayList<>();
+            for(;offset<messages.size();offset++){
+                int capacitySimple=calcMessageSize(messages.get(offset));
+                if(capacitySimple > maxCapacity){
+                    continue;
+                }else{
+                    tmpTotalSize+=capacitySimple;
+                }
+                if(tmpTotalSize > maxCapacity){
+                    break;
+                }else{
+                    splitList.add(messages.get(offset));
+                }
+            }
+            return splitList;
+        }
+
+        /**
+         * 计算单条消息的容量大小
+         */
+        private int calcMessageSize(Message message) {
+            int tmpSize = message.getTopic().length() + message.getBody().length;
+            Map<String, String> properties = message.getProperties();
+            for (Map.Entry<String, String> entry : properties.entrySet()) {
+                tmpSize += entry.getKey().length() + entry.getValue().length();
+            }
+            tmpSize = tmpSize + 20; // 增加⽇日志的开销20字节
+            return tmpSize;
+        }
+
+    }
+
+    @Test
+    @DisplayName("消息分割后批量发送消息")
+    public void sendBatchSplitMsgs() throws UnsupportedEncodingException, InterruptedException, RemotingException, MQClientException, MQBrokerException {
+        List<Message> messages = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            messages.add(new Message("BatchMsg", "tagA", "key" + i, ("batchMsg" + i).getBytes(RemotingHelper.DEFAULT_CHARSET)));
+        }
+
+        Iterator<List<Message>> splitter=new MsgSplitter(messages);
+        while(splitter.hasNext()){
+            List<Message> next = splitter.next();
+            producer.send(next);
+        }
+
+    }
 
     @Nested
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     @DisplayName("消费者测试")
-    public static class ConsumerTest{
+    public static class ConsumerTest {
 
         private DefaultMQPushConsumer consumer;
 
         @BeforeEach
         public void consumerBuilder() throws MQClientException {
 
-            DefaultMQPushConsumer consumer=new DefaultMQPushConsumer("DEFAULT_GROUP");
+            DefaultMQPushConsumer consumer = new DefaultMQPushConsumer("DEFAULT_GROUP");
             consumer.setNamesrvAddr("101.34.74.116:9876");
-            this.consumer=consumer;
+            this.consumer = consumer;
         }
 
         @AfterEach
         public void consumerStart() throws MQClientException {
             this.consumer.start();
-            while(true){}
+            while (true) {
+            }
         }
 
         @Test
@@ -181,14 +279,14 @@ public class RocketMQClientTest {
         public void consumeMsg() throws MQClientException {
 
             //订阅指定的topic和tag消息，第二个参数是tag的模糊匹配，*表示订阅全部，也支持tag1 || tag2 || tag3格式
-            consumer.subscribe("TopicTest","*");
+            consumer.subscribe("DelayMsg", "tagB");
             //并发地监听消息，消息将会并发接收
             consumer.registerMessageListener(new MessageListenerConcurrently() {
                 @Override
                 public ConsumeConcurrentlyStatus consumeMessage(List<MessageExt> msgs, ConsumeConcurrentlyContext context) {
                     System.out.printf("%s Receive New Messages: %s %n", Thread.currentThread().getName(), msgs);
                     msgs.stream().forEach(messageExt -> {
-                        System.out.println(new String(messageExt.getBody()));
+                        System.out.println(new String(messageExt.getBody()) + "，接收时间:" + new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date()));
                     });
                     // 标记该消息已经被成功消费
                     return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
@@ -200,7 +298,7 @@ public class RocketMQClientTest {
         @Test
         @DisplayName("顺序消费消息")
         public void consumeMsgOrderly() throws MQClientException {
-            consumer.subscribe("OrderMsg","*");
+            consumer.subscribe("OrderMsg", "tagC");
             //设置第一次启动的时候是从队列头还是队列尾开始消费，非第一次启动的话则是从上次消费的位置继续往下消费，这里设置从头到尾消费
             consumer.setConsumeFromWhere(ConsumeFromWhere.CONSUME_FROM_FIRST_OFFSET);
             consumer.registerMessageListener(new MessageListenerOrderly() {
@@ -219,7 +317,6 @@ public class RocketMQClientTest {
 
 
     }
-
 
 
 }
