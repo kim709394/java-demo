@@ -114,6 +114,7 @@ public class Junit5Test {
 
         @Nested
         @DisplayName("内嵌测试类")
+        @TestInstance(TestInstance.Lifecycle.PER_CLASS)         //@BeforeEach,@BeforeAll等注解生效的配套注解
         class InnerInnerTest {
 
             @Test
@@ -122,6 +123,11 @@ public class Junit5Test {
                 Assertions.assertEquals(1.0, 2);
             }
 
+
+            @BeforeAll
+            public void beforeAll(){
+                System.out.println("before test");
+            }
         }
     }
 
