@@ -1,6 +1,7 @@
 package com.kim.common;
 
 import com.google.common.util.concurrent.RateLimiter;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.text.SimpleDateFormat;
@@ -109,6 +110,50 @@ public class ThreadTest {
             if(executor.getCompletedTaskCount()==50){
                 break;
             }
+        }
+    }
+
+    @Test
+    @DisplayName("线程池测试")
+    public void testThreadPool() throws InterruptedException {
+
+        ThreadPoolExecutor threadPoolExecutor=new ThreadPoolExecutor(10,30,5,
+                TimeUnit.SECONDS,new LinkedBlockingDeque<>(10));   //创建一个线程池
+
+        for (int i=0;i<31;i++){
+            MyTask myTask=new MyTask(i); //创建一个线程任务
+            threadPoolExecutor.execute(myTask);    //将这个任务加入线程池
+            System.out.println("线程池的数目大小："+threadPoolExecutor.getPoolSize()+",队列中正在等待的缓存任务数目"+
+                    threadPoolExecutor.getQueue().size()+",已执行完的线程数量："+threadPoolExecutor.getCompletedTaskCount());
+        }
+
+        Thread.sleep(4000);
+        System.out.println("4秒后，线程池任务已全部执行完，线程池的数目大小："+threadPoolExecutor.getPoolSize()+",队列中正在等待的缓存任务数目"+
+                threadPoolExecutor.getQueue().size()+",已执行完的线程数量："+threadPoolExecutor.getCompletedTaskCount());
+
+        Thread.sleep(5000);
+        System.out.println("9秒后，线程池的数目大小："+threadPoolExecutor.getPoolSize()+",队列中正在等待的缓存任务数目"+
+                threadPoolExecutor.getQueue().size()+",已执行完的线程数量："+threadPoolExecutor.getCompletedTaskCount());
+
+        threadPoolExecutor.shutdown();  //销毁线程池
+
+        MyTask myTask=new MyTask(709394); //创建一个线程任务
+        threadPoolExecutor.execute(myTask);
+
+        System.out.println("销毁线程池后：线程池的数目大小："+threadPoolExecutor.getPoolSize()+",队列中正在等待的缓存任务数目"+
+                threadPoolExecutor.getQueue().size()+",已执行完的线程数量："+threadPoolExecutor.getCompletedTaskCount());
+    }
+
+    public static class MyTask implements Runnable{
+
+        private Integer i;
+
+        public MyTask(Integer i){
+
+        }
+        @Override
+        public void run() {
+            System.out.println(i);
         }
     }
 

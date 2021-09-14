@@ -1,6 +1,7 @@
 package com.kim.common;
 
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
+import org.apache.rocketmq.client.consumer.MessageSelector;
 import org.apache.rocketmq.client.consumer.listener.*;
 import org.apache.rocketmq.client.exception.MQBrokerException;
 import org.apache.rocketmq.client.exception.MQClientException;
@@ -230,7 +231,7 @@ public class RocketMQClientTest {
             for (Map.Entry<String, String> entry : properties.entrySet()) {
                 tmpSize += entry.getKey().length() + entry.getValue().length();
             }
-            tmpSize = tmpSize + 20; // 增加⽇日志的开销20字节
+            tmpSize = tmpSize + 20; // 增加日志的开销20字节
             return tmpSize;
         }
 
@@ -248,6 +249,24 @@ public class RocketMQClientTest {
         while(splitter.hasNext()){
             List<Message> next = splitter.next();
             producer.send(next);
+        }
+
+    }
+
+    @Test
+    @DisplayName("过滤消息发送")
+    public void sendFilterMsg() throws UnsupportedEncodingException, InterruptedException, RemotingException, MQClientException, MQBrokerException {
+        /**
+         * 默认情况下，通过大路由topic和小路由tag就可以订阅到具体的消息
+         * 但是在复杂的场景下只有这两个可能不够，于是消息路由的订阅rocketmq提供了sql语法
+         * 标准的统配规则，例如下面的例子，给消息设置属性a=i,那么在订阅的时候可以通过消息
+         * 选择器MessageSelector利用sql语法进行对消息的过滤订阅，只有满足规则的消息被订阅
+         * 消息过滤订阅请看下面的过滤消息接收的example
+         * */
+        for(int i=0;i<10;i++){
+            Message message = new Message("FilterMsg", "tagA", "key" + i, ("filterMsg" + i).getBytes(RemotingHelper.DEFAULT_CHARSET));
+            message.putUserProperty("a",String.valueOf(i));
+            producer.send(message);
         }
 
     }
@@ -313,6 +332,35 @@ public class RocketMQClientTest {
                 }
             });
 
+        }
+
+        @Test
+        @DisplayName("过滤消息接收")
+        public void filterMsgListence() throws MQClientException {
+
+            /**RocketMQ只定义了一些基本语法来支持这个特性。你也可以很容易地扩展它。
+            *数值比较，比如：>，>=，<，<=，BETWEEN，=；
+            *字符比较，比如：=，<>，IN；
+            *IS NULL 或者 IS NOT NULL；
+            *逻辑符号 AND，OR，NOT；
+            *常量支持类型为：
+            *数值，比如：123，3.1415；
+            *字符，比如：'abc'，必须用单引号包裹起来；
+            *NULL，特殊的常量
+            *布尔值，TRUE 或 FALSE
+             * *只有使用push模式的消费者才能用使用SQL92标准的sql语句*/
+            consumer.subscribe("FilterMsg", MessageSelector.bySql("a between 0 and 3"));
+            consumer.registerMessageListener(new MessageListenerConcurrently() {
+                @Override
+                public ConsumeConcurrentlyStatus consumeMessage(List<MessageExt> msgs, ConsumeConcurrentlyContext context) {
+                    System.out.printf("%s Receive New Messages: %s %n", Thread.currentThread().getName(), msgs);
+                    msgs.stream().forEach(messageExt -> {
+                        System.out.println(new String(messageExt.getBody()) + "，接收时间:" + new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date()));
+                    });
+                    // 标记该消息已经被成功消费
+                    return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
+                }
+            });
         }
 
 
