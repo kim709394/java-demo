@@ -5,13 +5,11 @@ import org.apache.rocketmq.client.consumer.MessageSelector;
 import org.apache.rocketmq.client.consumer.listener.*;
 import org.apache.rocketmq.client.exception.MQBrokerException;
 import org.apache.rocketmq.client.exception.MQClientException;
-import org.apache.rocketmq.client.producer.DefaultMQProducer;
-import org.apache.rocketmq.client.producer.MessageQueueSelector;
-import org.apache.rocketmq.client.producer.SendCallback;
-import org.apache.rocketmq.client.producer.SendResult;
+import org.apache.rocketmq.client.producer.*;
 import org.apache.rocketmq.common.CountDownLatch2;
 import org.apache.rocketmq.common.consumer.ConsumeFromWhere;
 import org.apache.rocketmq.common.message.Message;
+import org.apache.rocketmq.common.message.MessageConst;
 import org.apache.rocketmq.common.message.MessageExt;
 import org.apache.rocketmq.common.message.MessageQueue;
 import org.apache.rocketmq.remoting.common.RemotingHelper;
@@ -21,7 +19,10 @@ import org.junit.jupiter.api.*;
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author huangjie
@@ -204,18 +205,18 @@ public class RocketMQClientTest {
 
         @Override
         public List<Message> next() {
-            int tmpTotalSize=0;
-            List<Message> splitList=new ArrayList<>();
-            for(;offset<messages.size();offset++){
-                int capacitySimple=calcMessageSize(messages.get(offset));
-                if(capacitySimple > maxCapacity){
+            int tmpTotalSize = 0;
+            List<Message> splitList = new ArrayList<>();
+            for (; offset < messages.size(); offset++) {
+                int capacitySimple = calcMessageSize(messages.get(offset));
+                if (capacitySimple > maxCapacity) {
                     continue;
-                }else{
-                    tmpTotalSize+=capacitySimple;
+                } else {
+                    tmpTotalSize += capacitySimple;
                 }
-                if(tmpTotalSize > maxCapacity){
+                if (tmpTotalSize > maxCapacity) {
                     break;
-                }else{
+                } else {
                     splitList.add(messages.get(offset));
                 }
             }
@@ -245,8 +246,8 @@ public class RocketMQClientTest {
             messages.add(new Message("BatchMsg", "tagA", "key" + i, ("batchMsg" + i).getBytes(RemotingHelper.DEFAULT_CHARSET)));
         }
 
-        Iterator<List<Message>> splitter=new MsgSplitter(messages);
-        while(splitter.hasNext()){
+        Iterator<List<Message>> splitter = new MsgSplitter(messages);
+        while (splitter.hasNext()) {
             List<Message> next = splitter.next();
             producer.send(next);
         }
@@ -263,9 +264,9 @@ public class RocketMQClientTest {
          * 选择器MessageSelector利用sql语法进行对消息的过滤订阅，只有满足规则的消息被订阅
          * 消息过滤订阅请看下面的过滤消息接收的example
          * */
-        for(int i=0;i<10;i++){
+        for (int i = 0; i < 10; i++) {
             Message message = new Message("FilterMsg", "tagA", "key" + i, ("filterMsg" + i).getBytes(RemotingHelper.DEFAULT_CHARSET));
-            message.putUserProperty("a",String.valueOf(i));
+            message.putUserProperty("a", String.valueOf(i));
             producer.send(message);
         }
 
@@ -339,15 +340,15 @@ public class RocketMQClientTest {
         public void filterMsgListence() throws MQClientException {
 
             /**RocketMQ只定义了一些基本语法来支持这个特性。你也可以很容易地扩展它。
-            *数值比较，比如：>，>=，<，<=，BETWEEN，=；
-            *字符比较，比如：=，<>，IN；
-            *IS NULL 或者 IS NOT NULL；
-            *逻辑符号 AND，OR，NOT；
-            *常量支持类型为：
-            *数值，比如：123，3.1415；
-            *字符，比如：'abc'，必须用单引号包裹起来；
-            *NULL，特殊的常量
-            *布尔值，TRUE 或 FALSE
+             *数值比较，比如：>，>=，<，<=，BETWEEN，=；
+             *字符比较，比如：=，<>，IN；
+             *IS NULL 或者 IS NOT NULL；
+             *逻辑符号 AND，OR，NOT；
+             *常量支持类型为：
+             *数值，比如：123，3.1415；
+             *字符，比如：'abc'，必须用单引号包裹起来；
+             *NULL，特殊的常量
+             *布尔值，TRUE 或 FALSE
              * *只有使用push模式的消费者才能用使用SQL92标准的sql语句*/
             consumer.subscribe("FilterMsg", MessageSelector.bySql("a between 0 and 3"));
             consumer.registerMessageListener(new MessageListenerConcurrently() {
@@ -361,6 +362,130 @@ public class RocketMQClientTest {
                     return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
                 }
             });
+        }
+
+
+    }
+
+    //本地事务执行业务接口
+    public interface TransactionMsgExecuteHandle {
+        LocalTransactionState executeLocalTransaction(Message msg, Object arg);
+    }
+
+    //本地事务检查业务接口
+    public interface TransactionMsgCheckHandle {
+        LocalTransactionState checkLocalTransaction(MessageExt msg);
+    }
+
+    @Nested
+    @DisplayName("事务消息")
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    public static class TransactionMsg {
+
+        private TransactionMQProducer producer;
+
+        private TransactionMsgExecuteHandle executeHandle;
+
+        private TransactionMsgCheckHandle checkHandle;
+
+        @BeforeAll
+        public void initProducer() throws MQClientException {
+            //实例化事务消息生产者
+            TransactionMQProducer producer = new TransactionMQProducer("transactionMsg");
+            //创建线程池
+            ExecutorService executorService = Executors.newFixedThreadPool(10);
+            //定义事务消息监听器
+            TransactionListener transactionListener = new TransactionListener() {
+                @Override
+                public LocalTransactionState executeLocalTransaction(Message msg, Object arg) {
+                    return executeHandle.executeLocalTransaction(msg, arg);
+                }
+
+                @Override
+                public LocalTransactionState checkLocalTransaction(MessageExt msg) {
+                    return checkHandle.checkLocalTransaction(msg);
+                }
+            };
+            //装配
+            producer.setExecutorService(executorService);
+            producer.setTransactionListener(transactionListener);
+            //设置broker服务器地址
+            producer.setInstanceName(String.valueOf(System.currentTimeMillis()));
+            producer.setNamesrvAddr("101.34.74.116:9876");
+            producer.setSendMsgTimeout(10000);
+            this.producer = producer;
+            //启动
+            this.producer.start();
+        }
+
+        @AfterAll
+        public void shutdown() {
+           /* while (true) {
+            }*/
+            producer.shutdown();
+        }
+
+        /**
+         * 事务消息监听器接口方法将会返回以下三种状态
+         * TransactionStatus.CommitTransaction: 提交事务，它允许消费者消费此消息。
+         * TransactionStatus.RollbackTransaction: 回滚事务，它代表该消息将被删除，不允许被消费。
+         * TransactionStatus.Unknown: 中间状态，它代表需要检查消息队列来确定状态。
+         */
+
+        @Test
+        @DisplayName("本地事务提交成功的例子")
+        public void localSuccess() throws UnsupportedEncodingException, MQClientException {
+            executeHandle = (msg, arg) -> {
+                System.out.printf("执行本地事务是否提交: %s%n   %s", msg, arg);
+                return LocalTransactionState.COMMIT_MESSAGE;
+            };
+
+            checkHandle = msg -> {
+                System.out.printf("执行事务消息检查: %n%s", msg);
+                return LocalTransactionState.COMMIT_MESSAGE;
+            };
+            Message message = new Message("TransactionMsg", "tagA", String.valueOf(System.currentTimeMillis()), ("my transactionMsg" + new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date())).getBytes(RemotingHelper.DEFAULT_CHARSET));
+            producer.sendMessageInTransaction(message, "本地事务执行提交");
+
+        }
+
+        @Test
+        @DisplayName("本地事务执行回滚的例子")
+        public void localRollback() throws UnsupportedEncodingException, MQClientException {
+            executeHandle = (msg, arg) -> {
+                System.out.printf("执行本地事务是否提交: %s%n   %s", msg, arg);
+                return LocalTransactionState.ROLLBACK_MESSAGE;
+            };
+
+            checkHandle = msg -> {
+                System.out.printf("执行事务消息检查: %n%s", msg);
+                return LocalTransactionState.COMMIT_MESSAGE;
+            };
+            Message message = new Message("TransactionMsg", "tagA", String.valueOf(System.currentTimeMillis()), ("my transactionMsg" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date())).getBytes(RemotingHelper.DEFAULT_CHARSET));
+            producer.sendMessageInTransaction(message, "本地事务执行回滚");
+
+        }
+
+        @Test
+        @DisplayName("本地事务执行未知需要检查执行，且检查执行3次后提交事务消息的例子")
+        public void localUnknow() throws UnsupportedEncodingException, MQClientException {
+            executeHandle = (msg, arg) -> {
+                System.out.printf("执行本地事务是否提交: %s%n   %s", msg, arg);
+                return LocalTransactionState.UNKNOW;
+            };
+            AtomicInteger handleCount = new AtomicInteger();
+            checkHandle = msg -> {
+
+                System.out.printf("执行事务消息检查: %n%s,执行次数: %s", msg, handleCount.incrementAndGet());
+                return handleCount.get() == 3 ? LocalTransactionState.COMMIT_MESSAGE : LocalTransactionState.UNKNOW;
+
+            };
+            Message message = new Message("TransactionMsg", "tagA", String.valueOf(System.currentTimeMillis()), ("my transactionMsg" + new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date())).getBytes(RemotingHelper.DEFAULT_CHARSET));
+            //设置用户态的事务消息检查间隔时间
+            /*message.putUserProperty(MessageConst.PROPERTY_CHECK_IMMUNITY_TIME_IN_SECONDS,"6");
+            System.out.println(message.getProperty(MessageConst.PROPERTY_CHECK_IMMUNITY_TIME_IN_SECONDS));*/
+            producer.sendMessageInTransaction(message, "本地事务执行未知，需要检查执行");
+
         }
 
 
