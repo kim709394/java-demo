@@ -19,7 +19,7 @@ java应用下的各种api、工具类、第三方jar包使用、框架，等等�
 - #### ZipTest                              zip压缩包处理
 - #### CmdTest                              java执行cmd/sh命令
 - #### JschTest                             java连接ssh工具包  
-- #### GenerateO2OTest                      使用idea插件generateO2O生成实体类属性拷贝方法例子
+- #### PropertiesCopyTest                   实体类属性拷贝工具
 - #### CopyObjectTest                       对象拷贝例子
 - #### AnnotationTest                       注解测试 
 - #### NetTest                              网络编程，udp、tcp、socket、http等
