@@ -396,6 +396,19 @@ public class RocketMQClientTest {
             ExecutorService executorService = Executors.newFixedThreadPool(10);
             //定义事务消息监听器
             TransactionListener transactionListener = new TransactionListener() {
+                /**
+                 * 事务消息发送后，先执行这个方法，如果这个方法返回COMMIT_MESSAGE，则消息直接发送
+                 * 如果返回ROLLBACK_MESSAGE，则发送出去的消息直接回滚，不会发送到消息队列
+                 * 如果返回UNKNOW，表示不能确定本地事务是否提交成功，则会进入间隔回查方法checkLocalTransaction(MessageExt msg)
+                 * rocketmq将会每隔一段时间调用回查方法，如果回查方法返回COMMIT_MESSAGE，则消息直接发送
+                 * 如果回查方法返回ROLLBACK_MESSAGE，则发送出去的消息直接回滚，不会发送到消息队列
+                 * 如果回查方法返回UNKNOW，则会不断的循环调用回查方法，循环次数和间隔时间可以通过配置和重写接口进行个性化设置
+                 * executeLocalTransaction(Message msg, Object arg)方法用来当即检查本地业务事务是否提交成功，arg参数是发送事务
+                 * 消息的方法：sendMessageInTransaction(final Message msg, final Object arg)的第二个参数，可用于消息业务参数的
+                 * 传递处理。
+                 * LocalTransactionState checkLocalTransaction(MessageExt msg)方法用于本地事务回查，两个方法可以通过transactionId
+                 * 连线
+                 */
                 @Override
                 public LocalTransactionState executeLocalTransaction(Message msg, Object arg) {
                     return executeHandle.executeLocalTransaction(msg, arg);
@@ -419,9 +432,8 @@ public class RocketMQClientTest {
         }
 
         @AfterAll
-        public void shutdown() {
-           /* while (true) {
-            }*/
+        public void shutdown() throws InterruptedException {
+
             producer.shutdown();
         }
 
@@ -430,6 +442,18 @@ public class RocketMQClientTest {
          * TransactionStatus.CommitTransaction: 提交事务，它允许消费者消费此消息。
          * TransactionStatus.RollbackTransaction: 回滚事务，它代表该消息将被删除，不允许被消费。
          * TransactionStatus.Unknown: 中间状态，它代表需要检查消息队列来确定状态。
+         * 事务消息不支持延时消息和批量消息。
+         * 为了避免单个消息被检查太多次而导致半队列消息累积，我们默认将单个消息的检查次数限制为 15 次，
+         * 但是用户可以通过 Broker 配置文件的 transactionCheckMax参数来修改此限制。
+         * 如果已经检查某条消息超过 N 次的话（ N = transactionCheckMax ） 则 Broker 将丢弃此消息，
+         * 并在默认情况下同时打印错误日志。用户可以通过重写 AbstractTransactionalMessageCheckListener类来修改这个行为。
+         * 事务消息将在 Broker 配置文件中的参数 transactionTimeout 这样的特定时间长度之后被检查。
+         * 当发送事务消息时，用户还可以通过设置用户属性 CHECK_IMMUNITY_TIME_IN_SECONDS 来改变这个限制，
+         * 该参数优先于 transactionTimeout 参数。事务性消息可能不止一次被检查或消费。##--rocketmq4.4.0版本测试发现不生效--##
+         * 提交给用户的目标主题消息可能会失败，目前这依日志的记录而定。它的高可用性通过 RocketMQ 本身的高可用性机制
+         * 来保证，如果希望确保事务消息不丢失、并且事务完整性得到保证，建议使用同步的双重写入机制。
+         * 事务消息的生产者 ID 不能与其他类型消息的生产者 ID 共享。与其他类型的消息不同，事务消息允许
+         * 反向查询、MQ服务器能通过它们的生产者 ID 查询到消费者。
          */
 
         @Test
@@ -468,26 +492,54 @@ public class RocketMQClientTest {
 
         @Test
         @DisplayName("本地事务执行未知需要检查执行，且检查执行3次后提交事务消息的例子")
-        public void localUnknow() throws UnsupportedEncodingException, MQClientException {
+        public void localUnknowCheckCommit() throws UnsupportedEncodingException, MQClientException, InterruptedException {
             executeHandle = (msg, arg) -> {
                 System.out.printf("执行本地事务是否提交: %s%n   %s", msg, arg);
                 return LocalTransactionState.UNKNOW;
             };
             AtomicInteger handleCount = new AtomicInteger();
             checkHandle = msg -> {
-
-                System.out.printf("执行事务消息检查: %n%s,执行次数: %s", msg, handleCount.incrementAndGet());
-                return handleCount.get() == 3 ? LocalTransactionState.COMMIT_MESSAGE : LocalTransactionState.UNKNOW;
+                System.out.println();
+                System.out.printf("执行事务消息检查: %n%s,执行次数: %s ,当前时间: %s", msg, handleCount.incrementAndGet(),new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+                return handleCount.get() >= 3 ? LocalTransactionState.COMMIT_MESSAGE : LocalTransactionState.UNKNOW;
 
             };
-            Message message = new Message("TransactionMsg", "tagA", String.valueOf(System.currentTimeMillis()), ("my transactionMsg" + new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date())).getBytes(RemotingHelper.DEFAULT_CHARSET));
+            Message message = new Message("TransactionMsg", "tagA", String.valueOf(System.currentTimeMillis()), ("my transactionMsg" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date())).getBytes(RemotingHelper.DEFAULT_CHARSET));
             //设置用户态的事务消息检查间隔时间
-            /*message.putUserProperty(MessageConst.PROPERTY_CHECK_IMMUNITY_TIME_IN_SECONDS,"6");
+           /* message.putUserProperty(MessageConst.PROPERTY_CHECK_IMMUNITY_TIME_IN_SECONDS,"6");
             System.out.println(message.getProperty(MessageConst.PROPERTY_CHECK_IMMUNITY_TIME_IN_SECONDS));*/
+            System.out.println("消息体:"+new String(message.getBody()));
             producer.sendMessageInTransaction(message, "本地事务执行未知，需要检查执行");
-
+            for(int i=0;i<10000;i++){
+                Thread.sleep(1*1000);
+            }
         }
 
+
+        @Test
+        @DisplayName("本地事务执行未知需要检查执行，且检查执行3次后回滚事务消息的例子")
+        public void localUnknowCheckRollback() throws UnsupportedEncodingException, MQClientException, InterruptedException {
+            executeHandle = (msg, arg) -> {
+                System.out.printf("执行本地事务是否提交: %s%n   %s", msg, arg);
+                return LocalTransactionState.UNKNOW;
+            };
+            AtomicInteger handleCount = new AtomicInteger();
+            checkHandle = msg -> {
+                System.out.println();
+                System.out.printf("执行事务消息检查: %n%s,执行次数: %s ,当前时间: %s", msg, handleCount.incrementAndGet(),new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+                return handleCount.get() >= 3 ? LocalTransactionState.ROLLBACK_MESSAGE : LocalTransactionState.UNKNOW;
+
+            };
+            Message message = new Message("TransactionMsg", "tagA", String.valueOf(System.currentTimeMillis()), ("my transactionMsg" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date())).getBytes(RemotingHelper.DEFAULT_CHARSET));
+            //设置用户态的事务消息检查间隔时间
+           /* message.putUserProperty(MessageConst.PROPERTY_CHECK_IMMUNITY_TIME_IN_SECONDS,"6");
+            System.out.println(message.getProperty(MessageConst.PROPERTY_CHECK_IMMUNITY_TIME_IN_SECONDS));*/
+            System.out.println("消息体:"+new String(message.getBody()));
+            producer.sendMessageInTransaction(message, "本地事务执行未知，需要检查执行");
+            for(int i=0;i<10000;i++){
+                Thread.sleep(1*1000);
+            }
+        }
 
     }
 
