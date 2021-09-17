@@ -367,15 +367,7 @@ public class RocketMQClientTest {
 
     }
 
-    //本地事务执行业务接口
-    public interface TransactionMsgExecuteHandle {
-        LocalTransactionState executeLocalTransaction(Message msg, Object arg);
-    }
 
-    //本地事务检查业务接口
-    public interface TransactionMsgCheckHandle {
-        LocalTransactionState checkLocalTransaction(MessageExt msg);
-    }
 
     @Nested
     @DisplayName("事务消息")
@@ -387,6 +379,16 @@ public class RocketMQClientTest {
         private TransactionMsgExecuteHandle executeHandle;
 
         private TransactionMsgCheckHandle checkHandle;
+
+        //本地事务执行业务接口
+        public interface TransactionMsgExecuteHandle {
+            LocalTransactionState executeLocalTransaction(Message msg, Object arg);
+        }
+
+        //本地事务检查业务接口
+        public interface TransactionMsgCheckHandle {
+            LocalTransactionState checkLocalTransaction(MessageExt msg);
+        }
 
         @BeforeAll
         public void initProducer() throws MQClientException {
