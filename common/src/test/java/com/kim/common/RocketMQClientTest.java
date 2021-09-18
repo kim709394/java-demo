@@ -169,6 +169,25 @@ public class RocketMQClientTest {
     }
 
     @Test
+    @DisplayName("异步发送延时消息,消费者未能消费成功")
+    public void sendDelayMsgAsync() throws UnsupportedEncodingException, RemotingException, MQClientException, InterruptedException {
+        Message message=new Message("DelayMsg","tagB","key","hello delay".getBytes(RemotingHelper.DEFAULT_CHARSET));
+        message.setDelayTimeLevel(3);
+        producer.send(message, new SendCallback() {
+            @Override
+            public void onSuccess(SendResult sendResult) {
+                System.out.println("发送成功:"+new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+            }
+
+            @Override
+            public void onException(Throwable e) {
+                e.printStackTrace();
+            }
+        },3000L);
+        for(;;){}
+    }
+
+    @Test
     @DisplayName("批量发送消息")
     public void sendBatchMsgs() throws UnsupportedEncodingException, InterruptedException, RemotingException, MQClientException, MQBrokerException {
 
