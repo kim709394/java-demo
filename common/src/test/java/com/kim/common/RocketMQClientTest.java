@@ -160,6 +160,7 @@ public class RocketMQClientTest {
              * 目前仅支持以下这么多延时等级，从1~18等级依次对应
              * 1s 5s 10s 30s 1m 2m 3m 4m 5m 6m 7m 8m 9m 10m 20m 30m 1h 2h
              * 这里以等级3为例
+             * 要先启动消息监听服务再发送延时消费消息，延时消息只有在被消费之后才能存储
              * */
             message.setDelayTimeLevel(3);
             //同步发送消息
