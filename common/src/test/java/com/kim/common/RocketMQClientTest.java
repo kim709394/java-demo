@@ -499,7 +499,7 @@ public class RocketMQClientTest {
         @DisplayName("本地事务执行回滚的例子")
         public void localRollback() throws UnsupportedEncodingException, MQClientException {
             executeHandle = (msg, arg) -> {
-                System.out.printf("执行本地事务是否提交: %s%n   %s", msg, arg);
+                System.out.printf("执行本地事务是否提交: %s%n   %s", arg);
                 return LocalTransactionState.ROLLBACK_MESSAGE;
             };
 
