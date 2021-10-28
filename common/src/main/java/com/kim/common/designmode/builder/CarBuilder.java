@@ -1,8 +1,10 @@
 package com.kim.common.designmode.builder;
 
+import com.kim.common.designmode.pojo.Car;
+
 /**
  * @author huangjie
- * @description
+ * @description  车辆构建器
  * @date 2021/10/27
  */
 public class CarBuilder {
@@ -11,6 +13,11 @@ public class CarBuilder {
 
     public CarBuilder(){
         car=new Car();
+    }
+
+    public CarBuilder id(Integer id){
+        car.setId(id);
+        return this;
     }
 
     public CarBuilder engine(String engine){

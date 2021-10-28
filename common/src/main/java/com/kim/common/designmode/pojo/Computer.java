@@ -1,4 +1,4 @@
-package com.kim.common.designmode.builder;
+package com.kim.common.designmode.pojo;
 
 import lombok.Builder;
 import lombok.Data;
