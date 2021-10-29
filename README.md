@@ -27,6 +27,8 @@ java应用下的各种api、工具类、第三方jar包使用、框架，等等�
 - #### GuavaCacheTest                       guava缓存demo    
 - #### RocketMQClientTest                   连接rocketmq的java客户端
 - #### Junit5Test                           Junit5单元测试框架
+- #### DesignModelTest                      设计模式demo测试
+- #### JavassistTest                        Javassis生成类框架demo
 #### 工具类  com.kim.common.util
 - ##### AesUtil                             Aes对称算法加解密
 - ##### ExecCmdUtil                         java执行cmd/sh命令

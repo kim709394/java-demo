@@ -185,6 +185,16 @@
             <version>1.5.0.Beta1</version>
             <scope>provided</scope>
         </dependency>-->
+        <!--cglib代理工具类-->
+        <dependency>
+            <groupId>cglib</groupId>
+            <artifactId>cglib</artifactId>
+        </dependency>
+        <!--javassist 运行中生成和改变类工具-->
+        <dependency>
+            <groupId>org.javassist</groupId>
+            <artifactId>javassist</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

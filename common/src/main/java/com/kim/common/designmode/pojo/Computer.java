@@ -12,6 +12,7 @@ import lombok.Data;
 @Data
 public class Computer {
 
+    private Integer id;     //id
     private String name;    //电脑名字
     private String brand;   //品牌
     private String size;    //尺寸
