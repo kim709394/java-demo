@@ -6,7 +6,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import javax.swing.border.EmptyBorder;
+import java.io.EOFException;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 /**
  * @author huangjie
@@ -16,11 +20,13 @@ import java.io.IOException;
 public class JacassistTest {
 
     private CtClass ctClass;
+    private ClassPool pool;
 
     @BeforeEach
     public void before() throws Exception{
         //初始化类池
         ClassPool pool = ClassPool.getDefault();
+        this.pool = pool;
         //创建一个类
         CtClass ctClass = pool.makeClass("com.kim.common.javassist.Example");
         this.ctClass=ctClass;
@@ -36,6 +42,7 @@ public class JacassistTest {
 
         //生成无参构造方法
         CtConstructor constrNoParam = new CtConstructor(new CtClass[]{}, ctClass);
+        constrNoParam.setBody("{}");
         ctClass.addConstructor(constrNoParam);
 
         //生成有参构造方法,只有一个String类型的参数
@@ -63,6 +70,82 @@ public class JacassistTest {
 
     }
 
+    @Test
+    @DisplayName("实例化自定义类")
+    public void instanceDefClass() throws CannotCompileException, IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
+
+        Object o = ctClass.toClass().newInstance();
+        //利用反射调用方法
+        Method setMyMember = o.getClass().getMethod("setMyMember", String.class);
+        setMyMember.invoke(o,"newMember");
+        Method getMyMember = o.getClass().getMethod("getMyMember");
+        Object result = getMyMember.invoke(o);
+        System.out.println(result);
+
+    }
+
+    @Test
+    @DisplayName("读取生成.class文件实例化自定义类")
+    public void instanceDefClassByReadClassFile() throws NotFoundException, CannotCompileException, IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
+
+        //添加类加载路径,执行这一步可以不用生成.class文件
+        pool.appendClassPath(this.getClass().getClassLoader().getResource("").getPath());
+        CtClass ctClass = pool.get("com.kim.common.javassist.Example");
+        Object o = ctClass.toClass().newInstance();
+        Method myDefMethod = o.getClass().getMethod("myDefMethod", int.class);
+        myDefMethod.invoke(o,123);
+    }
+
+    public interface ExampleInterface{
+        void myDefMethod(int arg);
+    }
+
+    @Test
+    @DisplayName("通过实现之前定义好的接口来生成类")
+    public void defClassImplInterface() throws Exception{
+        //加载接口
+        CtClass exampleI = pool.get("com.kim.common.JacassistTest$ExampleInterface");
+        //让生成的类实现接口
+        ctClass.setInterfaces(new CtClass[]{exampleI});
+        //实例化生成的类，用接口接收，这样以后可以用接口的引用来调用方法，减少反射的开销
+        ExampleInterface exampleInterface = (ExampleInterface) ctClass.toClass().newInstance();
+        exampleInterface.myDefMethod(12);
+
+    }
+
+    public static class UserService{
+
+        public void show(){
+            System.out.println("my name is mike");
+
+        }
+    }
+
+    @Test
+    @DisplayName("修改某个已定义好的类")
+    public void modifyClass() throws Exception {
+        //加载目标类
+        CtClass targetClass = pool.get("com.kim.common.JacassistTest$UserService");
+        //获取目标类的方法
+        CtMethod show = targetClass.getDeclaredMethod("show");
+        //在方法执行前插入执行代码
+        show.insertBefore("{System.out.println(\"insert before\");}");
+        //在方法执行后插入执行代码
+        show.insertAfter("{System.out.println(\"insert after\");}");
+        //新增一个方法
+        CtMethod newMethod = new CtMethod(CtClass.voidType, "newMethod", new CtClass[]{}, targetClass);
+        newMethod.setModifiers(Modifier.PUBLIC);
+        newMethod.setBody("{System.out.println(\"新增加的方法\");}");
+        targetClass.addMethod(newMethod);
+
+        //实例化类并调用目标方法和新增的方法
+        Object o = targetClass.toClass().newInstance();
+        Method show1 = o.getClass().getMethod("show");
+        show1.invoke(o);
+        Method newMethod1 = o.getClass().getMethod("newMethod");
+        newMethod1.invoke(o);
+
+    }
 
 
 
