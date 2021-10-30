@@ -1,6 +1,13 @@
 package com.kim.common;
 
 import com.kim.common.designmode.factory.*;
+import com.kim.common.designmode.group.clear.ClearBranch;
+import com.kim.common.designmode.group.clear.ClearClearRoot;
+import com.kim.common.designmode.group.clear.ClearComponent;
+import com.kim.common.designmode.group.clear.ClearLeaf;
+import com.kim.common.designmode.group.safe.SafeBranch;
+import com.kim.common.designmode.group.safe.SafeLeaf;
+import com.kim.common.designmode.group.safe.SafeRoot;
 import com.kim.common.designmode.pojo.Car;
 import com.kim.common.designmode.builder.CarBuilder;
 import com.kim.common.designmode.pojo.Computer;
@@ -11,7 +18,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
@@ -181,6 +187,42 @@ public class DesignModelTest {
         computerServiceProxy.get(1);
 
 
+    }
+
+    @Test
+    @DisplayName("组合模式：安全形式")
+    public void groupBySafe(){
+
+        SafeRoot safeRoot =new SafeRoot("父节点");
+        SafeBranch b1=new SafeBranch("分支1", safeRoot);
+        SafeBranch b1_1=new SafeBranch("分支1-1",b1);
+        SafeLeaf l1=new SafeLeaf("叶子1-1-1",b1_1);
+        SafeLeaf l2=new SafeLeaf("叶子1-1-2",b1_1);
+        SafeLeaf l3=new SafeLeaf("叶子1-1-3",b1_1);
+        safeRoot.addChild(b1);
+        b1.addChild(b1_1);
+        b1_1.addChild(l1);
+        b1_1.addChild(l2);
+        b1_1.addChild(l3);
+        safeRoot.operation("action:");
+    }
+
+    @Test
+    @DisplayName("组合模式：透明形式")
+    public void groupByClear(){
+
+        ClearComponent clearRoot = new ClearClearRoot("父节点");
+        ClearComponent b1=new ClearBranch("分支1", clearRoot);
+        ClearComponent b1_1=new ClearBranch("分支1-1",b1);
+        ClearComponent l1=new ClearLeaf("叶子1-1-1",b1_1);
+        ClearComponent l2=new ClearLeaf("叶子1-1-2",b1_1);
+        ClearComponent l3=new ClearLeaf("叶子1-1-3",b1_1);
+        clearRoot.addChild(b1);
+        b1.addChild(b1_1);
+        b1_1.addChild(l1);
+        b1_1.addChild(l2);
+        b1_1.addChild(l3);
+        clearRoot.operation("action:");
     }
 
 
