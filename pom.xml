@@ -19,9 +19,14 @@
         <module>grpc-java</module>
         <module>mongodb-java</module>
         <module>spring-springmvc</module>
+        <module>mybatis</module>
     </modules>
     <properties>
+        <!--jdk编译版本和编码格式-->
         <project.version>1.0-SNAPSHOT</project.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.encoding>UTF-8</maven.compiler.encoding>
+        <java.version>1.8</java.version>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
         <spring.boot.version>2.3.10.RELEASE</spring.boot.version>
@@ -68,6 +73,8 @@
         <mapstruct.version>1.5.0.Beta1</mapstruct.version>
         <cglib.version>3.3.0</cglib.version>
         <javassist.version>3.28.0-GA</javassist.version>
+        <mybatis.version>3.5.6</mybatis.version>
+        <log4j.version>1.2.17</log4j.version>
     </properties>
 
     <dependencyManagement>
@@ -372,6 +379,18 @@
                 <groupId>org.javassist</groupId>
                 <artifactId>javassist</artifactId>
                 <version>${javassist.version}</version>
+            </dependency>
+            <!--mybatis-->
+            <dependency>
+                <groupId>org.mybatis</groupId>
+                <artifactId>mybatis</artifactId>
+                <version>${mybatis.version}</version>
+            </dependency>
+            <!--log4j-->
+            <dependency>
+                <groupId>log4j</groupId>
+                <artifactId>log4j</artifactId>
+                <version>${log4j.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
