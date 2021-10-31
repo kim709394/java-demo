@@ -1,5 +1,9 @@
 package com.kim.common;
 
+import com.kim.common.designmode.decorator.Airplane;
+import com.kim.common.designmode.decorator.SouthAirlines;
+import com.kim.common.designmode.decorator.SouthAirlinesCF1000Decorator;
+import com.kim.common.designmode.decorator.SouthAirlinesDF2000Decorator;
 import com.kim.common.designmode.factory.*;
 import com.kim.common.designmode.group.clear.ClearBranch;
 import com.kim.common.designmode.group.clear.ClearClearRoot;
@@ -8,10 +12,15 @@ import com.kim.common.designmode.group.clear.ClearLeaf;
 import com.kim.common.designmode.group.safe.SafeBranch;
 import com.kim.common.designmode.group.safe.SafeLeaf;
 import com.kim.common.designmode.group.safe.SafeRoot;
+import com.kim.common.designmode.iterator.ArrayList;
+import com.kim.common.designmode.iterator.Iterator;
+import com.kim.common.designmode.iterator.List;
 import com.kim.common.designmode.pojo.Car;
 import com.kim.common.designmode.builder.CarBuilder;
 import com.kim.common.designmode.pojo.Computer;
 import com.kim.common.designmode.proxy.*;
+import com.kim.common.designmode.template.AbstractTemplate;
+import com.kim.common.designmode.template.MyTemplate;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 import org.junit.jupiter.api.DisplayName;
@@ -223,6 +232,44 @@ public class DesignModelTest {
         b1_1.addChild(l2);
         b1_1.addChild(l3);
         clearRoot.operation("action:");
+    }
+
+    @Test
+    @DisplayName("迭代器模式")
+    public void iterator(){
+
+        List<Integer> list=new ArrayList<>();
+
+        for(int i=0;i<300;i++){
+            list.add(i);
+        }
+        System.out.println("size = "+list.size());
+        Iterator<Integer> iterator = list.iterator();
+        while (iterator.hasNext()){
+            System.out.println(iterator.next());
+        }
+        System.out.println();
+    }
+
+    @Test
+    @DisplayName("装饰者模式")
+    public void decorator(){
+
+        Airplane airplane=new SouthAirlines();
+        Airplane southAirlinesCF1000Decorator=new SouthAirlinesCF1000Decorator(airplane);
+        Airplane southAirlinesCF2000Decorator=new SouthAirlinesDF2000Decorator(airplane);
+
+        southAirlinesCF1000Decorator.fly();
+        System.out.println("---------------------------");
+        southAirlinesCF2000Decorator.fly();
+
+    }
+
+    @Test
+    @DisplayName("模板方法模式")
+    public void template(){
+        AbstractTemplate template=new MyTemplate();
+        template.base();
     }
 
 
