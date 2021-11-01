@@ -1,19 +1,27 @@
 <!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
+    <!--引入一些基础配置信息文件-->
+    <properties resource="database.properties">
+    </properties>
+    <!--类型别名-->
+    <typeAliases >
+        <package name="com.kim.mybatis.pojo"/>
+    </typeAliases>
     <environments default="dev">    <!--配置环境，指定默认环境，开发、测试、生产-->
         <environment id="dev">  <!--开发环境-->
             <transactionManager type="JDBC"/>   <!--使用jdbc的事务-->
             <dataSource type="POOLED">  <!--使用连接池-->
-                <property name="driver" value="com.mysql.jdbc.Driver"/>
-                <property name="url" value="jdbc:mysql:///it-test"/>
-                <property name="username" value="root"/>
-                <property name="password" value="root"/>
+                <property name="driver" value="${driver}"/>
+                <property name="url" value="${url}"/>
+                <property name="username" value="${username}"/>
+                <property name="password" value="${password}"/>
             </dataSource>
         </environment>
     </environments>
-
+  
     <mappers>
-        <mapper resource="com/lagou/mapper/UserMapper.xml"/>
+        <mapper resource="mapper/UserMapper.xml"/>
     </mappers>
+
 </configuration>
