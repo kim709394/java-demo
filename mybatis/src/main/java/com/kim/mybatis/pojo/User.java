@@ -12,15 +12,12 @@ import java.util.Date;
  * @date 2021-10-31
  */
 @Data
-@Builder
 @ToString
-public class User {
+public class User extends BasePojo{
 
-    private Integer id;
-    private String name;
+
     private String password;
-    private Date createdAt;
-    private Date deletedAt;
+
 
 
 }

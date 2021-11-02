@@ -22,6 +22,8 @@
   
     <mappers>
         <mapper resource="mapper/UserMapper.xml"/>
+        <!--<mapper class="com.kim.mybatis.mapper.UserMapper"/>-->
+        <mapper class="com.kim.mybatis.mapper.OrderMapper"/>
     </mappers>
 
 </configuration>

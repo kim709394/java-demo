@@ -1,5 +1,9 @@
+import com.kim.mybatis.mapper.OrderMapper;
 import com.kim.mybatis.mapper.UserMapper;
+import com.kim.mybatis.pojo.Order;
 import com.kim.mybatis.pojo.User;
+import com.kim.mybatis.pojo.UserPageInput;
+import com.kim.mybatis.pojo.UserPageOutput;
 import com.mysql.cj.xdevapi.SessionFactory;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
@@ -10,8 +14,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import javax.management.DynamicMBean;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -45,7 +51,10 @@ public class MybatisTest {
     @DisplayName("新增")
     public void insert(){
         for(int i=0;i<20;i++){
-            User user=User.builder().name("mike"+i).password("123"+i).createdAt(new Date()).build();
+            User user=new User();
+            user.setName("mike"+i);
+            user.setPassword("123"+i);
+            user.setCreatedAt(new Date());
             int insert = sqlSession.insert(STATEMENT+".addUser", user);
             System.out.println(user.getId());
         }
@@ -56,7 +65,10 @@ public class MybatisTest {
     @Test
     @DisplayName("修改")
     public void update(){
-        User user=User.builder().id(2).name("lucy").password("321").build();
+        User user=new User();
+        user.setName("lucy");
+        user.setPassword("321");
+        user.setCreatedAt(new Date());
         int update = sqlSession.update(STATEMENT + ".updateUser",user);
         sqlSession.commit();
     }
@@ -102,6 +114,87 @@ public class MybatisTest {
 
     }
 
+    @Test
+    @DisplayName("分页")
+    public void doPage(){
+        UserMapper mapper = sqlSession.getMapper(UserMapper.class);
+        UserPageInput pageInput=UserPageInput.builder().pageNo(1).pageSize(2).name("mike").build();
+        Integer pageSize = pageInput.getPageSize();
+        Integer pageNo = pageInput.getPageNo();
+        pageInput.setLimit((pageNo-1)*pageSize);
+        List<User> records = mapper.getPageRecordsByPageInput(pageInput);
+        Integer recordCount = mapper.getTotalByPageInput(pageInput);
+        UserPageOutput<User> userPageOutput=new UserPageOutput<>();
+
+        Integer total = recordCount / pageSize;
+        if((recordCount % pageSize)>0){
+            total++;
+        }
+        userPageOutput.setRecordCount(recordCount);
+        userPageOutput.setRecords(records);
+        userPageOutput.setTotal(total);
+        System.out.println(userPageOutput);
+    }
+
+    @Test
+    @DisplayName("条件集合查询")
+    public void queryByList(){
+        UserMapper mapper = sqlSession.getMapper(UserMapper.class);
+        List<Integer> list=new ArrayList<>();
+        list.add(2);
+        list.add(3);
+        list.add(4);
+        List<User> users = mapper.getUsersByIds(list);
+        users.stream().forEach(user -> System.out.println(user));
+    }
+
+
+    @Test
+    @DisplayName("注解开发：新增")
+    public void annotationAdd(){
+        OrderMapper mapper = sqlSession.getMapper(OrderMapper.class);
+        for(int i=0;i<20;i++){
+            Order order=new Order();
+            order.setStatus(1);
+            order.setName("订单00"+i);
+            order.setCreatedAt(new Date());
+            mapper.addOrder(order);
+        }
+        sqlSession.commit();
+    }
+
+    @Test
+    @DisplayName("注解开发：修改")
+    public void updateOrder(){
+        OrderMapper mapper = sqlSession.getMapper(OrderMapper.class);
+        Order order=new Order();
+        order.setId(21);
+        order.setStatus(2);
+        order.setName("订单");
+        mapper.updateOrder(order);
+        sqlSession.commit();
+    }
+
+    @Test
+    @DisplayName("注解开发：删除")
+    public void deleteOrder(){
+        OrderMapper mapper = sqlSession.getMapper(OrderMapper.class);
+        mapper.deleteOrder(21);
+        sqlSession.commit();
+    }
+
+    @Test
+    @DisplayName("注解开发：查询")
+    public void findAllByAnnotation(){
+        OrderMapper mapper = sqlSession.getMapper(OrderMapper.class);
+        List<Order> all = mapper.findAll();
+        System.out.println(all);
+        System.out.println("------------------------");
+        Order order006 = mapper.findOne(27, "订单006");
+        System.out.println(order006);
+        List<Order> dynamicSql = mapper.dynamicSql("订单006", null);
+        System.out.println(dynamicSql);
+    }
 
 
 
