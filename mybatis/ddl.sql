@@ -14,6 +14,7 @@ CREATE TABLE `it-test`.`t_order` (
   `status` INT NULL COMMENT '订单状态',
   `created_at` DATETIME NULL,
   `deleted_at` DATETIME NULL COMMENT '删除时间',
+  `uid` INT NOT NULL '用户id',
   PRIMARY KEY (`id`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
