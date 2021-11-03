@@ -3,6 +3,7 @@ package com.kim.mybatis.pojo;
 import lombok.Data;
 import lombok.ToString;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -11,8 +12,9 @@ import java.util.List;
  * @date 2021/11/2
  */
 @Data
-public class Order extends BasePojo {
+public class Order extends BasePojo implements Serializable {
 
+    private static final long serialVersionUID = -4009751163281338673L;
     private Integer status;     //订单状态
 
     private User user;  //从属用户

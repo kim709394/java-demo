@@ -3,6 +3,7 @@ package com.kim.mybatis.pojo;
 import lombok.Data;
 import lombok.ToString;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -11,9 +12,10 @@ import java.util.List;
  * @date 2021-10-31
  */
 @Data
-public class User extends BasePojo{
+public class User extends BasePojo implements Serializable {
 
 
+    private static final long serialVersionUID = -9029862553254325939L;
     private String password;
 
     private List<Role> roles;
