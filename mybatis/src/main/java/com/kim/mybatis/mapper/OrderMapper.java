@@ -1,6 +1,8 @@
 package com.kim.mybatis.mapper;
 
+import com.kim.mybatis.pojo.Goods;
 import com.kim.mybatis.pojo.Order;
+import com.kim.mybatis.pojo.User;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -43,5 +45,32 @@ public interface OrderMapper {
                 "</trim>",
             "</script>"})
     List<Order> dynamicSql(@Param("name") String name,@Param("status") Integer status);
+
+
+    //一对一查询
+    @Select("select * from t_order where id=#{id}")
+    @Results({
+            @Result(column = "id",property = "id"),
+            @Result(column = "name",property = "name"),
+            @Result(column = "status",property = "status"),
+            @Result(column = "created_at",property = "createdAt"),
+            @Result(column = "deleted_at",property = "deletedAt"),
+            @Result(column = "uid",property = "user",javaType = User.class,one = @One(
+                    select = "com.kim.mybatis.mapper.UserMapper.findById"))
+    })
+    Order oneToOne(Integer id);
+
+    //一对多查询
+    @Select("select * from t_order where id=#{id}")
+    @Results({
+            @Result(id=true,column = "id", property="id"),
+            @Result(column = "name", property="name"),
+            @Result(column = "status", property="status"),
+            @Result(column = "created_at", property="createdAt"),
+            @Result(column = "deleted_at", property="deletedAt"),
+            @Result(column = "id", property="goodsList",javaType = List.class,many = @Many(
+                    select = "com.kim.mybatis.mapper.GoodsMapper.queryGoodsByOid")),
+    })
+    Order oneToMany(Integer id);
 
 }

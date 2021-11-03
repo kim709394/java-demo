@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.kim.mybatis.mapper.GoodsMapper">
+
+    <resultMap id="oneToOne" type="Goods">
+        <result column="gid" property="id"/>
+        <result column="gname" property="name"/>
+        <result column="price" property="price"/>
+        <result column="gcreated" property="createdAt"/>
+        <result column="gdeleted" property="deletedAt"/>
+        <association property="order" javaType="Order">
+            <result column="oid" property="id"/>
+            <result column="oname" property="name"/>
+            <result column="status" property="status"/>
+            <result column="ocreated" property="createdAt"/>
+            <result column="odeleted" property="deletedAt"/>
+        </association>
+    </resultMap>
+
+    <select id="queryOneToOne" parameterType="Integer" resultMap="oneToOne">
+        select g.id as gid,g.name as gname,g.price,g.created_at as gcreated,
+        g.deleted_at as gdeleted,o.id oid, o.name as oname,o.status,o.created_at as ocreated,
+        o.deleted_at as odeleted from
+        (select * from t_goods where id = #{id}) g left join t_order o on g.oid = o.id
+
+    </select>
+
+
+    <select id="queryGoodsByOid" parameterType="Integer" resultType="Goods">
+        select * from t_goods where oid=#{oid}
+    </select>
+
+
+</mapper>

@@ -36,4 +36,7 @@ public interface UserMapper {
     //条件集合查询
     List<User> getUsersByIds(List<Integer> ids);
 
+    //一堆多结果封装
+    User queryRolesByUid(Integer uid);
+
 }

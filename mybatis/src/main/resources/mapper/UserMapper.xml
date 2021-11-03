@@ -82,4 +82,31 @@
         </foreach>
     </select>
 
+    
+    <resultMap id="userRoleMap" type="User">
+        <result column="uid" property="id"/>
+        <result column="uname" property="name"/>
+        <result column="password" property="password"/>
+        <result column="ucreated" property="createdAt"/>
+        <result column="udeleted" property="deletedAt"/>
+       <collection property="roles" ofType="Role">
+           <result column="rid" property="id"/>
+           <result column="rname" property="name"/>
+           <result column="code" property="code"/>
+           <result column="rcreated" property="createdAt"/>
+           <result column="rdeleted" property="deletedAt"/>
+       </collection>
+    </resultMap>
+    
+    <!--一对多封装-->
+    <select id="queryRolesByUid" parameterType="Integer" resultMap="userRoleMap">
+        select u.id as uid,u.name as uname,u.password,u.created_at as ucreated,
+        u.deleted_at as udeleted,r.id as rid,r.name as rname,r.code,r.created_at as rcreated,
+        r.deleted_at as rdeleted from
+        (select * from t_user where id = #{id}) u
+        left join t_user_role ur on u.id=ur.user_id
+        left join t_role r on ur.role_id = r.id
+    </select>
+    
+    
 </mapper>

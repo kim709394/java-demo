@@ -1,9 +1,7 @@
+import com.kim.mybatis.mapper.GoodsMapper;
 import com.kim.mybatis.mapper.OrderMapper;
 import com.kim.mybatis.mapper.UserMapper;
-import com.kim.mybatis.pojo.Order;
-import com.kim.mybatis.pojo.User;
-import com.kim.mybatis.pojo.UserPageInput;
-import com.kim.mybatis.pojo.UserPageOutput;
+import com.kim.mybatis.pojo.*;
 import com.mysql.cj.xdevapi.SessionFactory;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
@@ -196,6 +194,36 @@ public class MybatisTest {
         System.out.println(dynamicSql);
     }
 
+    @Test
+    @DisplayName("xml配置文件：一对多结果封装")
+    public void oneToManyByXml(){
+        UserMapper mapper = sqlSession.getMapper(UserMapper.class);
+        User user = mapper.queryRolesByUid(3);
+        System.out.println(user);
+    }
 
+    @Test
+    @DisplayName("xml配置：一对一结果封装")
+    public void oneToOneByXml(){
+        GoodsMapper mapper = sqlSession.getMapper(GoodsMapper.class);
+        Goods goods = mapper.queryOneToOne(1);
+        System.out.println(goods);
+    }
+
+    @Test
+    @DisplayName("注解方式：一对一查询")
+    public void oneToOneByAnnotation(){
+        OrderMapper mapper = sqlSession.getMapper(OrderMapper.class);
+        Order order = mapper.oneToOne(22);
+        System.out.println(order);
+    }
+
+    @Test
+    @DisplayName("注解方式:一对查询")
+    public void oneToManyByAnnotation(){
+        OrderMapper mapper = sqlSession.getMapper(OrderMapper.class);
+        Order order = mapper.oneToMany(22);
+        System.out.println(order);
+    }
 
 }
