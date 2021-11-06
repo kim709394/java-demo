@@ -24,7 +24,7 @@ import java.util.List;
  * @description
  * @date 2021/11/1
  */
-public class MybatisTest {
+public class ExecuteTest {
 
     private SqlSession sqlSession;
     private SqlSessionFactory sqlSessionFactory;
