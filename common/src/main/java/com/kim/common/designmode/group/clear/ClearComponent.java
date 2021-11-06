@@ -13,20 +13,21 @@ public interface ClearComponent {
     String getName();
 
     //业务方法
-    public void operation(String prefix);
+    void operation(String prefix);
 
-    public void addChild(ClearComponent clearComponent);
+    //新增子节点
+    void addChild(ClearComponent clearComponent);
 
     //删除子节点
-    public void removeChild(int index);
+    void removeChild(int index);
 
     //获取子节点
-    public ClearComponent getChild(int index);
+    ClearComponent getChild(int index);
 
     //获取全部子节点
-    public List<ClearComponent> getChildren();
+    List<ClearComponent> getChildren();
 
     //获取父节点
-    public ClearComponent getParent();
+    ClearComponent getParent();
 
 }

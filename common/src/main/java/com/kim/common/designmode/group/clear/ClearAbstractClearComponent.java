@@ -38,7 +38,7 @@ public abstract class ClearAbstractClearComponent implements ClearComponent {
 
     //删除子节点
     public void removeChild(int index){
-        throw new ClearGroupException("根节点无法删除子节点");
+        throw new ClearGroupException("叶子节点无法删除子节点");
     }
 
     //获取子节点
