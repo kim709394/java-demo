@@ -1,9 +1,15 @@
 <!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
+
     <!--引入一些基础配置信息文件-->
     <properties resource="database.properties">
     </properties>
+
+    <settings>
+        <!--打开二级缓存总开关-->
+        <setting name="cacheEnabled" value="true"/>
+    </settings>
     <!--类型别名-->
     <typeAliases >
         <package name="com.kim.mybatis.pojo"/>

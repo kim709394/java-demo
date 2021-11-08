@@ -5,11 +5,17 @@
 
 <mapper namespace="com.kim.mybatis.mapper.UserMapper">
 
+    <!--开启userMapper的二级缓存-->
+    <cache></cache>
+
     <sql id="selectColumns">
         select id,name,password,created_at,deleted_at from t_user
     </sql>
-
-    <select id="findAll" resultType="User">
+    <!--useCache：是否启用二级缓存，true：启用，默认值；false：禁用
+        flushCache:是否刷新二级缓存，当执行了insert、update、delete等操作，需要刷新二级缓存
+        如果设置为false，则不刷新，会出现脏读，默认为true
+    -->
+    <select id="findAll" resultType="User" useCache="true" flushCache="true">
         <include refid="selectColumns"></include>
     </select>
 
