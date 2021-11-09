@@ -14,6 +14,17 @@
     <typeAliases >
         <package name="com.kim.mybatis.pojo"/>
     </typeAliases>
+    <!--插件
+        分为四种，分别是Executor、ParameterHandler、StatementHandler、ResultSetHandler
+    -->
+    <plugins>
+        <plugin interceptor="com.kim.mybatis.plugins.ExecutorPlugin">
+            <property name="examplePlugin" value="myPlugin"/>
+        </plugin>
+        <plugin interceptor="com.kim.mybatis.plugins.ParameterHandlerPlugin"></plugin>
+        <plugin interceptor="com.kim.mybatis.plugins.ResultSetHandlerPlugin"></plugin>
+        <plugin interceptor="com.kim.mybatis.plugins.StatementHandlerPlugin"></plugin>
+    </plugins>
     <environments default="dev">    <!--配置环境，指定默认环境，开发、测试、生产-->
         <environment id="dev">  <!--开发环境-->
             <transactionManager type="JDBC"/>   <!--使用jdbc的事务-->
@@ -25,6 +36,7 @@
             </dataSource>
         </environment>
     </environments>
+
   
     <mappers>
         <mapper resource="mapper/UserMapper.xml"/>
