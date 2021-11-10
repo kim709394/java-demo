@@ -55,3 +55,7 @@ ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_bin
 COMMENT = '商品表';
+
+ALTER TABLE `it-test`.`t_user`
+ADD COLUMN `gids` JSON NULL COMMENT 'json字段' AFTER `deleted_at`;
+

@@ -20,8 +20,12 @@ public class User extends BasePojo implements Serializable {
 
     private List<Role> roles;
 
+    private List<String> gids;  //json字段
+
     @Override
     public String toString() {
-        return "User{" + "password='" + password + '\'' + ", roles=" + roles + ", id=" + id + ", name='" + name + '\'' + ", createdAt=" + createdAt + ", deletedAt=" + deletedAt + '}';
+        return "User{" + "password='" + password + '\'' + ", roles=" + roles + ", id=" + id + ", name='" + name + '\'' + ", createdAt=" + createdAt + ", deletedAt=" + deletedAt +
+
+                ",gids = "+gids+'}';
     }
 }

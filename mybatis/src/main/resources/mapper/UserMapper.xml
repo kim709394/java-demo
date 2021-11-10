@@ -18,14 +18,18 @@
     <select id="findAll" resultType="User" useCache="true" flushCache="true">
         <include refid="selectColumns"></include>
     </select>
-
-    <insert id="addUser" parameterType="User">
-        insert into t_user (name,password,created_at) values
-        (#{name} , #{password}, #{createdAt})
+    <!--useGeneratedKeys:使用数据库jdbc生成的默认主键
+     keyProperty:设置生成的主键返回给参数对象的属性名
+    -->
+    <insert id="addUser" parameterType="User" useGeneratedKeys="true" keyProperty="id">
+        insert into t_user (name,password,created_at,gids) values
+        (#{name} , #{password}, #{createdAt},#{gids,typeHandler=com.kim.mybatis.typehandler.JsonTypeHandler})
     </insert>
 
     <update id="updateUser" parameterType="User">
-        update t_user set name = #{name},password=#{password} where id = #{id}
+        update t_user set name = #{name},password=#{password},
+         gids = #{gids,typeHandler=com.kim.mybatis.typehandler.JsonTypeHandler}
+         where id = #{id}
     </update>
 
     <delete id="deleteUser" parameterType="Integer">
@@ -95,6 +99,7 @@
         <result column="password" property="password"/>
         <result column="ucreated" property="createdAt"/>
         <result column="udeleted" property="deletedAt"/>
+        <result column="gids" property="gids" typeHandler="com.kim.mybatis.typehandler.JsonTypeHandler"/>
        <collection property="roles" ofType="Role">
            <result column="rid" property="id"/>
            <result column="rname" property="name"/>
@@ -106,7 +111,7 @@
     
     <!--一对多封装-->
     <select id="queryRolesByUid" parameterType="Integer" resultMap="userRoleMap">
-        select u.id as uid,u.name as uname,u.password,u.created_at as ucreated,
+        select u.id as uid,u.name as uname,u.password,u.gids,u.created_at as ucreated,
         u.deleted_at as udeleted,r.id as rid,r.name as rname,r.code,r.created_at as rcreated,
         r.deleted_at as rdeleted from
         (select * from t_user where id = #{id}) u

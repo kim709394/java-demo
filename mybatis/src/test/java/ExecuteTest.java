@@ -64,9 +64,15 @@ public class ExecuteTest {
     @DisplayName("修改")
     public void update(){
         User user=new User();
+        user.setId(4);
         user.setName("lucy");
         user.setPassword("321");
         user.setCreatedAt(new Date());
+        List<String> gids=new ArrayList<>();
+        gids.add("1");
+        gids.add("2");
+        gids.add("3");
+        user.setGids(gids);
         int update = sqlSession.update(STATEMENT + ".updateUser",user);
         sqlSession.commit();
     }
@@ -110,6 +116,23 @@ public class ExecuteTest {
             System.out.println(o);
         });
 
+    }
+
+    @Test
+    @DisplayName("代理方式新增")
+    public void mapperInsert(){
+        UserMapper mapper = sqlSession.getMapper(UserMapper.class);
+        User user=new User();
+        user.setName("lucy");
+        user.setPassword("1234");
+        user.setCreatedAt(new Date());
+        List<String> gids=new ArrayList<>();
+        gids.add("1");
+        gids.add("2");
+        gids.add("3");
+        user.setGids(gids);
+        int i = mapper.addUser(user);
+        System.out.println(user.getId());
     }
 
     @Test
