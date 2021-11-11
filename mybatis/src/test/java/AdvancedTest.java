@@ -91,7 +91,6 @@ public class AdvancedTest {
         System.out.println(user == user3);
         System.out.println(user3);
         sqlSession3.close();
-
     }
 
 

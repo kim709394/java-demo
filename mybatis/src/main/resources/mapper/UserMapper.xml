@@ -20,6 +20,7 @@
     </select>
     <!--useGeneratedKeys:使用数据库jdbc生成的默认主键
      keyProperty:设置生成的主键返回给参数对象的属性名
+     typeHandler:指定该字段要使用的数据类型转换器
     -->
     <insert id="addUser" parameterType="User" useGeneratedKeys="true" keyProperty="id">
         insert into t_user (name,password,created_at,gids) values
@@ -99,6 +100,11 @@
         <result column="password" property="password"/>
         <result column="ucreated" property="createdAt"/>
         <result column="udeleted" property="deletedAt"/>
+        <!--
+            typeHandler:指定该字段要使用的数据类型转换器
+            当需要手动指定数据类型转换器时，必须使用resultMap，resultType只能使用mybatis
+            默认的数据类型转换器，也就是基本数据类型
+        -->
         <result column="gids" property="gids" typeHandler="com.kim.mybatis.typehandler.JsonTypeHandler"/>
        <collection property="roles" ofType="Role">
            <result column="rid" property="id"/>

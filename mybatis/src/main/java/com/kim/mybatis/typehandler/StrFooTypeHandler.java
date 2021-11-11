@@ -18,7 +18,7 @@ import java.sql.SQLException;
 
 /**
  * 指定数据库数据类型，继承BaseTypeHandler的泛型指定java类型
- * 将会覆盖mybatis默认的字符串数据类型处理器
+ *
  */
 @MappedJdbcTypes(JdbcType.VARCHAR)
 @MappedTypes(String.class)  //除了泛型指定映射的java类型还可以使用此注解指定
