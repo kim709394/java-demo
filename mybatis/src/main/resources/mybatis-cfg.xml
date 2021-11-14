@@ -30,6 +30,12 @@
     <typeHandlers>
         <package name="com.kim.mybatis.typehandler"/>
     </typeHandlers>
+    <!--
+        结果对象封装，对方法返回的结果对象的实例化进行特殊设置
+    -->
+    <objectFactory type="com.kim.mybatis.objectfactory.MyObjectFactory">
+        <property name="myKey" value="myValue"/>
+    </objectFactory>
     <!--插件
         分为四种，分别是Executor、ParameterHandler、StatementHandler、ResultSetHandler
     -->
@@ -41,6 +47,7 @@
         <plugin interceptor="com.kim.mybatis.plugins.ResultSetHandlerPlugin"></plugin>
         <plugin interceptor="com.kim.mybatis.plugins.StatementHandlerPlugin"></plugin>
     </plugins>
+
 
     <environments default="dev">    <!--配置环境，指定默认环境，开发、测试、生产-->
         <environment id="dev">  <!--开发环境-->
