@@ -22,14 +22,15 @@ public class ObjectPoolTest {
         //设置池中最大对象数量
         genericObjectPool.setMaxTotal(4);
         //设置最小空闲等待时间(当对象池中空闲对象持续时间达到这个时间时可能会被移除)为无穷大
-        genericObjectPool.setMinEvictableIdleTimeMillis(2);
+        genericObjectPool.setMinEvictableIdleTimeMillis(2*1000);
         //设置最大空闲数量
         genericObjectPool.setMaxIdle(4);
         //连接空闲的最小时间，达到此值后空闲链接将会被移除，且保留minIdle个空闲连接数；
-        genericObjectPool.setSoftMinEvictableIdleTimeMillis(2);
+        genericObjectPool.setSoftMinEvictableIdleTimeMillis(2*1000);
         //空闲连接检测的周期（单位毫秒）；如果为负值，表示不运行检测线程；
-        genericObjectPool.setTimeBetweenEvictionRunsMillis(2);
-        //genericObjectPool.setMinIdle(4);
+        //genericObjectPool.setTimeBetweenEvictionRunsMillis(2*1000);
+        //设置最小空闲链接数量
+        genericObjectPool.setMinIdle(2);
         ObjectPool<StringBuffer> stringBufferObjectPool=(ObjectPool<StringBuffer>)genericObjectPool;
 
         System.out.println("*************-----------******************---------------***************");
