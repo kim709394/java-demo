@@ -6,7 +6,11 @@
 <mapper namespace="com.kim.mybatis.mapper.UserMapper">
 
     <!--开启userMapper的二级缓存-->
-    <cache></cache>
+    <!--自定义二级缓存类实现类，实现org.apache.ibatis.cache.Cache接口，默认使用的是
+        org.apache.ibatis.cache.impl.PerpetualCache类
+        <cache type="xx.xx.cacheImpl"></cache>
+    -->
+    <cache ></cache>
 
     <sql id="selectColumns">
         select id,name,password,created_at,deleted_at from t_user
