@@ -17,7 +17,7 @@ import java.lang.reflect.Method;
  * @description   javassist 运行中生成和改变类
  * @date 2021/10/29
  */
-public class JacassistTest {
+public class JavassistTest {
 
     private CtClass ctClass;
     private ClassPool pool;

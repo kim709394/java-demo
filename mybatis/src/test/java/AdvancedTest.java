@@ -1,4 +1,6 @@
+import com.kim.mybatis.mapper.OrderMapper;
 import com.kim.mybatis.mapper.UserMapper;
+import com.kim.mybatis.pojo.Order;
 import com.kim.mybatis.pojo.User;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
@@ -94,5 +96,22 @@ public class AdvancedTest {
     }
 
 
+    @Test
+    @DisplayName("延迟加载")
+    public void lazyLoad(){
+
+        OrderMapper mapper = sqlSession.getMapper(OrderMapper.class);
+        /**延迟加载需要开启全局配置和在具体方法上配置延迟加载策略
+         *返回的是一个默认使用javassist动态代理的代理类
+         *第一次查询的时候没有查询延迟加载的对象，当对象调用延迟加载的对象的get方法时，在通过事先
+         * 保存好的sql进行查询并返回
+         */
+        Order order = mapper.oneToMany(1);
+        order.getGoodsList().stream().forEach(goods -> {
+            System.out.println(goods);
+        });
+
+
+    }
 
 }

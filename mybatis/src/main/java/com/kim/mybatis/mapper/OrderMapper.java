@@ -4,6 +4,7 @@ import com.kim.mybatis.pojo.Goods;
 import com.kim.mybatis.pojo.Order;
 import com.kim.mybatis.pojo.User;
 import org.apache.ibatis.annotations.*;
+import org.apache.ibatis.mapping.FetchType;
 
 import java.util.List;
 
@@ -68,8 +69,9 @@ public interface OrderMapper {
             @Result(column = "status", property="status"),
             @Result(column = "created_at", property="createdAt"),
             @Result(column = "deleted_at", property="deletedAt"),
+            //配置延迟加载
             @Result(column = "id", property="goodsList",javaType = List.class,many = @Many(
-                    select = "com.kim.mybatis.mapper.GoodsMapper.queryGoodsByOid")),
+                    fetchType = FetchType.LAZY,select = "com.kim.mybatis.mapper.GoodsMapper.queryGoodsByOid")),
     })
     Order oneToMany(Integer id);
 
