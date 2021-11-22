@@ -71,7 +71,7 @@ public interface OrderMapper {
             @Result(column = "deleted_at", property="deletedAt"),
             //配置延迟加载
             @Result(column = "id", property="goodsList",javaType = List.class,many = @Many(
-                    fetchType = FetchType.LAZY,select = "com.kim.mybatis.mapper.GoodsMapper.queryGoodsByOid")),
+                    select = "com.kim.mybatis.mapper.GoodsMapper.queryGoodsByOid",fetchType = FetchType.LAZY)),
     })
     Order oneToMany(Integer id);
 

@@ -1,7 +1,6 @@
 package com.kim.mybatis.pojo;
 
-import lombok.Data;
-import lombok.ToString;
+import lombok.*;
 
 import java.io.Serializable;
 import java.util.List;
@@ -24,6 +23,7 @@ public class Order extends BasePojo implements Serializable {
 
     @Override
     public String toString() {
+        System.out.println("order call toString");
         return "Order{" + "status=" + status + ", user=" + user + ", id=" + id + ", name='" + name + '\'' + ", createdAt=" + createdAt + ", deletedAt=" + deletedAt +
                 ",goodsList="+goodsList+'}';
     }

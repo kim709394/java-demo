@@ -106,7 +106,8 @@ public class AdvancedTest {
          *第一次查询的时候没有查询延迟加载的对象，当对象调用延迟加载的对象的get方法时，在通过事先
          * 保存好的sql进行查询并返回
          */
-        Order order = mapper.oneToMany(1);
+        Order order = mapper.oneToMany(22);
+        System.out.println(order.getStatus());
         order.getGoodsList().stream().forEach(goods -> {
             System.out.println(goods);
         });

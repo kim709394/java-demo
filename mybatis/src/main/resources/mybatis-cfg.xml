@@ -14,6 +14,9 @@
         	特定关联关系中可通过设置 fetchType 属性来覆盖该项的开关状态。
         -->
         <setting name="lazyLoadingEnabled" value="true"/>
+        <setting name="aggressiveLazyLoading" value="false"/>
+        <!--必须显性声明这个配置，懒加载才能生效-->
+        <setting name="lazyLoadTriggerMethods" value="equals(),clone(),hashCode(),toString()"/>
         <!--
             一级缓存设置
             MyBatis 利用本地缓存机制（Local Cache）防止循环引用和加速重复的嵌套查询。
