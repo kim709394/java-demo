@@ -1,0 +1,48 @@
+package ${package.Service};
+
+import ${package.Entity}.${entity}DO;
+import ${superServiceClassPackage};
+import java.util.List;
+
+
+/**
+ * <p>
+ * $!{table.comment} 服务类
+ * </p>
+ *
+ * @author ${author}
+ * @since ${date}
+ */
+#if(${kotlin})
+interface ${table.serviceName} : ${superServiceClass}<${entity}>
+#else
+public interface ${table.serviceName} extends ${superServiceClass}<${entity}DO> {
+
+    /**
+    * 新增
+    * @param entityVO
+    * @return Long
+    * */
+    Long add(${entity}VO entityVO);
+
+    /**
+    * 修改
+    * @param entityVO
+    * */
+    void update(${entity}VO entityVO);
+
+    /**
+    *  查询单个
+    * @param id
+    * @return ${entity}VO
+    * */
+    ${entity}VO get(Long id);
+
+    /**
+    * 列表
+    * @return List<${entity}VO>
+    * */
+    List<${entity}VO> listAll();
+
+}
+#end

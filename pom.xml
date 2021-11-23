@@ -20,6 +20,7 @@
         <module>mongodb-java</module>
         <module>spring-springmvc</module>
         <module>mybatis</module>
+        <module>springboot-mybatis-plus</module>
     </modules>
     <properties>
         <!--jdk编译版本和编码格式-->

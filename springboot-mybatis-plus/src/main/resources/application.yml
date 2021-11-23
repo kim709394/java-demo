@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: springboot-mybatis-plus
+  profiles:
+    active: dev
+
+#mybatis plus
+mybatis-plus:
+  global-config:
+    db-config:
+      logic-delete-field: deletedAt
+      logic-delete-value: now()
+      logic-not-delete-value: "null"
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.kim.springboot.mybatisplus.entity.dos,com.kim.springboot.mybatisplus.entity.dtos,com.kim.springboot.mybatisplus.entity.vos
+  type-enums-package: com.kim.springboot.mybatisplus.consts     #枚举所在的包

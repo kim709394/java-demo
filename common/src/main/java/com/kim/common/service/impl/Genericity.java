@@ -23,4 +23,6 @@ public class Genericity implements GenericityInterface<List<User<User.Car>>, Map
     public void invoke2(Map<String, Object> stringObjectMap) {
 
     }
+
+
 }

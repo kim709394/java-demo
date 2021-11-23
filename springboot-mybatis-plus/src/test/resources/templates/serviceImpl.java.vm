@@ -1,0 +1,59 @@
+package ${package.ServiceImpl};
+
+import ${package.Mapper}.${table.mapperName};
+import ${package.Service}.${table.serviceName};
+import ${package.Entity}.${entity}DO;
+import ${superServiceImplClassPackage};
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import java.util.List;
+
+/**
+ * <p>
+ * $!{table.comment} 服务实现类
+ * </p>
+ *
+ * @author ${author}
+ * @since ${date}
+ */
+@Service
+#if(${kotlin})
+open class ${table.serviceImplName} : ${superServiceImplClass}<${table.mapperName}, ${entity}>(), ${table.serviceName} {
+
+}
+#else
+public class ${table.serviceImplName} extends ${superServiceImplClass}<${table.mapperName}, ${entity}DO> implements ${table.serviceName} {
+
+
+    //新增
+    @Override
+    @Transactional
+    public Long add(${entity}VO entityVO){
+
+        return 0;
+    }
+
+    //修改
+    @Override
+    @Transactional
+    public void update(${entity}VO entityVO){
+
+    }
+
+    //查看
+    @Override
+    @Transactional
+    public ${entity}VO get(Long id){
+
+        return null;
+    }
+
+    //列表
+    @Override
+    @Transactional
+    public List<${entity}VO> listAll(){
+        return null;
+    }
+
+}
+#end

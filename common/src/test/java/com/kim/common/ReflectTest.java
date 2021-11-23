@@ -110,6 +110,28 @@ public class ReflectTest {
 
     }
 
+    /**
+     * 获取类实现的接口
+     * */
+    @Test
+    public void getInterfaces(){
+        Genericity genericity = new Genericity();
+        //获取实现的接口集合，不带泛型
+        Class<?>[] interfaces =genericity.getClass().getInterfaces();
+        //获取实现的接口集合，带泛型
+        Type[] genericInterfaces = genericity.getClass().getGenericInterfaces();
+        for (Class<?> c:interfaces
+             ) {
+            System.out.println(c);
+        }
+        System.out.println("---------------------------");
+        for (Type t:genericInterfaces
+             ) {
+            System.out.println(t);
+        }
+
+    }
+
 
 
 
