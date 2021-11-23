@@ -43,15 +43,15 @@ public class ${table.controllerName} {
 
     @ApiOperation(value = "新增")
     @PostMapping("/add")
-    public ResultVO add(@RequestBody ){
+    public ResultVO add(@RequestBody ${entity}VO entityVO ){
 
-        return ResultVO.success();
+        return ResultVO.success(service.add(entityVO));
     }
 
     @ApiOperation(value = "修改")
     @PutMapping("/update")
-    public ResultVO update(@RequestBody ){
-
+    public ResultVO update(@RequestBody ${entity}VO entityVO){
+        service.update(entityVO);
         return ResultVO.success();
     }
 
@@ -59,21 +59,21 @@ public class ${table.controllerName} {
     @DeleteMapping("/delete/{id}")
     public ResultVO delete(@PathVariable("id") Long id){
 
-        return ResultVO.success();
+        return ResultVO.success(service.removeById(id));
     }
 
     @ApiOperation(value = "获取单个")
     @GetMapping("/get/{id}")
     public ResultVO get(@PathVariable("id") Long id){
 
-        return ResultVO.success();
+        return ResultVO.success(service.get(id));
     }
 
     @ApiOperation(value = "查询列表")
     @GetMapping("/list")
     public ResultVO list(){
 
-        return ResultVO.success();
+        return ResultVO.success(service.listAll());
     }
 }
 

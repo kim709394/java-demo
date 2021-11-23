@@ -22,7 +22,7 @@ public class UserVO {
 
 
     @ApiModelProperty(value = "主键")
-    private Integer id;
+    private Long id;
 
     @ApiModelProperty(value = "用户名")
     private String name;
