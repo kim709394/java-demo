@@ -51,3 +51,4 @@ java应用下的各种api、工具类、第三方jar包使用、框架，等等�
 ### mongodb-java                            springboot.data.mongodb&&mongodb.plus demo
 ### spring-springmvc                        spring以及springmvc的基本用法
 ### mybatis                                 mybatis的应用
+### springboot-mybatis-plus                 mybatis-plus与springboot整合
