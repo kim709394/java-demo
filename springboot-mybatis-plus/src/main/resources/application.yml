@@ -3,6 +3,19 @@ spring:
     name: springboot-mybatis-plus
   profiles:
     active: dev
+  # data source
+  datasource:
+    druid:
+      url: jdbc:mysql://localhost:3306/it-test?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&failOverReadOnly=false&maxReconnects=10
+      username: root
+      password: root
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      test-on-borrow: true
+      test-while-idle: true
+      web-stat-filter:
+        enabled: true
+      stat-view-servlet:
+        enabled: true
 
 #mybatis plus
 mybatis-plus:
@@ -14,3 +27,17 @@ mybatis-plus:
   mapper-locations: classpath:mapper/*.xml
   type-aliases-package: com.kim.springboot.mybatisplus.entity.dos,com.kim.springboot.mybatisplus.entity.dtos,com.kim.springboot.mybatisplus.entity.vos
   type-enums-package: com.kim.springboot.mybatisplus.consts     #枚举所在的包
+
+server:
+  port: 9000
+
+#swagger
+swagger:
+  enabled: true
+  base-package: com.kim.springboot.mybatisplus.controller
+
+#logging
+logging:
+  config: classpath:log/logback.xml
+  level:
+    com.kim.springboot.mybatisplus.mapper: debug  #打印sql日志

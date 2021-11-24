@@ -1,11 +1,13 @@
 package com.kim.springboot.mybatisplus.entity.vos;
 
+import com.kim.springboot.mybatisplus.consts.StatusEnum;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.util.Date;
+import java.util.Map;
 
 /**
  * <p>
@@ -34,7 +36,9 @@ public class UserVO {
     private Date createdAt;
 
     @ApiModelProperty(value = "json字段")
-    private String gids;
+    private Map<String,Object> gids;
 
+    @ApiModelProperty(value = "状态")
+    private StatusEnum status;
 
 }

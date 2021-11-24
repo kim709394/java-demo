@@ -2,6 +2,8 @@ package com.kim.springboot.mybatisplus.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.kim.springboot.mybatisplus.entity.dos.UserDO;
+import com.kim.springboot.mybatisplus.entity.vos.PageOutputVO;
+import com.kim.springboot.mybatisplus.entity.vos.UserPageInputVO;
 import com.kim.springboot.mybatisplus.entity.vos.UserVO;
 
 import java.util.List;
@@ -42,5 +44,15 @@ public interface IUserService extends IService<UserDO> {
     * @return List<UserVO>
     * */
     List<UserVO> listAll();
+
+    /**
+     * 使用通用分页方法进行分页
+     * */
+    PageOutputVO<UserVO> doPageByDefault(UserPageInputVO inputVO);
+
+    /**
+     * 使用XML配置文件分页方法进行分页
+     * */
+    PageOutputVO<UserVO> doPageByXml(UserPageInputVO inputVO);
 
 }

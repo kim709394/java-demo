@@ -1,11 +1,13 @@
 package com.kim.springboot.mybatisplus.entity.dos;
 
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.*;
+
 import java.util.Date;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableLogic;
 import java.io.Serializable;
+import java.util.Map;
+
+import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
+import com.kim.springboot.mybatisplus.consts.StatusEnum;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -21,7 +23,7 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-@TableName("t_user")
+@TableName(value="t_user",autoResultMap = true)
 @ApiModel(value="User对象", description="用户表")
 public class UserDO implements Serializable {
 
@@ -45,7 +47,10 @@ public class UserDO implements Serializable {
     private Date deletedAt;
 
     @ApiModelProperty(value = "json字段")
-    private String gids;
+    @TableField(typeHandler = JacksonTypeHandler.class)
+    private Map<String,Object> gids;
 
+    @ApiModelProperty(value = "状态")
+    private StatusEnum status;
 
 }
