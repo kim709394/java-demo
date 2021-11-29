@@ -1,10 +1,13 @@
 package com.kim.common;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.*;
+import java.nio.charset.Charset;
 
 /**
  * @Author kim
@@ -81,6 +84,63 @@ public class NetTest {
 
     }
 
+
+    /**
+     * tcp服务端
+     * */
+    @Test
+    @DisplayName("tcp服务端")
+    public void tcpServer() throws IOException {
+
+        ServerSocket server=new ServerSocket();
+        server.bind(new InetSocketAddress("localhost",8800));
+        while(true){
+            Socket accept = server.accept();
+
+            try (InputStream in = accept.getInputStream(); OutputStream out=accept.getOutputStream();){
+                for (int i=0;i<10;i++){
+                    String inStr=read(in);
+                    out.write(inStr.toUpperCase().getBytes("UTF-8"));
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                accept.close();
+            }
+        }
+    }
+
+
+    /**
+     * tcp客户端
+     * */
+    @Test
+    @DisplayName("tcp客户端")
+    public void tcpClient() throws IOException {
+
+        Socket socket = new Socket("localhost", 8800);
+        try ( OutputStream out = socket.getOutputStream(); InputStream in = socket.getInputStream()){
+            for (int i=0;i<10;i++){
+                out.write(" i love you".getBytes("UTF-8"));
+                String reply = read(in);
+                System.out.println(reply);
+            }
+        }catch (IOException e){
+            e.printStackTrace();
+        }finally {
+            socket.close();
+        }
+
+    }
+
+
+    private String read(InputStream in) throws IOException {
+
+        byte[] b=new byte[1024];
+        int len = in.read(b);
+        return new String(b,0,len,Charset.forName("UTF-8"));
+
+    }
 
 
 }

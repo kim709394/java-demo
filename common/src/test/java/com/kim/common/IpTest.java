@@ -16,6 +16,9 @@ public class IpTest {
      * */
     @Test
     public void testIpReachabled() throws Exception{
+        String[] split = "1111 222 ".split("\\n");
+        System.out.println(split);
+        System.out.println("O".equals("0"));
         InetAddress baidu = InetAddress.getByName("www.baidu.com");
         System.out.println(baidu.isReachable(3000));
     }
