@@ -21,6 +21,7 @@
         <module>spring-springmvc</module>
         <module>mybatis</module>
         <module>springboot-mybatis-plus</module>
+        <module>spring-framework</module>
     </modules>
     <properties>
         <!--jdk编译版本和编码格式-->
@@ -78,6 +79,7 @@
         <log4j.version>1.2.17</log4j.version>
         <junit.version>4.12</junit.version>
         <fastjson.version>1.2.76</fastjson.version>
+        <spring.framework.version>5.3.9</spring.framework.version>
     </properties>
 
     <dependencyManagement>
@@ -406,6 +408,22 @@
                 <groupId>com.alibaba</groupId>
                 <artifactId>fastjson</artifactId>
                 <version>${fastjson.version}</version>
+            </dependency>
+            <!--spring依赖-->
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-context</artifactId>
+                <version>${spring.framework.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-core</artifactId>
+                <version>${spring.framework.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-beans</artifactId>
+                <version>${spring.framework.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

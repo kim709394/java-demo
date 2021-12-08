@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!--无参构造方法注册spring bean-->
+    <bean id="student" class="com.kim.springframework.bean.StudentBean"></bean>
+
+    <!--使用静态方法工厂bean创建-->
+    <bean id="teacher" class="com.kim.springframework.bean.factory.StaticBeanFactory" factory-method="buildTeacher"></bean>
+
+    <!--使用工厂bean的非静态方法创建-->
+    <bean id="workerFactory" class="com.kim.springframework.bean.factory.BeanFactory"></bean>
+
+    <bean id="worker" factory-bean="workerFactory" factory-method="buildWorkers"></bean>
+
+
+</beans>
