@@ -1,4 +1,4 @@
-package com.kim.springframework.bean;
+package com.kim.springframework.ioc.xml.bean;
 
 import lombok.Data;
 
@@ -8,7 +8,7 @@ import lombok.Data;
  * @date 2021/12/8
  */
 @Data
-public class BaseBean {
+public abstract class BaseBean {
 
     protected Integer id;
     protected String name;

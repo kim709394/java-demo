@@ -1,6 +1,6 @@
-package com.kim.springframework.bean.factory;
+package com.kim.springframework.ioc.xml.factory;
 
-import com.kim.springframework.bean.TeacherBean;
+import com.kim.springframework.ioc.xml.bean.TeacherBean;
 
 /**
  * @author huangjie

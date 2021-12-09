@@ -4,4 +4,38 @@
 
 <web-app>
   <display-name>Archetype Created Web Application</display-name>
+  <!--xml方式启动的配置-->
+  <!--配置Spring ioc容器的xml配置⽂件路径，参数contextConfigLocation为默认值-->
+  <!--<context-param>
+    <param-name>contextConfigLocation</param-name>
+    <param-value>classpath:application-context.xml</param-value>
+  </context-param>-->
+
+
+  <!--注解方式启动的配置-->
+  <!--告知监听器ContextloaderListener使用注解方式启动spring-->
+  <context-param>
+    <param-name>contextClass</param-name>
+    <param-value>org.springframework.web.context.support.AnnotationConfigWebApplicationContext</param-value>
+  </context-param>
+  <!--配置启动类的全限定类名-->
+  <context-param>
+    <param-name>contextConfigLocation</param-name>
+    <param-value>com.kim.springframework.SpringframeworkApplication</param-value>
+  </context-param>
+
+
+  <!--配置启动加载ioc容器的监听器-->
+  <listener>
+    <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+  </listener>
+  <!--配置spring web测试的servlet-->
+  <servlet>
+    <servlet-name>springWebTestServlet</servlet-name>
+    <servlet-class>com.kim.springframework.servlet.SpringWebTestServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>springWebTestServlet</servlet-name>
+    <url-pattern>/spring</url-pattern>
+  </servlet-mapping>
 </web-app>

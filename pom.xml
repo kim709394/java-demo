@@ -80,6 +80,7 @@
         <junit.version>4.12</junit.version>
         <fastjson.version>1.2.76</fastjson.version>
         <spring.framework.version>5.3.9</spring.framework.version>
+        <servlet.version>4.0.1</servlet.version>
     </properties>
 
     <dependencyManagement>
@@ -424,6 +425,11 @@
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-beans</artifactId>
                 <version>${spring.framework.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>javax.servlet-api</artifactId>
+                <version>${servlet.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

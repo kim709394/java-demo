@@ -3,16 +3,79 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <!--无参构造方法注册spring bean-->
-    <bean id="student" class="com.kim.springframework.bean.StudentBean"></bean>
+    <!--无参构造方法注册spring bean
+        scope:作用域:
+        singleton：单例，容器初始化的时候就被实例化进单例池管理，容器销毁时才销毁，默认值
+        prototype：多例，容器初始化的时候并没有实例化，不会放在ioc容器的单例池中，
+        再调用容器getBean方法或者需要调用的时候才实例化给调用者，然后随着引用对象
+        的消亡而被gc，ioc容器只负责实例化，不负责销毁
+        init-method:bean装配后调用，必须是一个无参方法
+        destory-method:bean销毁前调用，scope为singleton单例的时候才能起作用
+    -->
+    <bean id="student" class="com.kim.springframework.ioc.xml.bean.StudentBean" scope="prototype"
+          init-method="initMethod" destroy-method="destoryMethod"></bean>
+    <bean id="lifeCycleBean" class="com.kim.springframework.ioc.xml.bean.LifeCycleBean" scope="singleton"></bean>
+
+    <!--依赖注入-->
+    <bean id="school" class="com.kim.springframework.ioc.xml.bean.SchoolBean">
+        <!--构造方法注入-->
+        <constructor-arg index="0" value="3" />
+        <constructor-arg index="1" value="深圳市外国语学校"/>
+        <constructor-arg index="2" value="20"/>
+        <constructor-arg index="3" ref="teacher"/>
+        <!--普通类型属性注入-->
+        <property name="id" value="4"/>
+        <property name="name" value="深圳市外国语学校"/>
+        <property name="age" value="20"/>
+        <property name="teacherBean" ref="teacher"/>
+        <!--数组或集合类型属性注入-->
+        <property name="studentBeans" >
+            <array>
+                <ref bean="student"/>
+            </array>
+        </property>
+        <property name="workersBeans" >
+            <array>
+                <ref bean="worker"/>
+            </array>
+        </property>
+        <!--map类型熟悉注入-->
+        <property name="history">
+            <map>
+                <entry key="1991年" value="学校成立"/>
+                <entry key="1995年" value="荣获全市示范性学校"/>
+                <entry key="2000年" value="晋升市一级学校"/>
+            </map>
+        </property>
+        <!--set集合属性注入-->
+        <property name="grades">
+            <set>
+                <value>一年级</value>
+                <value>二年级</value>
+                <value>三年级</value>
+                <value>四年级</value>
+                <value>五年级</value>
+                <value>六年级</value>
+            </set>
+        </property>
+        <!--properties类型属性注入-->
+        <property name="leaderInfos">
+            <props>
+                <prop key="一(1)班" >吴老师</prop>
+                <prop key="二(1)班" >王老师</prop>
+                <prop key="三(1)班" >黄老师</prop>
+                <prop key="四(1)班" >李老师</prop>
+                <prop key="五(1)班" >林老师</prop>
+                <prop key="六(1)班" >欧阳主任</prop>
+            </props>
+        </property>
+    </bean>
 
     <!--使用静态方法工厂bean创建-->
-    <bean id="teacher" class="com.kim.springframework.bean.factory.StaticBeanFactory" factory-method="buildTeacher"></bean>
+    <bean id="teacher" class="com.kim.springframework.ioc.xml.factory.StaticBeanFactory" factory-method="buildTeacher"></bean>
 
     <!--使用工厂bean的非静态方法创建-->
-    <bean id="workerFactory" class="com.kim.springframework.bean.factory.BeanFactory"></bean>
+    <bean id="workerFactory" class="com.kim.springframework.ioc.xml.factory.BeanFactory"></bean>
 
     <bean id="worker" factory-bean="workerFactory" factory-method="buildWorkers"></bean>
-
-
 </beans>
