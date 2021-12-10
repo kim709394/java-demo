@@ -1,8 +1,6 @@
 
 import com.kim.springframework.SpringframeworkApplication;
-import com.kim.springframework.ioc.annotation.bean.Car;
-import com.kim.springframework.ioc.annotation.bean.Engine;
-import com.kim.springframework.ioc.annotation.bean.Wheel;
+import com.kim.springframework.ioc.annotation.bean.*;
 import com.kim.springframework.ioc.xml.bean.*;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
@@ -50,6 +48,28 @@ public class IocTest {
         System.out.println(wheel);
         //销毁容器
         ((AnnotationConfigApplicationContext) applicationContext).close();
+    }
+
+
+    @Test
+    public void factoryBeanTest(){
+
+        ApplicationContext applicationContext=new AnnotationConfigApplicationContext(SpringframeworkApplication.class);
+        //通过类型获取
+        Computer computer = applicationContext.getBean(Computer.class);
+        ComputerFactoryBean computerFactoryBean = applicationContext.getBean(ComputerFactoryBean.class);
+
+        System.out.println(computer);
+        System.out.println(computerFactoryBean);
+
+        //通过名称获取
+        //直接通过名称获取的是工厂bean生产出来的bean
+        computer = (Computer)applicationContext.getBean("computerFactoryBean");
+        //前面加上一个&的符号通过名称获取的是工厂bean本身
+        computerFactoryBean=(ComputerFactoryBean)applicationContext.getBean("&computerFactoryBean");
+        System.out.println(computer);
+        System.out.println(computerFactoryBean);
+
     }
 
 }

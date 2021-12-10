@@ -1,11 +1,9 @@
 package com.kim.springframework.servlet;
 
 
-import com.kim.springframework.SpringframeworkApplication;
 import com.kim.springframework.ioc.annotation.bean.Car;
 import com.kim.springframework.ioc.xml.bean.LifeCycleBean;
 import com.kim.springframework.ioc.xml.bean.TeacherBean;
-import org.springframework.context.ApplicationContext;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;

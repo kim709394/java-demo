@@ -11,8 +11,12 @@
         的消亡而被gc，ioc容器只负责实例化，不负责销毁
         init-method:bean装配后调用，必须是一个无参方法
         destory-method:bean销毁前调用，scope为singleton单例的时候才能起作用
+        lazy-init="false":是否延迟加载，如果延迟加载的话，容器启动时不会实例化到
+        单例池，只会在被引用的时候才会实例化，例如调用getBean方法或者被其他bean引用
+        的时候才会进行实例化，如果这个bean在其他没有延迟加载的单例bean引用的话，
+        则也会被立即加载。
     -->
-    <bean id="student" class="com.kim.springframework.ioc.xml.bean.StudentBean" scope="prototype"
+    <bean id="student" class="com.kim.springframework.ioc.xml.bean.StudentBean" scope="prototype" lazy-init="false"
           init-method="initMethod" destroy-method="destoryMethod"></bean>
     <bean id="lifeCycleBean" class="com.kim.springframework.ioc.xml.bean.LifeCycleBean" scope="singleton"></bean>
 
