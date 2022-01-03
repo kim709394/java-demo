@@ -72,4 +72,34 @@ public class IocTest {
 
     }
 
+    /**
+     * init-method前后置处理器
+     * */
+    @Test
+    public void beanPostProcessor(){
+        ApplicationContext applicationContext=new AnnotationConfigApplicationContext(SpringframeworkApplication.class);
+    }
+
+    /**
+     * BeanDefinition初始化完成时的后置处理器
+     * */
+    @Test
+    public void beanFactoryPostProcessor(){
+        ApplicationContext applicationContext=new AnnotationConfigApplicationContext(SpringframeworkApplication.class);
+
+    }
+
+    /**
+     * 实现InitializingBean接口，在属性输入后执行业务方法
+     * */
+    @Test
+    public void initializingBeanAfterPropertiesSet(){
+        ApplicationContext applicationContext=new AnnotationConfigApplicationContext(SpringframeworkApplication.class);
+        applicationContext.getBean(Wheel.class);
+
+
+    }
+
+
+
 }

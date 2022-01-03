@@ -2,6 +2,7 @@ package com.kim.springframework.ioc.annotation.bean;
 
 import lombok.Data;
 import lombok.ToString;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Component;
 
 /**
@@ -17,5 +18,6 @@ public class Engine {
     private Integer id;
     private String name;
     private Integer power;
+
 
 }

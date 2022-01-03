@@ -25,7 +25,7 @@ import javax.annotation.Resource;
 //设置作用域
 @Scope("singleton")
 //设置懒加载
-@Lazy
+//@Lazy
 public class Car {
 
     //从properties配置文件中取值注入
