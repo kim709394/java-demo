@@ -1,6 +1,8 @@
 
 import com.kim.springframework.SpringframeworkApplication;
 import com.kim.springframework.ioc.annotation.bean.*;
+import com.kim.springframework.ioc.postprocessor.MyBeanFactoryPostProcessor;
+import com.kim.springframework.ioc.postprocessor.MyBeanPostProcessor;
 import com.kim.springframework.ioc.xml.bean.*;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
@@ -78,6 +80,8 @@ public class IocTest {
     @Test
     public void beanPostProcessor(){
         ApplicationContext applicationContext=new AnnotationConfigApplicationContext(SpringframeworkApplication.class);
+        applicationContext.getBean(MyBeanPostProcessor.class);
+
     }
 
     /**
@@ -86,7 +90,7 @@ public class IocTest {
     @Test
     public void beanFactoryPostProcessor(){
         ApplicationContext applicationContext=new AnnotationConfigApplicationContext(SpringframeworkApplication.class);
-
+        applicationContext.getBean(MyBeanFactoryPostProcessor.class);
     }
 
     /**
@@ -96,10 +100,17 @@ public class IocTest {
     public void initializingBeanAfterPropertiesSet(){
         ApplicationContext applicationContext=new AnnotationConfigApplicationContext(SpringframeworkApplication.class);
         applicationContext.getBean(Wheel.class);
-
-
     }
 
+    /**
+     * bean的生命周期
+     * */
+    @Test
+    public void beanLifeCycle(){
+        ApplicationContext applicationContext=new AnnotationConfigApplicationContext(SpringframeworkApplication.class);
+        applicationContext.getBean(LifeCycleBean.class);
+        ((AnnotationConfigApplicationContext)applicationContext).close();
+    }
 
 
 }
