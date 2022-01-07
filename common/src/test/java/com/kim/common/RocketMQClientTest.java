@@ -1,8 +1,10 @@
 package com.kim.common;
 
-import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
-import org.apache.rocketmq.client.consumer.MessageSelector;
+import org.apache.rocketmq.acl.common.AclClientRPCHook;
+import org.apache.rocketmq.acl.common.SessionCredentials;
+import org.apache.rocketmq.client.consumer.*;
 import org.apache.rocketmq.client.consumer.listener.*;
+import org.apache.rocketmq.client.consumer.rebalance.AllocateMessageQueueAveragely;
 import org.apache.rocketmq.client.exception.MQBrokerException;
 import org.apache.rocketmq.client.exception.MQClientException;
 import org.apache.rocketmq.client.producer.*;
@@ -12,6 +14,7 @@ import org.apache.rocketmq.common.message.Message;
 import org.apache.rocketmq.common.message.MessageConst;
 import org.apache.rocketmq.common.message.MessageExt;
 import org.apache.rocketmq.common.message.MessageQueue;
+import org.apache.rocketmq.common.protocol.heartbeat.MessageModel;
 import org.apache.rocketmq.remoting.common.RemotingHelper;
 import org.apache.rocketmq.remoting.exception.RemotingException;
 import org.junit.jupiter.api.*;
@@ -33,13 +36,15 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class RocketMQClientTest {
 
     private DefaultMQProducer producer;
+    private static final String ACCESS_KEY="rocketmq1";
+    private static final String SECRET_KEY="12345678";
 
 
     @BeforeEach
     public void producerBuilder() throws MQClientException {
 
         //实例化消息生产者，可从构造方法传入默认消息组名
-        DefaultMQProducer producer = new DefaultMQProducer("DEFAULT_GROUP");
+        DefaultMQProducer producer = new DefaultMQProducer("DEFAULT_GROUP", new AclClientRPCHook(new SessionCredentials(ACCESS_KEY,SECRET_KEY)));
         producer.setInstanceName(String.valueOf(System.currentTimeMillis()));
         producer.setNamesrvAddr("101.34.74.116:9876");
         producer.setSendMsgTimeout(10000);
@@ -292,17 +297,18 @@ public class RocketMQClientTest {
 
     }
 
+    //push模式消费
     @Nested
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-    @DisplayName("消费者测试")
-    public static class ConsumerTest {
+    @DisplayName("推送模式消费者测试")
+    public static class PushConsumerTest {
 
         private DefaultMQPushConsumer consumer;
 
         @BeforeEach
         public void consumerBuilder() throws MQClientException {
 
-            DefaultMQPushConsumer consumer = new DefaultMQPushConsumer("DEFAULT_GROUP");
+            DefaultMQPushConsumer consumer = new DefaultMQPushConsumer("DEFAULT_GROUP", new AclClientRPCHook(new SessionCredentials(ACCESS_KEY,SECRET_KEY)), new AllocateMessageQueueAveragely());
             consumer.setNamesrvAddr("101.34.74.116:9876");
             this.consumer = consumer;
         }
@@ -315,11 +321,87 @@ public class RocketMQClientTest {
         }
 
         @Test
-        @DisplayName("消费消息")
-        public void consumeMsg() throws MQClientException {
+        @DisplayName("同步消费消息")
+        public void syncConsumeMsg() throws MQClientException {
+
+            //订阅指定的topic和tag消息，第二个参数是tag的模糊匹配，*表示订阅全部，也支持tag1 || tag2 || tag3格式
+            consumer.setConsumeFromWhere(ConsumeFromWhere.CONSUME_FROM_FIRST_OFFSET);
+            consumer.subscribe("TopicTest", "TagE");
+            //并发地监听消息，消息将会并发接收
+            consumer.registerMessageListener(new MessageListenerConcurrently() {
+                @Override
+                public ConsumeConcurrentlyStatus consumeMessage(List<MessageExt> msgs, ConsumeConcurrentlyContext context) {
+                    System.out.printf("%s Receive New Messages: %s %n", Thread.currentThread().getName(), msgs);
+                    msgs.stream().forEach(messageExt -> {
+                        System.out.println(new String(messageExt.getBody()) + "，接收时间:" + new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date()));
+                    });
+                    // 标记该消息已经被成功消费
+                    return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
+                }
+            });
+
+        }
+
+        @Test
+        @DisplayName("多实例广播消费消息")
+        public void broadcastingConsumeMsg() throws MQClientException {
+
+            //订阅指定的topic和tag消息，第二个参数是tag的模糊匹配，*表示订阅全部，也支持tag1 || tag2 || tag3格式
+            consumer.setConsumeFromWhere(ConsumeFromWhere.CONSUME_FROM_FIRST_OFFSET);
+            //默认是集群模式，同一个消费组的多实例通过负载均衡分摊消息，广播模式是同一个消费组的每一个实例获得全量消息
+            consumer.setMessageModel(MessageModel.BROADCASTING);
+            consumer.subscribe("TopicTest", "TagE");
+            consumer.setInstanceName("broadcastingConsumeMsg1");
+
+            //并发地监听消息，消息将会并发接收
+            consumer.registerMessageListener(new MessageListenerConcurrently() {
+                @Override
+                public ConsumeConcurrentlyStatus consumeMessage(List<MessageExt> msgs, ConsumeConcurrentlyContext context) {
+                    System.out.printf("%s Receive New Messages: %s %n", Thread.currentThread().getName(), msgs);
+                    msgs.stream().forEach(messageExt -> {
+                        System.out.println(new String(messageExt.getBody()) + "，接收时间:" + new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date()));
+                    });
+                    // 标记该消息已经被成功消费
+                    return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
+                }
+            });
+
+        }
+
+        @Test
+        @DisplayName("多实例广播消费消息")
+        public void broadcastingConsumeMsg2() throws MQClientException {
+
+            //订阅指定的topic和tag消息，第二个参数是tag的模糊匹配，*表示订阅全部，也支持tag1 || tag2 || tag3格式
+            consumer.setConsumeFromWhere(ConsumeFromWhere.CONSUME_FROM_FIRST_OFFSET);
+            //默认是集群模式，同一个消费组的多实例通过负载均衡分摊消息，广播模式是同一个消费组的每一个实例获得全量消息
+            consumer.setMessageModel(MessageModel.BROADCASTING);
+            consumer.subscribe("TopicTest", "TagE");
+
+            consumer.setInstanceName("broadcastingConsumeMsg2");
+
+            //并发地监听消息，消息将会并发接收
+            consumer.registerMessageListener(new MessageListenerConcurrently() {
+                @Override
+                public ConsumeConcurrentlyStatus consumeMessage(List<MessageExt> msgs, ConsumeConcurrentlyContext context) {
+                    System.out.printf("%s Receive New Messages: %s %n", Thread.currentThread().getName(), msgs);
+                    msgs.stream().forEach(messageExt -> {
+                        System.out.println(new String(messageExt.getBody()) + "，接收时间:" + new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date()));
+                    });
+                    // 标记该消息已经被成功消费
+                    return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
+                }
+            });
+
+        }
+
+        @Test
+        @DisplayName("延时消息消费")
+        public void consumeDelayMsg() throws MQClientException {
 
             //订阅指定的topic和tag消息，第二个参数是tag的模糊匹配，*表示订阅全部，也支持tag1 || tag2 || tag3格式
             consumer.subscribe("DelayMsg", "tagB");
+            consumer.setConsumeFromWhere(ConsumeFromWhere.CONSUME_FROM_FIRST_OFFSET);
             //并发地监听消息，消息将会并发接收
             consumer.registerMessageListener(new MessageListenerConcurrently() {
                 @Override
