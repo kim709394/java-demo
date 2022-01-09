@@ -18,6 +18,7 @@ import org.apache.rocketmq.common.protocol.heartbeat.MessageModel;
 import org.apache.rocketmq.remoting.common.RemotingHelper;
 import org.apache.rocketmq.remoting.exception.RemotingException;
 import org.junit.jupiter.api.*;
+import org.python.antlr.op.Add;
 
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
@@ -38,15 +39,14 @@ public class RocketMQClientTest {
     private DefaultMQProducer producer;
     private static final String ACCESS_KEY="rocketmq1";
     private static final String SECRET_KEY="12345678";
-
-
+    private static final String ADDRESS="101.34.74.116:9876";
     @BeforeEach
     public void producerBuilder() throws MQClientException {
 
         //实例化消息生产者，可从构造方法传入默认消息组名
         DefaultMQProducer producer = new DefaultMQProducer("DEFAULT_GROUP", new AclClientRPCHook(new SessionCredentials(ACCESS_KEY,SECRET_KEY)));
         producer.setInstanceName(String.valueOf(System.currentTimeMillis()));
-        producer.setNamesrvAddr("101.34.74.116:9876");
+        producer.setNamesrvAddr(ADDRESS);
         producer.setSendMsgTimeout(10000);
         this.producer = producer;
         this.producer.start();
@@ -309,7 +309,7 @@ public class RocketMQClientTest {
         public void consumerBuilder() throws MQClientException {
 
             DefaultMQPushConsumer consumer = new DefaultMQPushConsumer("DEFAULT_GROUP", new AclClientRPCHook(new SessionCredentials(ACCESS_KEY,SECRET_KEY)), new AllocateMessageQueueAveragely());
-            consumer.setNamesrvAddr("101.34.74.116:9876");
+            consumer.setNamesrvAddr(ADDRESS);
             this.consumer = consumer;
         }
 
@@ -350,7 +350,7 @@ public class RocketMQClientTest {
             consumer.setConsumeFromWhere(ConsumeFromWhere.CONSUME_FROM_FIRST_OFFSET);
             //默认是集群模式，同一个消费组的多实例通过负载均衡分摊消息，广播模式是同一个消费组的每一个实例获得全量消息
             consumer.setMessageModel(MessageModel.BROADCASTING);
-            consumer.subscribe("TopicTest", "TagE");
+            consumer.subscribe("ConsumerBroadcast", "TagE");
             consumer.setInstanceName("broadcastingConsumeMsg1");
 
             //并发地监听消息，消息将会并发接收
@@ -376,7 +376,7 @@ public class RocketMQClientTest {
             consumer.setConsumeFromWhere(ConsumeFromWhere.CONSUME_FROM_FIRST_OFFSET);
             //默认是集群模式，同一个消费组的多实例通过负载均衡分摊消息，广播模式是同一个消费组的每一个实例获得全量消息
             consumer.setMessageModel(MessageModel.BROADCASTING);
-            consumer.subscribe("TopicTest", "TagE");
+            consumer.subscribe("ConsumerBroadcast", "TagE");
 
             consumer.setInstanceName("broadcastingConsumeMsg2");
 
