@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 public class MyBeanPostProcessor implements BeanPostProcessor {
 
     /**
-     * spring的所有bean的init-method执行前要执行的方法，不包含当bean(MyBeanPostProcessor)
+     * spring的所有bean的init-method执行前要执行的方法，不包含当前bean(MyBeanPostProcessor)
      * 发生在springbean实例化和依赖装配之后
      * */
     @Override
@@ -23,7 +23,7 @@ public class MyBeanPostProcessor implements BeanPostProcessor {
     }
 
     /**
-     * spring的所有bean的init-method执行后要执行的方法,不包含当bean(MyBeanPostProcessor)
+     * spring的所有bean的init-method执行后要执行的方法,不包含当前bean(MyBeanPostProcessor)
      * 发生在springbean实例化和依赖装配之后
      * */
     @Override

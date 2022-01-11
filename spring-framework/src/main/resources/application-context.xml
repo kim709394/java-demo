@@ -43,7 +43,7 @@
                 <ref bean="worker"/>
             </array>
         </property>
-        <!--map类型熟悉注入-->
+        <!--map类型属性注入-->
         <property name="history">
             <map>
                 <entry key="1991年" value="学校成立"/>
@@ -75,7 +75,7 @@
         </property>
     </bean>
 
-    <!--使用静态方法工厂bean创建-->
+    <!--使用静态方法工厂bean创建,factory-method指定创建bean的工厂方法-->
     <bean id="teacher" class="com.kim.springframework.ioc.xml.factory.StaticBeanFactory" factory-method="buildTeacher"></bean>
 
     <!--使用工厂bean的非静态方法创建-->
