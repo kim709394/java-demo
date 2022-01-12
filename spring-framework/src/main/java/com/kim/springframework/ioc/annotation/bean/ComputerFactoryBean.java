@@ -2,6 +2,7 @@ package com.kim.springframework.ioc.annotation.bean;
 
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 /**
  * @author huangjie
@@ -9,7 +10,7 @@ import org.springframework.stereotype.Component;
  * @date 2021/12/10
  */
 //工厂bean本身需要注册为一个bean
-@Component(value="computerFactoryBean")
+@Repository(value="computerFactoryBean")
 public class ComputerFactoryBean implements FactoryBean<Computer> {
 
 

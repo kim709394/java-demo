@@ -8,6 +8,9 @@ import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.stereotype.Service;
+
+import java.util.Map;
 
 /**
  * @author huangjie
@@ -110,6 +113,16 @@ public class IocTest {
         ApplicationContext applicationContext=new AnnotationConfigApplicationContext(SpringframeworkApplication.class);
         applicationContext.getBean(LifeCycleBean.class);
         ((AnnotationConfigApplicationContext)applicationContext).close();
+    }
+
+    /**
+     * 获取被某个注解注解上的bean
+     * */
+    @Test
+    public void getBeanWithAnnotations(){
+        ApplicationContext applicationContext=new AnnotationConfigApplicationContext(SpringframeworkApplication.class);
+        Map<String, Object> service = applicationContext.getBeansWithAnnotation(Service.class);
+        System.out.println(service);
     }
 
 

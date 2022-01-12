@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.ToString;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 /**
  * @author huangjie
@@ -12,7 +13,7 @@ import org.springframework.stereotype.Component;
  */
 @Data
 @ToString(callSuper = true)
-@Component
+@Service
 public class Engine {
 
     private Integer id;
