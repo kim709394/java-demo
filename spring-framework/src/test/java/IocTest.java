@@ -121,6 +121,7 @@ public class IocTest {
     @Test
     public void getBeanWithAnnotations(){
         ApplicationContext applicationContext=new AnnotationConfigApplicationContext(SpringframeworkApplication.class);
+        //获取bean所在的类被@Service注解的所有bean
         Map<String, Object> service = applicationContext.getBeansWithAnnotation(Service.class);
         System.out.println(service);
     }
