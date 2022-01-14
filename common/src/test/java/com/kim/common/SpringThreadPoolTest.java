@@ -1,6 +1,7 @@
 package com.kim.common;
 
-import com.kim.common.service.impl.SpringRun;
+import com.kim.common.service.SpringRun;
+import com.kim.common.service.impl.SpringRunImpl;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -14,7 +15,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 public class SpringThreadPoolTest {
 
     @Autowired
-    private SpringRun SpringRun;
+    private SpringRun springRun;
+
+
 
     /***
      * spring线程池
@@ -22,11 +25,10 @@ public class SpringThreadPoolTest {
     @Test
     public void springThreadPool() throws InterruptedException {
 
-
         for(int i=0;i<100;i++){
-            SpringRun.execute(i);
+            springRun.call(i);
         }
-        Thread.sleep(60*1000);
+        Thread.sleep(5*1000);
         System.out.println("ok");
 
     }

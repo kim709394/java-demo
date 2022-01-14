@@ -1,6 +1,10 @@
 
 import com.kim.springframework.SpringframeworkApplication;
 import com.kim.springframework.ioc.annotation.bean.*;
+import com.kim.springframework.ioc.annotation.circle.BeanA;
+import com.kim.springframework.ioc.annotation.circle.BeanB;
+import com.kim.springframework.ioc.annotation.circle.BeanC;
+import com.kim.springframework.ioc.annotation.circle.BeanD;
 import com.kim.springframework.ioc.postprocessor.MyBeanFactoryPostProcessor;
 import com.kim.springframework.ioc.postprocessor.MyBeanPostProcessor;
 import com.kim.springframework.ioc.xml.bean.*;
@@ -126,5 +130,23 @@ public class IocTest {
         System.out.println(service);
     }
 
+
+    /**
+     * 循环依赖
+     * */
+    @Test
+    public void circleDependence(){
+
+        ApplicationContext applicationContext=new AnnotationConfigApplicationContext(SpringframeworkApplication.class);
+        BeanA a = applicationContext.getBean(BeanA.class);
+        BeanB b = applicationContext.getBean(BeanB.class);
+        BeanC c = applicationContext.getBean(BeanC.class);
+        BeanD d = applicationContext.getBean(BeanD.class);
+        System.out.println(a);
+        System.out.println(b);
+        System.out.println(c);
+        System.out.println(d);
+
+    }
 
 }
