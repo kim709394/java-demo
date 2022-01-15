@@ -80,6 +80,7 @@
         <junit.version>4.12</junit.version>
         <fastjson.version>1.2.76</fastjson.version>
         <spring.framework.version>5.3.9</spring.framework.version>
+        <aspectj.version>1.9.6</aspectj.version>
         <servlet.version>4.0.1</servlet.version>
         <easy.excel.version>3.0.5</easy.excel.version>
     </properties>
@@ -426,6 +427,16 @@
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-beans</artifactId>
                 <version>${spring.framework.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-aop</artifactId>
+                <version>${spring.framework.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.aspectj</groupId>
+                <artifactId>aspectjweaver</artifactId>
+                <version>${aspectj.version}</version>
             </dependency>
             <dependency>
                 <groupId>javax.servlet</groupId>

@@ -1,5 +1,5 @@
 
-import com.kim.springframework.SpringframeworkApplication;
+import com.kim.springframework.IocApplication;
 import com.kim.springframework.ioc.annotation.bean.*;
 import com.kim.springframework.ioc.annotation.circle.BeanA;
 import com.kim.springframework.ioc.annotation.circle.BeanB;
@@ -46,7 +46,7 @@ public class IocTest {
 
     @Test
     public void annotationTest(){
-        ApplicationContext applicationContext=new AnnotationConfigApplicationContext(SpringframeworkApplication.class);
+        ApplicationContext applicationContext=new AnnotationConfigApplicationContext(IocApplication.class);
         Car car = applicationContext.getBean(Car.class);
         Engine engine = applicationContext.getBean(Engine.class);
         Wheel wheel = applicationContext.getBean(Wheel.class);
@@ -63,7 +63,7 @@ public class IocTest {
     @Test
     public void factoryBeanTest(){
 
-        ApplicationContext applicationContext=new AnnotationConfigApplicationContext(SpringframeworkApplication.class);
+        ApplicationContext applicationContext=new AnnotationConfigApplicationContext(IocApplication.class);
         //通过类型获取
         Computer computer = applicationContext.getBean(Computer.class);
         ComputerFactoryBean computerFactoryBean = applicationContext.getBean(ComputerFactoryBean.class);
@@ -86,7 +86,7 @@ public class IocTest {
      * */
     @Test
     public void beanPostProcessor(){
-        ApplicationContext applicationContext=new AnnotationConfigApplicationContext(SpringframeworkApplication.class);
+        ApplicationContext applicationContext=new AnnotationConfigApplicationContext(IocApplication.class);
         applicationContext.getBean(MyBeanPostProcessor.class);
 
     }
@@ -96,7 +96,7 @@ public class IocTest {
      * */
     @Test
     public void beanFactoryPostProcessor(){
-        ApplicationContext applicationContext=new AnnotationConfigApplicationContext(SpringframeworkApplication.class);
+        ApplicationContext applicationContext=new AnnotationConfigApplicationContext(IocApplication.class);
         applicationContext.getBean(MyBeanFactoryPostProcessor.class);
     }
 
@@ -105,7 +105,7 @@ public class IocTest {
      * */
     @Test
     public void initializingBeanAfterPropertiesSet(){
-        ApplicationContext applicationContext=new AnnotationConfigApplicationContext(SpringframeworkApplication.class);
+        ApplicationContext applicationContext=new AnnotationConfigApplicationContext(IocApplication.class);
         applicationContext.getBean(Wheel.class);
     }
 
@@ -114,7 +114,7 @@ public class IocTest {
      * */
     @Test
     public void beanLifeCycle(){
-        ApplicationContext applicationContext=new AnnotationConfigApplicationContext(SpringframeworkApplication.class);
+        ApplicationContext applicationContext=new AnnotationConfigApplicationContext(IocApplication.class);
         applicationContext.getBean(LifeCycleBean.class);
         ((AnnotationConfigApplicationContext)applicationContext).close();
     }
@@ -124,7 +124,7 @@ public class IocTest {
      * */
     @Test
     public void getBeanWithAnnotations(){
-        ApplicationContext applicationContext=new AnnotationConfigApplicationContext(SpringframeworkApplication.class);
+        ApplicationContext applicationContext=new AnnotationConfigApplicationContext(IocApplication.class);
         //获取bean所在的类被@Service注解的所有bean
         Map<String, Object> service = applicationContext.getBeansWithAnnotation(Service.class);
         System.out.println(service);
@@ -137,7 +137,7 @@ public class IocTest {
     @Test
     public void circleDependence(){
 
-        ApplicationContext applicationContext=new AnnotationConfigApplicationContext(SpringframeworkApplication.class);
+        ApplicationContext applicationContext=new AnnotationConfigApplicationContext(IocApplication.class);
         BeanA a = applicationContext.getBean(BeanA.class);
         BeanB b = applicationContext.getBean(BeanB.class);
         BeanC c = applicationContext.getBean(BeanC.class);

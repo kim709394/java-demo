@@ -1,7 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context.xsd
+           http://www.springframework.org/schema/aop
+           http://www.springframework.org/schema/aop/spring-aop.xsd
+           http://www.springframework.org/schema/tx
+           http://www.springframework.org/schema/tx/spring-tx.xsd">
 
     <!--无参构造方法注册spring bean
         scope:作用域:
@@ -82,4 +92,61 @@
     <bean id="workerFactory" class="com.kim.springframework.ioc.xml.factory.BeanFactory"></bean>
 
     <bean id="worker" factory-bean="workerFactory" factory-method="buildWorkers"></bean>
+
+    <!--aop-->
+    <!--配置增强类-->
+    <bean id="xmlAdvice" class="com.kim.springframework.aop.XmlAdvice"></bean>
+    <!--业务逻辑处理类bean，切入点类也要被spring管理-->
+    <bean id="businessHandler" class="com.kim.springframework.aop.BusinessHandler"/>
+    <aop:config proxy-target-class="true">  <!--proxy-target-class="true"是配置spring强制使用cglib代理-->
+        <!--配置增强类为切面-->
+        <aop:aspect id="aopAdvice" ref="xmlAdvice">
+
+            <!-- aspectj表达式配置切点
+                execution(访问修饰符 返回值 全路径包名.类名.方法名(参数类型))
+                访问修饰符可以省略，*表示任意返回值:execution(* 全路径包名.类名.方法名(参数类型))
+                包名可以用..表示任意包和子包，也可以用*表示每一级包名，但是有多少级就有多少个*.:
+                execution(* *.*.*.*.类名.方法名(参数类型))
+                *..表示当前包及其子包:execution(* *..类名.方法名(参数类型))
+                类目和方法名可以用*表示任意：  execution(* *..*.*(参数类型))
+                参数类型用..表示任意参数，可有可无:  execution(* *..*.*(..))
+                参数类型用*表示任意参数，但是一定要有参数execution(* *..*.*(*))
+                全通配：execution(* * *..*.*(..)),省略访问修饰符则是:execution(* *..*.*(..))
+            -->
+            <aop:pointcut id="handlePointcut" expression="execution(public void com.kim.springframework.aop.BusinessHandler.handle(java.lang.String))"/>
+
+            <!--配置前置增强 method是增强类的方法名，pointcut是执行切入哪个类的哪个方法-->
+            <aop:before method="before" pointcut-ref="handlePointcut"  ></aop:before>
+            <!--后置增强 切点方法正常执行才会执行该增强方法-->
+            <aop:after-returning method="afterReturning" pointcut-ref="handlePointcut" returning="result"/>
+            <!--异常增强-->
+            <aop:after-throwing method="throwing" pointcut-ref="handlePointcut" throwing="ex"/>
+            <!--后置增强 切点方法无论是否抛出异常都会执行-->
+            <aop:after method="afterAlways" pointcut-ref="handlePointcut"/>
+            <!--环绕增强-->
+            <aop:around method="around" pointcut-ref="handlePointcut"/>
+        </aop:aspect>
+
+        <aop:aspect id="aopAdvice2" ref="xmlAdvice">
+            <aop:pointcut id="throwExceptionHandlePointcut" expression="execution(public void com.kim.springframework.aop.BusinessHandler.throwExceptionHandle(java.lang.String))"/>
+            <!--配置前置增强 method是增强类的方法名，pointcut是执行切入哪个类的哪个方法-->
+            <aop:before method="before" pointcut-ref="throwExceptionHandlePointcut" ></aop:before>
+            <!--后置增强 切点方法正常执行才会执行该增强方法-->
+            <aop:after-returning method="afterReturning" pointcut-ref="throwExceptionHandlePointcut" returning="result"/>
+            <!--异常增强-->
+            <aop:after-throwing method="throwing" pointcut-ref="throwExceptionHandlePointcut" throwing="ex"/>
+            <!--后置增强 切点方法无论是否抛出异常都会执行-->
+            <aop:after method="afterAlways" pointcut-ref="throwExceptionHandlePointcut"/>
+            <!--环绕增强-->
+            <aop:around method="around" pointcut-ref="throwExceptionHandlePointcut"/>
+
+        </aop:aspect>
+
+
+    </aop:config>
+    <!--此标签是基于XML和注解组合配置AOP时的必备标签，表示Spring开启注解配置AOP的⽀持
+        <aop:aspectj-autoproxy proxy-target-class="true" />
+    -->
+
+
 </beans>

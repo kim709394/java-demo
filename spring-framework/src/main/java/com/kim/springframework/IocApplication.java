@@ -22,7 +22,7 @@ import org.springframework.context.annotation.*;
 @PropertySource(value = "classpath:example.properties")
 //设置注解扫描包路径，扫描此包和此包的子包的所有spring注解
 @ComponentScan(basePackages = "com.kim.springframework")
-public class SpringframeworkApplication implements ApplicationContextAware {
+public class IocApplication implements ApplicationContextAware {
 
 
     private static ApplicationContext applicationContext;

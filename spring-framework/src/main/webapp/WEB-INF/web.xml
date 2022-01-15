@@ -21,7 +21,7 @@
   <!--配置启动类的全限定类名-->
   <context-param>
     <param-name>contextConfigLocation</param-name>
-    <param-value>com.kim.springframework.SpringframeworkApplication</param-value>
+    <param-value>com.kim.springframework.IocApplication</param-value>
   </context-param>
 
 
