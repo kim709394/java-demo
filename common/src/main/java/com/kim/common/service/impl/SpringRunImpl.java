@@ -19,6 +19,7 @@ public class SpringRunImpl implements SpringRun {
     @Lazy
     private SpringRun springRun;
 
+
     @Async
     public void execute(Integer i){
         System.out.println(i);
@@ -26,6 +27,7 @@ public class SpringRunImpl implements SpringRun {
 
     @Override
     public void call(Integer i) {
+
         springRun.execute(i);
     }
 
