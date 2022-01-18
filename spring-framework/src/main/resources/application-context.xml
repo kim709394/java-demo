@@ -148,5 +148,60 @@
         <aop:aspectj-autoproxy proxy-target-class="true" />
     -->
 
+    <!--声明式事务配置-->
+    <!--事务管理器-->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+    <!--引入properties文件-->
+    <context:property-placeholder location="jdbc.properties"/>
+    <!--druid连接池数据源-->
+    <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
+        <property name="url" value="${url}" />
+        <property name="driverClassName" value="${driver}"/>
+        <property name="username" value="${user}" />
+        <property name="password" value="${password}" />
+        <property name="filters" value="stat" />
+        <property name="maxActive" value="20" />
+        <property name="initialSize" value="1" />
+        <property name="maxWait" value="6000" />
+        <property name="minIdle" value="1" />
+        <property name="timeBetweenEvictionRunsMillis" value="60000" />
+        <property name="minEvictableIdleTimeMillis" value="300000" />
+        <property name="testWhileIdle" value="true" />
+        <property name="testOnBorrow" value="false" />
+        <property name="testOnReturn" value="false" />
+        <property name="poolPreparedStatements" value="true" />
+        <property name="maxOpenPreparedStatements" value="20" />
+        <property name="asyncInit" value="true" />
+    </bean>
+
+    <tx:advice id="txAdvice" transaction-manager="transactionManager">
+        <tx:attributes>
+            <!--针对所有方法的配置-->
+            <tx:method name="*" read-only="false" propagation="REQUIRED" isolation="DEFAULT" timeout="-1"/>
+            <!--针对查询的方法的配置,覆盖配置-->
+            <tx:method name="find*" read-only="true" propagation="REQUIRED" isolation="DEFAULT" timeout="-1"/>
+        </tx:attributes>
+    </tx:advice>
+    <aop:config>
+        <aop:pointcut id="txPointcut" expression="execution(public void com.kim.springframework.transaction.service.GoodsServiceImpl.*(..))"/>
+
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="txPointcut"/>
+    </aop:config>
+    <!--jdbc操作bean-->
+    <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+    <!--dao service bean-->
+    <bean id="goodsDao" class="com.kim.springframework.transaction.dao.GoodsDaoImpl">
+        <property name="jdbcTemplate" ref="jdbcTemplate"/>
+    </bean>
+    <bean id="goodsService" class="com.kim.springframework.transaction.service.GoodsServiceImpl">
+        <property name="goodsDao" ref="goodsDao"/>
+    </bean>
+    <!--xml配置文件开启spring对注解事务的⽀持
+         <tx:annotation-driven transaction-manager="transactionManager"/>
+    -->
 
 </beans>
