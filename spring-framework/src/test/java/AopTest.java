@@ -6,6 +6,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import java.util.Date;
+
 /**
  * @author huangjie
  * @description  aop测试用例
@@ -46,7 +48,6 @@ public class AopTest {
     //业务方法抛出异常的五种增强
     @Test
     public void withExceptionAnnotationTest(){
-
         ApplicationContext applicationContext=new AnnotationConfigApplicationContext(AopApplication.class);
         BusinessHandler handler=(BusinessHandler)applicationContext.getBean(BusinessHandler.class);
         handler.throwExceptionHandle("kim");
