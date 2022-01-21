@@ -1,5 +1,6 @@
 package com.kim.springframework.aop;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -9,6 +10,9 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class BusinessHandler {
+
+    @Autowired
+    private BusinessHandler2 businessHandler2;
 
     //正常业务逻辑处理
     public void handle(String name){

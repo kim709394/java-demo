@@ -40,6 +40,7 @@ public class AopTest {
     public void annotationTest(){
 
         ApplicationContext applicationContext=new AnnotationConfigApplicationContext(AopApplication.class);
+        //当aop和循环依赖在一起时，被aop代理的bean并没有注入该注入的依赖bean
         BusinessHandler handler=(BusinessHandler)applicationContext.getBean(BusinessHandler.class);
         handler.handle("kim");
 
