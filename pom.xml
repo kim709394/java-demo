@@ -22,6 +22,7 @@
         <module>mybatis</module>
         <module>springboot-mybatis-plus</module>
         <module>spring-framework</module>
+        <module>spring-mvc</module>
     </modules>
     <properties>
         <!--jdk编译版本和编码格式-->
