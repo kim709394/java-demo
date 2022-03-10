@@ -3,6 +3,9 @@ package com.kim.spring.mvc.controller;
 import com.kim.spring.mvc.pojo.Order;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.util.Date;
 
 /**
@@ -41,5 +44,13 @@ public class OrderController {
         return order;
     }
 
+    //对servlet原生api的支持
+    @GetMapping("/servlet")
+    public String servlet(HttpServletRequest request, HttpServletResponse response, HttpSession session){
+        System.out.println(request);
+        System.out.println(response);
+        System.out.println(session);
+        return "success";
+    }
 
 }
