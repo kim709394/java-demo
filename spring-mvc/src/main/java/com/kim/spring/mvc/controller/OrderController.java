@@ -53,4 +53,12 @@ public class OrderController {
         return "success";
     }
 
+    //全局异常捕捉
+    @GetMapping("/exception")
+    public String globalException(){
+        int i=1/0;
+        return "success";
+    }
+
+
 }

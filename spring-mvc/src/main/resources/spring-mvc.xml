@@ -10,10 +10,13 @@
         https://www.springframework.org/schema/context/spring-context.xsd
         http://www.springframework.org/schema/mvc
         https://www.springframework.org/schema/mvc/spring-mvc.xsd">
-
+<!--注解驱动-->
     <mvc:annotation-driven/>
     <!--配置扫描带有controller注解的类，注册为前端控制器-->
-    <context:component-scan base-package="com.kim.spring.mvc.controller"/>
+    <context:component-scan base-package="
+        com.kim.spring.mvc.controller
+        com.kim.spring.mvc.config
+"/>
     <!--配置视图解析器-->
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 <!--        前缀-->
