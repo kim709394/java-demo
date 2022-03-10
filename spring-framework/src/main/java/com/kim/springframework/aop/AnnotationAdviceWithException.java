@@ -16,7 +16,7 @@ import java.lang.reflect.Method;
 @Component   //作为一个bean注入容器
 public class AnnotationAdviceWithException {
 
-    @Pointcut("execution(public void com.kim.springframework.aop.BusinessHandler.throwExceptionHandle(java.lang.String))")
+    @Pointcut("execution(public void com.kim.springframework.aop.BusinessHandler2.throwExceptionHandle(java.lang.String))")
     public void throwExceptionHandlePointcut(){}
 
 

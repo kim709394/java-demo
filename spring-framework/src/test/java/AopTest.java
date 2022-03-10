@@ -51,6 +51,7 @@ public class AopTest {
     public void withExceptionAnnotationTest(){
         ApplicationContext applicationContext=new AnnotationConfigApplicationContext(AopApplication.class);
         BusinessHandler handler=(BusinessHandler)applicationContext.getBean(BusinessHandler.class);
+        System.out.println(handler.getBusinessHandler2());
         handler.throwExceptionHandle("kim");
 
     }

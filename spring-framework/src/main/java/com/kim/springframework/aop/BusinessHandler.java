@@ -14,6 +14,14 @@ public class BusinessHandler {
     @Autowired
     private BusinessHandler2 businessHandler2;
 
+    public BusinessHandler2 getBusinessHandler2() {
+        return businessHandler2;
+    }
+
+    public void setBusinessHandler2(BusinessHandler2 businessHandler2) {
+        this.businessHandler2 = businessHandler2;
+    }
+
     //正常业务逻辑处理
     public void handle(String name){
         System.out.println("业务逻辑处理完成"+name);
