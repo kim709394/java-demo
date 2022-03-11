@@ -13,6 +13,13 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class OrderInterceptor implements HandlerInterceptor {
 
+    /**
+     * 如果有多个拦截器，则拦截顺序：
+     * interceptor1(preHandle) -> interceptor2(preHandle)
+     * interceptor2(postHandle) -> interceptor1(postHandle)
+     * interceptor2(afterCompletion) -> interceptor1(afterCompletion)
+     * */
+
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {

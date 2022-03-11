@@ -38,6 +38,9 @@
     
 <!--    拦截器配置-->
     <mvc:interceptors>
+<!--        如果有多个拦截器，则执行顺序从上到下
+
+-->
         <mvc:interceptor>
 <!--            配置要拦截的url规则，/**代表-->
             <mvc:mapping path="/order/**"/>
