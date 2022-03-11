@@ -5,10 +5,8 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -61,6 +59,23 @@ public class UserController {
     public User add(User user){
 
         return user;
+    }
+
+    //重定向到get请求接口，直接在url拼接参数进行下游接口传递
+    @GetMapping("/redirect/get")
+    public String redirectGet(){
+        return "redirect:/order/get/id?id=3";
+    }
+
+    /**
+     * 基于flash的跨重定向参数传递
+     * flash机制会将参数暂存在session中，作为重定向的请求参数传递到下游接口
+     */
+    @PostMapping("/redirect/flash")
+    public String redirectFlash(RedirectAttributes redirectAttributes){
+
+        redirectAttributes.addAttribute("id","4");
+        return "redirect:/order/get/id";
     }
 
 }
