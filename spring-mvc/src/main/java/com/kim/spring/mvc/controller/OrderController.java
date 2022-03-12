@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.*;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 
@@ -122,6 +123,20 @@ public class OrderController {
         }
         return new ResponseEntity<byte[]>(new byte[0],headers, HttpStatus.INTERNAL_SERVER_ERROR);
 
+    }
+
+    //时间类型入参,验证入参时间类型转换
+    @GetMapping("/date/before")
+    public String dateConvertBefore(@RequestParam(value="date") Date date){
+
+        return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date);
+
+    }
+
+    //时间类型参数返回，验证返回对象时间类型转换
+    @GetMapping("/date/after")
+    public Date dateConverterAfter(){
+        return new Date();
     }
 
 

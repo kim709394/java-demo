@@ -10,8 +10,15 @@
         https://www.springframework.org/schema/context/spring-context.xsd
         http://www.springframework.org/schema/mvc
         https://www.springframework.org/schema/mvc/spring-mvc.xsd">
-<!--注解驱动-->
-    <mvc:annotation-driven/>
+<!--注册消息类型转换器，参数传入和对象返回json的时候的数据类型转换-->
+    <mvc:annotation-driven conversion-service="conversionServiceFactoryBean"/>
+    <bean id="conversionServiceFactoryBean" class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
+        <property name="converters">
+            <set>
+                <bean class="com.kim.spring.mvc.config.DateConverter"/>
+            </set>
+        </property>
+    </bean>
     <!--配置扫描带有controller注解的类，注册为前端控制器-->
     <context:component-scan base-package="
         com.kim.spring.mvc.controller
