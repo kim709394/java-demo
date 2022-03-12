@@ -133,12 +133,6 @@ public class OrderController {
 
     }
 
-    //时间类型参数返回，验证返回对象时间类型转换
-    @GetMapping("/date/after")
-    public Date dateConverterAfter(){
-        return new Date();
-    }
-
 
 
 
