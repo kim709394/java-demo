@@ -56,3 +56,4 @@ java应用下的各种api、工具类、第三方jar包使用、框架，等等�
 ### springboot-mybatis-plus                 mybatis-plus与springboot整合
 ### spring-framework                        spring原生框架demo
 ### spring-mvc                              spring-mvc原生框架demo
+### spring-data-jpa                         spring结合hibernate符合jpa规范demo
