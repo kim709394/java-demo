@@ -83,7 +83,8 @@ public class CrudTest {
     //hql查询
     @Test
     public void testHqlQuery(){
-        userDao.selectByIdAndName(1,"");
+        List<User> john = userDao.selectByIdAndName(1, "john");
+        john.stream().forEach(user -> System.out.println(user));
     }
 
     //原生sql查询
@@ -97,7 +98,8 @@ public class CrudTest {
     //约定命名规则查询
     @Test
     public void testFindBy(){
-        userDao.findByIdAndNameLike(1,"john");
+        List<User> john = userDao.findByIdAndNameLike(1, "john");
+        System.out.println(john);
     }
 
     //分页查询

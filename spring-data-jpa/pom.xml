@@ -17,23 +17,27 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
+            <version>4.12</version>
             <scope>test</scope>
         </dependency>
         <!--spring-data-jpa 相关,start-->
         <dependency>
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-jpa</artifactId>
+            <version>2.3.9.RELEASE</version>
         </dependency>
         <dependency>
             <groupId>javax.el</groupId>
             <artifactId>javax.el-api</artifactId>
+            <version>3.0.1-b04</version>
         </dependency>
         <dependency>
             <groupId>org.glassfish.web</groupId>
             <artifactId>javax.el</artifactId>
+            <version>2.2.6</version>
         </dependency>
-        <!--spring-data-jpa end-->
-        <!--spring 相关jar,start-->
+        <!--spring-data-jpa 相关,end-->
+        <!--spring 相关,start-->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-aop</artifactId>
@@ -70,20 +74,23 @@
             <artifactId>spring-core</artifactId>
             <version>5.1.12.RELEASE</version>
         </dependency>
-        <!--spring 相关jar,end-->
+        <!--spring 相关,end-->
         <!--hibernate相关jar包,start-->
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
+            <version>5.4.0.Final</version>
         </dependency>
         <!--hibernate对jpa的实现jar-->
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-entitymanager</artifactId>
+            <version>5.4.0.Final</version>
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-validator</artifactId>
+            <version>5.4.0.Final</version>
         </dependency>
         <!--hibernate相关,end-->
         <!--mysql 数据库驱动包-->
@@ -109,6 +116,8 @@
             <artifactId>lombok</artifactId>
         </dependency>
     </dependencies>
+
+
 
 
 </project>
