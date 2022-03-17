@@ -56,6 +56,7 @@ public class UserController {
     public ResultVO get(@PathVariable("id") Long id){
         //模拟设置租户id
         MpInterceptor.MyTenantLine.setTenantId(1L);
+        System.out.println("哈哈123456");
         return ResultVO.success(service.get(id));
     }
 
