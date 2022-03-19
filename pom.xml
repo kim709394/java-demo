@@ -24,6 +24,7 @@
         <module>spring-framework</module>
         <module>spring-mvc</module>
         <module>spring-data-jpa</module>
+        <module>spring-boot</module>
     </modules>
     <properties>
         <!--jdk编译版本和编码格式-->

@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: spring-boot-demo
+  profiles:
+    active: dev     #指定运行环境
+  devtools: #热部署排除资源文件路径：排除的路径的资源文件发生变动不会出发重新启动动态类加载器
+    restart:
+      exclude: static/**,public/**
+  servlet:
+    multipart:
+      max-file-size: 4096MB     #配置文件上传最大容量
+      max-request-size: 4096MB  #配置请求包最大容量
+server:
+  port: 8090
+

@@ -1,0 +1,23 @@
+myconfig:     #自定义配置
+  my-name: myconfig    #普通数据类型,字段名也可使用驼峰命名规则，也可以下划线：my_name,大写下划线：MY_NAME
+  friends:       #集合或者数组类型
+    - john
+    - lucy
+    - jack
+  colors:          #集合的另一种形式
+    yellow,
+    red,
+    blue
+  frameworks: [spring,hibernate,mybatis]         #集合的另一种形式
+  cars:                 # map集合 ,注意key值不能为中文
+    c1: 比亚迪
+    c2: 宝马
+  map:  {k1: v1,k2: v2}   #map集合的另一种形式  ，注意key和value之间要有空格
+  user:           #对象注入
+    id: 2
+    name: mike
+
+logging:
+  config: classpath:log/logback-${spring.profiles.active}.xml   #指定logback配置文件路径
+  level:
+    com.kim.spring.boot.controller: debug     #为哪个包或者类指定日志级别
