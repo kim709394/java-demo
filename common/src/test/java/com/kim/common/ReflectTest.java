@@ -1,7 +1,9 @@
 package com.kim.common;
 
+import com.kim.common.service.GenericityClass;
 import com.kim.common.service.GenericityInterface;
 import com.kim.common.service.impl.Genericity;
+import com.kim.common.service.impl.GenericityClassImpl;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.junit.jupiter.api.Test;
@@ -77,7 +79,7 @@ public class ReflectTest {
 
 
     /**
-     * 通过反射获取类的泛型
+     * 通过反射获取类实现接口的泛型
      * */
     @Test
     public void testGenericity() throws Exception {
@@ -98,6 +100,27 @@ public class ReflectTest {
 
     }
 
+    /**
+     * 通过反射获取类继承的父类的泛型
+     * */
+    @Test
+    public void testGenericityClass(){
+        GenericityClass genericityClass=new GenericityClassImpl();
+        Type genericSuperclass = genericityClass.getClass().getGenericSuperclass();
+        ParameterizedType parameterizedType=(ParameterizedType)genericSuperclass;
+        Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
+        //获取第一个泛型
+        Type gen1=actualTypeArguments[0];
+        String typeName = gen1.getTypeName();
+        System.out.println(typeName);
+        //Class<?> clazz=Class.forName(typeName);
+
+        //获取第二个泛型
+        Type gen2=actualTypeArguments[1];
+        System.out.println(gen2.getTypeName());
+
+
+    }
     private String methodReturn(){
         return "yes";
     }
