@@ -58,3 +58,4 @@ java应用下的各种api、工具类、第三方jar包使用、框架，等等�
 ### spring-mvc                              spring-mvc原生框架demo
 ### spring-data-jpa                         spring结合hibernate符合jpa规范demo
 ### spring-boot                             springboot原生demo
+### spring-security                         spring-boot-starter-security安全框架demo

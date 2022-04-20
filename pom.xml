@@ -25,6 +25,7 @@
         <module>spring-mvc</module>
         <module>spring-data-jpa</module>
         <module>spring-boot</module>
+        <module>spring-security</module>
     </modules>
     <properties>
         <!--jdk编译版本和编码格式-->

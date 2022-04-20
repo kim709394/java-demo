@@ -1,0 +1,111 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"> 
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="pragma" content="no-cache">
+    <meta http-equiv="cache-control" content="no-cache">
+    <meta http-equiv="expires" content="0"> 
+	<title>登录</title>
+    <link href="/login1/css/default.css" rel="stylesheet" type="text/css" />
+	<!--必要样式-->
+    <link href="/login1/css/styles.css" rel="stylesheet" type="text/css" />
+    <link href="/login1/css/demo.css" rel="stylesheet" type="text/css" />
+    <link href="/login1/css/loaders.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+	<div class='login'>
+	  <div class='login_title'>
+	    <span>井口唯一性项目配置</span>
+	  </div>
+	  <div class='login_fields'>
+	    <div class='login_fields__user'>
+	      <div class='icon'>
+	        <img alt="" src='/login1/img/user_icon_copy.png'>
+	      </div>
+	      <input name="username" placeholder='用户名' maxlength="16" type='text' autocomplete="off" value=""/>
+	        <div class='validation'>
+	          <img alt="" src='/login1/img/tick.png'>
+	        </div>
+	    </div>
+	    <div class='login_fields__password'>
+	      <div class='icon'>
+	        <img alt="" src='/login1/img/lock_icon_copy.png'>
+	      </div>
+	      <input name="password" placeholder='密码' maxlength="16" type='password' autocomplete="off">
+	      <div class='validation'>
+	        <img alt="" src='/login1/img/tick.png'>
+	      </div>
+	    </div>
+	    <div class='login_fields__submit'>
+	      <input type='button' value='登录'>
+	    </div>
+	  </div>
+	  <div class='success'>
+	  </div>
+	  <div class='disclaimer'>
+	    <p>© 淮南万泰电子股份有限公司</p>
+	  </div>
+	</div>
+	
+    <link href="/login1/layui/css/layui.css" rel="stylesheet" type="text/css" />
+	
+	<script type="text/javascript" src="/login1/js/jquery.min.js"></script>
+	<script type="text/javascript" src="/login1/js/jquery-ui.min.js"></script>
+	<script type="text/javascript" src='/login1/js/stopExecutionOnTimeout.js?t=1'></script>
+    <script type="text/javascript" src="/login1/layui/layui.js"></script>
+    <script type="text/javascript" src="/login1/js/Particleground.js"></script>
+    <script type="text/javascript" src="/login1/js/Treatment.js"></script>
+    <script type="text/javascript" src="/login1/js/jquery.mockjax.js"></script>
+	<script type="text/javascript">
+		var layer ;
+		layui.use(["layer"],function(){
+			layer = layui.layer;
+		});
+		//粒子背景特效
+		$('body').particleground({
+			dotColor: '#E8DFE8',
+			lineColor: '#133b88'
+		});
+		$(function(){
+			$("div.login_fields__submit").click(function(){
+				var localStorage = window.localStorage;
+				if (!localStorage) {
+					layer.style(layer.msg("浏览器版本过低，请选择谷歌或者IE8以上的浏览器",{icon: 2}), {
+						color: '#777'
+					});
+					return;
+				}
+
+				let username = $("input[name='username']").val();
+				let password = $("input[name='password']").val();
+				if(username == "" || password == ""){
+					layer.style(layer.msg("用户名或密码不能为空",{icon: 2}), {
+						color: '#777'
+					});
+					return;
+				}
+				$.post(
+						'/wellheadunique/login/verify',
+						{username:username,password:password},
+						function(result){
+							if (result.code != 2000){
+								layer.style(layer.msg(result.msg,{icon: 2}), {
+									color: '#777'
+								});
+							} else{
+								layer.msg("登录成功",{icon: 1});
+								window.location="/wellheadunique/front/iriscollect";
+							}
+						}
+				);
+			});
+		});
+    </script>
+
+</body>
+</html>

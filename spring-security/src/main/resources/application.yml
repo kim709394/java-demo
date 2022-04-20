@@ -1,0 +1,9 @@
+server:
+  port: 8080
+spring:
+  application:
+    name: spring-security-demo
+  #静态资源模板
+  thymeleaf:
+    prefix:  classpath:/public/pages/
+    cache: false
