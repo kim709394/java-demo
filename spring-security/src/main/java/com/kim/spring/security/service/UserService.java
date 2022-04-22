@@ -31,4 +31,13 @@ public interface UserService {
 
     User getCurrent();
 
+    //添加验证码
+    void putVerifyCode(String key,String verifyCode);
+
+
+    //获取验证码
+    Map<String,String> getVerifyCode(String key);
+
+    //删除验证码
+    void removeVerifyCode(String key);
 }

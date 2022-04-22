@@ -22,39 +22,44 @@
 	  <div class='login_title'>
 	    <span>spring-security安全框架</span>
 	  </div>
-	  <div class='login_fields'>
-	    <div class='login_fields__user'>
-	      <div class='icon'>
-	        <img alt="" src='/login1/img/user_icon_copy.png'>
-	      </div>
-	      <input name="username" placeholder='用户名' maxlength="16" type='text' autocomplete="off" value=""/>
-	        <div class='validation'>
-	          <img alt="" src='/login1/img/tick.png'>
-	        </div>
-	    </div>
-	    <div class='login_fields__password'>
-	      <div class='icon'>
-	        <img alt="" src='/login1/img/lock_icon_copy.png'>
-	      </div>
-	      <input name="password" placeholder='密码' maxlength="16" type='password' autocomplete="off">
-	      <div class='validation'>
-	        <img alt="" src='/login1/img/tick.png'>
-	      </div>
-	    </div>
-		  <div class='login_fields__password'>
+		<form id="login">
+		  <div class='login_fields'>
+			<div class='login_fields__user'>
 			  <div class='icon'>
-				  <img alt="" src='/login1/img/lock_icon_copy.png'>
+				<img alt="" src='/login1/img/user_icon_copy.png'>
 			  </div>
-			  <!--记住我 name为remember-me value值可选true yes 1 on 都行-->
-			  <input type="checkbox" name="remember-me" value="true" lay-skin="switch">
-			  <div class='validation'>
+			  <input name="username" placeholder='用户名' maxlength="16" type='text' autocomplete="off" value=""/>
+				<div class='validation'>
 				  <img alt="" src='/login1/img/tick.png'>
+				</div>
+			</div>
+			<div class='login_fields__password'>
+			  <div class='icon'>
+				<img alt="" src='/login1/img/lock_icon_copy.png'>
 			  </div>
+			  <input name="password" placeholder='密码' maxlength="16" type='password' autocomplete="off">
+			  <div class='validation'>
+				<img alt="" src='/login1/img/tick.png'>
+			  </div>
+			</div>
+			  <div class='login_fields__password'>
+				  <div class='icon'>
+					  <img alt="" src='/login1/img/lock_icon_copy.png'>
+				  </div>
+				  <input name="verifyCode" placeholder='验证码' maxlength="16" type='password' autocomplete="off">
+				  <img id="verifyCode" src="/security/user/verify/code" width="130px" height="48px" title="点击获取验证码" />
+				  <div class='validation'>
+					  <img alt="" src='/login1/img/tick.png'>
+				  </div>
+			  </div>
+			<div class='login_fields__submit'>
+			  <input type='button' value='登录'>
+				<!--记住我 name为remember-me value值可选true yes 1 on 都行-->
+				记住我
+				<input type="checkbox" name="remember-me" value="true" lay-skin="switch">
+			</div>
 		  </div>
-	    <div class='login_fields__submit'>
-	      <input type='button' value='登录'>
-	    </div>
-	  </div>
+		</form>
 	  <div class='success'>
 	  </div>
 	  <div class='disclaimer'>
@@ -82,6 +87,9 @@
 			lineColor: '#133b88'
 		});
 		$(function(){
+			$("#verifyCode").click(function(){
+				$(this).prop("src","/security/user/verify/code?num="+Math.round(Math.random()*10));
+			});
 			$("div.login_fields__submit").click(function(){
 				var localStorage = window.localStorage;
 				if (!localStorage) {
@@ -100,8 +108,8 @@
 					return;
 				}
 				$.post(
-						'/wellheadunique/login/verify',
-						{username:username,password:password},
+						'/login',
+						$("#login").serialize(),
 						function(result){
 							if (result.code != 2000){
 								layer.style(layer.msg(result.msg,{icon: 2}), {
@@ -109,7 +117,7 @@
 								});
 							} else{
 								layer.msg("登录成功",{icon: 1});
-								window.location="/wellheadunique/front/iriscollect";
+								window.location="/security/front/index";
 							}
 						}
 				);

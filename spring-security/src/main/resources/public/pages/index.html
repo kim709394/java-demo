@@ -1,7 +1,26 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml" >
+<script type="text/javascript" src="/login1/js/jquery.min.js"></script>
 <body>
 <h2>Hello Spring security!</h2>
+<input type='button' id="logout" value='登出'>
 </body>
+<script type="text/javascript">
+
+    $(function(){
+        $("#logout").click(function(){
+            $.get(
+                '/logout',
+                function(result){
+                    if (result.code != 2000){
+                        window.location="/security/front/login";
+                    } else{
+                        window.location="/security/front/login";
+                    }
+                }
+            );
+        });
+    });
+</script>
 </html>

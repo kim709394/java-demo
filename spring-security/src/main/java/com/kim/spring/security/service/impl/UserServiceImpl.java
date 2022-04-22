@@ -21,8 +21,11 @@ public class UserServiceImpl implements UserService {
 
     //模拟数据库
     private static Map<Integer,User> users ;
+    //模拟redis缓存验证码
+    private Map<String,Map<String,String>> verifyCodes ;
 
     public UserServiceImpl(){
+        verifyCodes = new HashMap<>();
         users=new HashMap<>();
         //设置管理员
         User user=new User();
@@ -93,5 +96,23 @@ public class UserServiceImpl implements UserService {
             return getUserByName(userDetails.getUsername());
         }
         return null;
+    }
+
+    @Override
+    public void putVerifyCode(String key,String verifyCode) {
+        Map<String,String> verifyCodeObj=new HashMap<>();
+        verifyCodeObj.put("timestamp",String.valueOf(System.currentTimeMillis()));
+        verifyCodeObj.put("verifyCode",verifyCode);
+        verifyCodes.put(key,verifyCodeObj);
+    }
+
+    @Override
+    public Map<String,String> getVerifyCode(String key) {
+        return verifyCodes.get(key);
+    }
+
+    @Override
+    public void removeVerifyCode(String key) {
+        verifyCodes.remove(key);
     }
 }

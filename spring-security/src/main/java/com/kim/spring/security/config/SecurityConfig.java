@@ -1,13 +1,21 @@
 package com.kim.spring.security.config;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kim.spring.security.common.ErrorEnum;
+import com.kim.spring.security.filter.VerifyCodeFilter;
+import com.kim.spring.security.pojo.ResultVO;
 import com.kim.spring.security.service.impl.MyUserDetailServiceImpl;
+import com.kim.spring.security.utils.HttpResponseUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringBootConfiguration;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
  * @author huangjie
@@ -20,6 +28,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private MyUserDetailServiceImpl myUserDetailService;
+
+    @Autowired
+    private ObjectMapper mapper;
+
+    @Autowired
+    private VerifyCodeFilter verifyCodeFilter;
+
+    /**
+     * json转换器对象
+     * */
+    @Bean
+    public ObjectMapper objectMapper() {
+        return new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    }
+
     /**
      * Spring Security 中，安全构建器 HttpSecurity 和 WebSecurity 的区别是 :
      * 1. WebSecurity 不仅通过 HttpSecurity 定义某些请求的安全控制，也通过其他方式定义其他某些
@@ -52,21 +75,44 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
          * 这种方式不推荐使用，因为会保留用户敏感信息到客户端
          */
         http
+                //添加验证码过滤器，这个过滤器要在登录认证过滤器之前
+                .addFilterBefore(verifyCodeFilter, UsernamePasswordAuthenticationFilter.class)
+                /*.exceptionHandling()
+                .authenticationEntryPoint((request, response, authException) -> {
+                    //未登录或者无权限访问的响应处理实现，默认跳转到登录页
+                    HttpResponseUtil.responseJson(response,mapper, ResultVO.result(ErrorEnum.CODE_3005));
+                })*/
                 .formLogin().loginPage("/security/front/login")     //开启表单登录并设置登录页面
-                .loginProcessingUrl("/login")   //登录处理url
+                .loginProcessingUrl("/login")   //登录处理url,默认是UsernamePasswordAuthenticationFilter过滤器处理
                 .usernameParameter("username").passwordParameter("password")    //指定表单用户名和密码的参数名
-                .successForwardUrl("/security/front/index")     //指定登录成功后重定向跳转的url
-                .failureForwardUrl("")      //指定登录失败后重定向跳转的url
-                .and()
-                .authorizeRequests().antMatchers("/security/front/login").permitAll()   //放行登录页面
+                //.successForwardUrl("/security/front/index")     //指定登录成功后重定向跳转的url
+                //.failureForwardUrl("/security/front/index")      //指定登录失败后重定向跳转的url
+                .successHandler((request, response, authentication) -> {    //登录成功响应处理实现
+                    HttpResponseUtil.responseJson(response,mapper, ResultVO.success());
+                })
+                .failureHandler((request, response, exception) -> {
+                    //登录认证不通过响应处理实现，当抛出AuthenticationException异常的时候执行
+                    HttpResponseUtil.responseJson(response,mapper, ResultVO.result(ErrorEnum.CODE_3003));
+                })
+                .and()//放行登录页面，验证码接口
+                .authorizeRequests().antMatchers("/security/front/login","/security/user/verify/code").permitAll()
                 .anyRequest().authenticated()      //其余所有请求都要进行登录认证才能访问
+                .and()
+                .logout()   //退出登录处理url和退出成功后跳转url的指定，默认LogoutFilter过滤器处理
+                .logoutUrl("/logout")
+                //.logoutSuccessUrl("/security/front/login")
+                .logoutSuccessHandler((request, response, authentication) -> {
+                    //退出成功后响应实现
+                    HttpResponseUtil.responseJson(response,mapper,ResultVO.success());
+                })
                 .and()
                 .headers().frameOptions().sameOrigin()     // 允许iframe加载页面
                 .and()
                 .rememberMe()   //开启remenber me功能，登录表单需要有name为remenber-me的参数
                 .tokenValiditySeconds(604800)   //remenber me的token生效时间，这里设置为一周，单位为秒
                 .rememberMeParameter("remenber-me")     //remenber me的表单参数名称
-                .csrf().disable()   //关闭csrf防护,这里的防护仅仅只是页面增加一个_csrf的参数，后台进行验证
+                .and()
+                .csrf().disable();   //关闭csrf防护,这里的防护仅仅只是页面增加一个_csrf的参数，后台进行验证
 
 
     }
@@ -76,4 +122,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(myUserDetailService);
     }
+
+
 }

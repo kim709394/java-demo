@@ -93,6 +93,7 @@
         <javax.el.version>3.0.1-b04</javax.el.version>
         <glassfish.web.version>2.2.6</glassfish.web.version>
         <hibernate.relative.version>5.4.0.Final</hibernate.relative.version>
+        <easy.captcha.version>1.6.2</easy.captcha.version>
     </properties>
 
     <dependencyManagement>
@@ -527,6 +528,12 @@
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-validator</artifactId>
                 <version>${hibernate.relative.version}</version>
+            </dependency>
+            <!--        验证码工具类-->
+            <dependency>
+                <groupId>com.github.whvcse</groupId>
+                <artifactId>easy-captcha</artifactId>
+                <version>${easy.captcha.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
