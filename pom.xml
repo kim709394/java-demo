@@ -92,7 +92,7 @@
         <spring.data.jpa.version>2.1.8.RELEASE</spring.data.jpa.version>
         <javax.el.version>3.0.1-b04</javax.el.version>
         <glassfish.web.version>2.2.6</glassfish.web.version>
-        <hibernate.relative.version>5.4.0.Final</hibernate.relative.version>
+        <hibernate.relative.version>5.4.24.Final</hibernate.relative.version>
         <easy.captcha.version>1.6.2</easy.captcha.version>
     </properties>
 
