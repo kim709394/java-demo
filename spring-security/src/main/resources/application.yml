@@ -1,5 +1,8 @@
 server:
   port: 8080
+  servlet:
+    session:
+      timeout: 60   #设置session会话超时时间为60秒，默认是30秒
 spring:
   application:
     name: spring-security-demo
@@ -7,3 +10,5 @@ spring:
   thymeleaf:
     prefix:  classpath:/public/pages/
     cache: false
+  #session:
+    #store-type: redis    # session交由redis管理，而非web服务器

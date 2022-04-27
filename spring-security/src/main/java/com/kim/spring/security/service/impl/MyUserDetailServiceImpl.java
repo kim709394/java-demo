@@ -4,6 +4,7 @@ import com.kim.spring.security.pojo.User;
 import com.kim.spring.security.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -33,7 +34,13 @@ public class MyUserDetailServiceImpl implements UserDetailsService {
             throw new UsernameNotFoundException(username);
         }
         //此用户的所有权限集合
-        Collection<? extends GrantedAuthority> authorities = new ArrayList<>();
+        Collection<GrantedAuthority> authorities = new ArrayList<>();
+        //带ROLE_前缀的是角色，没有ROLE_前缀的是权限
+        authorities.add(new SimpleGrantedAuthority("ROLE_user"));
+        authorities.add(new SimpleGrantedAuthority("ROLE_admin"));
+        //添加权限
+        authorities.add(new SimpleGrantedAuthority("user:list"));
+        authorities.add(new SimpleGrantedAuthority("user:add"));
         //返回用户信息
         return new org.springframework.security.core.userdetails.User(user.getName(),
                 "{bcrypt}"+user.getPassword(),        //{noop}表示密码不加密认证，{bcrypt}表示加密认证
