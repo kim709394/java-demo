@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -26,6 +27,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
  * @date 2022/4/20
  */
 @SpringBootConfiguration
+@EnableGlobalMethodSecurity(prePostEnabled = true)  //开启方法注解授权支持
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 
@@ -61,8 +63,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity web) throws Exception {
-        //忽略静态资源
-        web.ignoring().antMatchers("/login1/**");
+        //忽略静态资源,放行前端页面
+        web.ignoring().antMatchers("/login1/**","/css/**","/js/**","/**.js","/security/front/**");
     }
 
     @Override
@@ -105,18 +107,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests().antMatchers("/security/front/login", "/security/user/verify/code")
                 .permitAll()    //放行登录页面，验证码接口，任何人都可以访问
                 //授权部分
-                .antMatchers("/security/user/del/{id}")
-                .access("@myAuthorizationService.check(authentication,request,#id)") //根据路径id来判断授权逻辑
-                .antMatchers("/security/user/list")
-                .hasAuthority("user:list")  //对于/security/user/list的访问需要user:list的权限
-                .antMatchers("/security/user/get/{id}")
-                .hasAnyAuthority("user:list","user:get")    //对于/security/user/get/{id}的访问需要user:list或者user:get的权限
-                .antMatchers("/security/user/**")
+                //.antMatchers("/security/user/del/{id}")
+                //.access("@myAuthorizationService.check(authentication,request,#id)") //根据路径id来判断授权逻辑
+                //.antMatchers("/security/user/list")
+                //.hasAuthority("user:list")  //对于/security/user/list的访问需要user:list的权限
+                //.antMatchers("/security/user/get/{id}")
+                //.hasAnyAuthority("user:list","user:get")    //对于/security/user/get/{id}的访问需要user:list或者user:get的权限
+                //.antMatchers("/security/user/**")
                 //.hasRole("admin")   //授权了admin角色才能访问
                 //.hasAnyRole("user","admin") //授权了"admin"和"user"角色任意一个才能访问
                 //.access("hasAnyRole('user,admin') and hasIpAddress('127.0.0.1')")   //有user或者admin角色并且指定ip为127.0.0.1的用户才能访问
                 //.hasIpAddress("127.0.0.1")  //指定ip为127.0.0.1的用户才能访问
-                .access("@myAuthorizationService.check(authentication,request)")    //使用自定义授权逻辑
+                //.access("@myAuthorizationService.check(authentication,request)")    //使用自定义授权逻辑
                 .anyRequest()   //所有请求
                 //.denyAll()    其余所有请求任何人都不能访问
                 //.anonymous()  匿名用户允许访问
@@ -150,9 +152,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .sessionManagement()
                 //.sessionCreationPolicy(SessionCreationPolicy.STATELESS) //设置会话创建策略
-                .invalidSessionUrl("/security/front/login")     //设置session无效后的跳转地址，默认是登录页
+                //.invalidSessionUrl("/security/front/login")     //设置session无效后的跳转地址，默认是登录页
                 .maximumSessions(1) //设置session最大会话数量，即同时在线的同一用户数量，后面登录的用户将会踢掉前面登录的用户
-                .expiredUrl("/security/front/login")     //设置session过期后的跳转路径，默认是登录页
+                //.expiredUrl("/security/front/login")     //设置session过期后的跳转路径，默认是登录页
                 .maxSessionsPreventsLogin(false);    //当同一用户达到最大登录会话数时，是否禁止登录，false为不禁止
 
 

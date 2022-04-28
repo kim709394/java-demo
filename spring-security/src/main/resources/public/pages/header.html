@@ -1,0 +1,97 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org/">
+<div th:fragment="header">
+    <div class="layui-logo">spring security demo</div>
+<link rel="stylesheet" href="/css/layui.css">
+    <script type="text/javascript" src="/js/jquery-1.11.1.min.js"></script>
+    <ul class="layui-nav layui-layout-right">
+        <li class="layui-nav-item"><a href="javascript:">欢迎您，<span id="currentUser" ></span></a></li>
+        <li class="layui-nav-item"><a href="javascript:exit()">登出</a></li>
+    </ul>
+<script src="/layui.js"></script>
+
+<!--全局ajax拦截库-->
+<script type="text/javascript" src="/js/ajaxhook.min.js"></script>
+<script type="text/javascript">
+    //全局ajax拦截
+    ah.proxy({
+        //请求发起前进入
+        onRequest: (config, handler) => {
+            console.log(config.url)
+            handler.next(config);
+        },
+        //请求发生错误时进入，比如超时；注意，不包括http状态码错误，如404仍然会认为请求成功
+        onError: (err, handler) => {
+            console.log(err.type)
+            handler.next(err)
+        },
+        //请求成功后进入
+        onResponse: (response, handler) => {
+            try{
+                var res = JSON.parse(response.response);
+                if (res.code == 3004 || res.code == 3006){
+                    layer.msg(res.msg, {icon: 2})
+                    setTimeout(function () {
+                        window.location = '/security/front/login'
+                    },1000);
+
+                }else{
+                    handler.next(response)
+                }
+            }catch (e) {
+                console.log(e);
+            }
+
+        }
+    });
+
+    getCurrent();
+
+    function getCurrent(){
+        $.get(
+            '/security/user/current',
+            function(result){
+                if (result.code == 2000){
+                    $("#currentUser").text(result.data.name);
+                }
+            }
+        );
+    }
+
+    function exit(){
+        $.get(
+            '/logout',
+            function(result){
+                if (result.code == 2000){
+                    //清空本地会话存储信息
+                    window.localStorage.clear();
+                    window.location = '/security/front/login';
+                }
+            }
+        )
+    }
+    //时间戳转时间字符串格式
+    function timestampToDateStr(timestamp){
+        if(timestamp == null ||timestamp==0||timestamp==undefined||timestamp==""){
+            return "";
+        }
+        var date=new Date(timestamp);
+        var year=date.getFullYear();
+        var mon = date.getMonth()+1;
+        var day = date.getDate();
+        var hours = date.getHours();
+        var minu = date.getMinutes();
+        var sec = date.getSeconds();
+        return year+"-"+mon+"-"+day+" "+hours+":"+minu+":"+sec;
+    }
+    //时间字符串转时间戳
+    function dateStrToTimestamp(dateStr){
+        if(dateStr == null || dateStr == "" || dateStr == undefined){
+            return null;
+        }
+        return new Date(dateStr).getTime();
+    }
+
+
+
+</script>
+</div>

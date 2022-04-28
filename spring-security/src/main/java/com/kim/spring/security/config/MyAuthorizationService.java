@@ -28,7 +28,7 @@ public class MyAuthorizationService {
             return true;
         }else{
             for(GrantedAuthority authority: user.getAuthorities()){
-                if(authority.getAuthority().equals("ROLE_admin")){
+                if(authority.getAuthority().equals("ROLE_admin")|| authority.getAuthority().equals("ROLE_user")){
                     return true;
                 }
             }

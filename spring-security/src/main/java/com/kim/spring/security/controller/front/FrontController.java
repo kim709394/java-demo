@@ -26,4 +26,10 @@ public class FrontController {
         return "index";
     }
 
+    //用户列表
+    @GetMapping("/user")
+    public String user(){
+        return "userlist";
+    }
+
 }

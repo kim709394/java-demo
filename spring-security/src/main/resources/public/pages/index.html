@@ -1,26 +1,39 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org/">
+<head>
+    <meta charset="UTF-8">
+    <title>首页</title>
 
-<html xmlns="http://www.w3.org/1999/xhtml" >
-<script type="text/javascript" src="/login1/js/jquery.min.js"></script>
-<body>
-<h2>Hello Spring security!</h2>
-<input type='button' id="logout" value='登出'>
+    <link rel="stylesheet" href="/css/layui.css">
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+    <div class="layui-header">
+        <!-- 头部区域（可配合layui已有的水平导航） -->
+        <div th:replace="header :: header"></div>
+    </div>
+
+    <div class="layui-side layui-bg-black">
+        <div class="layui-side-scroll">
+            <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+            <div th:replace="navigation :: navigation"></div>
+        </div>
+    </div>
+
+    <div class="layui-body">
+        <!--底部-->
+        <div class="layui-footer">
+            <!-- 底部固定区域 -->
+            <div th:replace="footer :: footer"></div>
+        </div>
+    </div>
+</div>
+
+
 </body>
-<script type="text/javascript">
 
-    $(function(){
-        $("#logout").click(function(){
-            $.get(
-                '/logout',
-                function(result){
-                    if (result.code != 2000){
-                        window.location="/security/front/login";
-                    } else{
-                        window.location="/security/front/login";
-                    }
-                }
-            );
-        });
-    });
-</script>
+
+
+<script src="/layui.js"></script>
+<script type="text/javascript" src="/js/jquery-1.11.1.min.js"></script>
 </html>

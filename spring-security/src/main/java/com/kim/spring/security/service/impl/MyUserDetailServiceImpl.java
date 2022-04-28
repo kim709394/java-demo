@@ -35,12 +35,21 @@ public class MyUserDetailServiceImpl implements UserDetailsService {
         }
         //此用户的所有权限集合
         Collection<GrantedAuthority> authorities = new ArrayList<>();
-        //带ROLE_前缀的是角色，没有ROLE_前缀的是权限
-        authorities.add(new SimpleGrantedAuthority("ROLE_user"));
-        authorities.add(new SimpleGrantedAuthority("ROLE_admin"));
-        //添加权限
-        authorities.add(new SimpleGrantedAuthority("user:list"));
-        authorities.add(new SimpleGrantedAuthority("user:add"));
+        if(username.equals("admin")){
+            //带ROLE_前缀的是角色，没有ROLE_前缀的是权限
+            authorities.add(new SimpleGrantedAuthority("ROLE_user"));
+            authorities.add(new SimpleGrantedAuthority("ROLE_admin"));
+            //添加权限
+            authorities.add(new SimpleGrantedAuthority("user:list"));
+            authorities.add(new SimpleGrantedAuthority("user:add"));
+            authorities.add(new SimpleGrantedAuthority("user:update"));
+            authorities.add(new SimpleGrantedAuthority("user:del"));
+            authorities.add(new SimpleGrantedAuthority("user:get"));
+        }else{
+            authorities.add(new SimpleGrantedAuthority("ROLE_user"));
+            authorities.add(new SimpleGrantedAuthority("user:list"));
+        }
+
         //返回用户信息
         return new org.springframework.security.core.userdetails.User(user.getName(),
                 "{bcrypt}"+user.getPassword(),        //{noop}表示密码不加密认证，{bcrypt}表示加密认证

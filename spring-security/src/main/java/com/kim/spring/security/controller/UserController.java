@@ -1,10 +1,15 @@
 package com.kim.spring.security.controller;
 
+import com.kim.spring.security.pojo.ResultVO;
 import com.kim.spring.security.pojo.User;
 import com.kim.spring.security.service.UserService;
 import com.wf.captcha.SpecCaptcha;
 import com.wf.captcha.base.Captcha;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PostFilter;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.access.prepost.PreFilter;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.ServletOutputStream;
@@ -29,42 +34,62 @@ public class UserController {
 
 
     @GetMapping("/list")
-    public List<User> list() {
-
-
-        return userService.list();
+    //方法执行之前进行权限校验
+    @PreAuthorize("hasAuthority('user:list')")
+    public ResultVO list() {
+        return ResultVO.success(userService.list());
     }
 
+    @GetMapping("/ids")
+    //方法执行之前进行权限校验,主要过滤掉集合参数的不符合条件的部分元素，以下过滤掉参数集合中不能被2整除的元素
+    @PreFilter(filterTarget = "ids",value="filterObject%2 == 0")
+    //方法执行之后进行权限校验，主要过滤掉返回值集合不符合条件的部分元素，以下过滤掉返回值集合中不能被4整除的元素
+    @PostFilter("filterObject%4 == 0")
+    public ResultVO listByIds(@RequestBody List<Integer> ids) {
+
+        return ResultVO.success(ids);
+    }
+
+
+
     @PostMapping("/add")
-    public String add(@RequestBody User user) {
+    //方法执行之前进行权限校验
+    @PreAuthorize("hasRole('admin') or hasAuthority('user:add')")   //需要有admin的角色才能访问
+    public ResultVO add(@RequestBody User user) {
         userService.add(user);
-        return "success";
+        return ResultVO.success();
     }
 
     @PutMapping("/update")
-    public String update(@RequestBody User user) {
-
-        return add(user);
+    @PreAuthorize("hasAnyAuthority('user:update','user:list')") //有update或者list权限才能访问
+    public ResultVO update(@RequestBody User user) {
+        userService.update(user);
+        return ResultVO.success();
     }
 
     @GetMapping("/get/{id}")
-    public User get(@PathVariable("id") Integer id) {
+    //路径参数权限校验
+    @PreAuthorize("hasAnyAuthority('user:list','user:get','user:update')")   //路径参数id小于10才能访问
+    public ResultVO get(@PathVariable("id") Integer id) {
 
-        return userService.get(id);
+        return ResultVO.success(userService.get(id));
     }
 
     @DeleteMapping("/del/{id}")
-    public String del(@PathVariable("id") Integer id) {
+    @PreAuthorize("#id > 1 and  hasAuthority('user:del')")
+    public ResultVO del(@PathVariable("id") Integer id) {
 
         userService.del(id);
-        return "success";
+        return ResultVO.success();
 
     }
 
     //获取当前登录用户
     @GetMapping("/current")
-    public User getCurrent() {
-        return userService.getCurrent();
+    //方法执行之后进行权限校验，适合对返回值进行权限校验
+    @PostAuthorize("returnObject.data.name== authentication.principal.username") //返回值等于当前用户才能访问
+    public ResultVO getCurrent() {
+        return ResultVO.success(userService.getCurrent());
     }
 
     //还有两种方式获取当前登录用户信息

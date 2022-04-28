@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org/">
+<head>
+    <meta charset="UTF-8">
+    <title>用户列表</title>
+
+    <link rel="stylesheet" href="/css/layui.css">
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+    <div class="layui-header">
+        <!-- 头部区域（可配合layui已有的水平导航） -->
+        <div th:replace="header :: header"></div>
+    </div>
+
+    <div class="layui-side layui-bg-black">
+        <div class="layui-side-scroll">
+            <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+            <div th:replace="navigation :: navigation"></div>
+        </div>
+    </div>
+
+    <div class="layui-body">
+
+            <span class="layui-breadcrumb">
+              <a href="/security/front/index">首页</a>
+                <a href="">用户列表</a>
+            </span>
+        <hr class="layui-bg-green">
+        <!-- 内容主体区域 -->
+        <!--搜索框-->
+
+        &nbsp;&nbsp;&nbsp;
+        <button type="button" class="layui-btn" id="add" title="添加">
+            <i class="layui-icon">&#xe608;</i>
+        </button>
+        <!--数据列表-->
+        <table id="dataList" lay-filter="dataList" class="layui-table"></table>
+
+        <!--分页组件-->
+        <div id="paging"></div>
+
+        <!--底部-->
+        <div class="layui-footer">
+            <!-- 底部固定区域 -->
+            <div th:replace="footer :: footer"></div>
+        </div>
+    </div>
+</div>
+
+
+</body>
+
+    <form class="layui-form" hidden id="form1" lay-filter="form1"> <!-- 提示：如果你不想用form，你可以换成div等任何一个普通元素 -->
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">用户名称</label>
+            <div class="layui-input-block">
+                <input type="text" name="form1_name" placeholder="请输入用户名称" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">密码</label>
+            <div class="layui-input-block">
+                <input type="text" name="form1_password" placeholder="请输入密码" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">年龄</label>
+            <div class="layui-input-block">
+                <input type="text" name="form1_age" placeholder="请输入年龄" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item" hidden id="form1_createdAt">
+            <label class="layui-form-label">创建时间</label>
+            <div class="layui-input-block">
+                <input type="text" name="form1_createdAt" placeholder="" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+    </form>
+
+<script src="/layui.js"></script>
+<script type="text/javascript" src="/js/jquery-1.11.1.min.js"></script>
+<script type="text/javascript">
+    //layui组件配置
+    layui.config({
+        dir: '/res/layui/' //layui.js 所在路径（注意，如果是 script 单独引入 layui.js，无需设定该参数。），一般情况下可以无视
+        , version: false //一般用于更新模块缓存，默认不开启。设为 true 即让浏览器不缓存。也可以设为一个固定的值，如：201610
+        , debug: false //用于开启调试模式，默认 false，如果设为 true，则JS模块的节点会保留在页面
+        , base: '' //设定扩展的 layui 模块的所在目录，一般用于外部模块扩展
+    });
+    var layer;     //弹出层
+    var form;     //表单
+    var table;    //列表
+    var laypage;  //分页
+    var laydate;  //时间插件
+    var tree;   //树形组件
+    //全html加载完毕才会执行第二个参数function回调
+    layui.use(['table','element', 'layer','tree' ,'form','laydate','laypage'], function () {
+        //var element = layui.element;
+        table = layui.table;
+        layer = layui.layer;
+        laytpl = layui.laytpl;
+        laydate = layui.laydate;
+        laypage = layui.laypage;
+        form = layui.form;
+        tree = layui.tree;
+        laydate.render({
+            elem:'#createTime',
+            range:true,
+            theme:'molv',
+            calendar:false
+        });
+
+        //初始化方法
+        dataList(1,10,false);   //初始化角色列表数据
+    });
+
+    //分页组件渲染
+    //count:总数据量，pageSize:页面容量
+    function paging(count, pageSize){
+        laypage.render({
+            elem:'paging',
+            count:count,
+            limit:pageSize,
+            limits:[10,20,30,40,50],
+            layout:['count','prev','page','next','limit','refresh','skip'],
+            jump:function (obj,first) {
+                console.log('当前页:'+obj.curr);
+                console.log('每页数量:'+obj.limit);
+                console.log(first)
+                if (first) {
+                    return;
+                }
+                dataList(obj.curr , obj.limit, false);
+            }
+        });
+    }
+    //列表数据渲染
+    //pageNo: 页码，pageSize:页面容量，isPaging:是否渲染分页组件
+    function dataList(pageNo , pageSize, isPaging){
+        table.render({
+            elem:'#dataList',
+            url:'/security/user/list',
+            method:'get',
+            cols:[ [
+                {field:'order',title:"序号",type:"numbers"},
+                {field:'name',title:'用户名',width:220},
+                {field:'password',title:'密码',width:200},
+                {field:'age',title:'年龄',width:200},
+                {field:'createdAt',title:'创建时间',width:200,templet:function(d){
+                        return timestampToDateStr(d.createdAt);
+                    }},
+                {field:'operation',title:"操作",toolbar:"#operation"}
+            ] ],
+            parseData:function(res){
+              return {
+                  "code":res.code,
+                  "msg":res.msg,
+                  "data":res.data
+              }
+            },
+            response:{
+              statusCode:"2000"
+            },
+            done:function(res, curr, count){
+                if (isPaging) {
+                    paging(res.count, pageSize);
+                }
+            }
+        });
+        //查改删
+        table.on('tool(dataList)',function (obj){
+            var data = obj.data;
+            var event = obj.event;
+            var user ;
+            if (event == 'detail'){
+                $.ajax({
+                    type:'GET',
+                    async:false,    //同步请求
+                    url:'/security/user/get/'+data.id,
+                    success:function(result) {
+                        if (result.code == 2000) {
+                            user = result.data;
+                        } else {
+                            layer.msg(result.msg, {icon: 2});
+                        }
+                    }
+                });
+                if(user == undefined){
+                    return;
+                }
+                resetForm1(user, true, true);
+                layer.open({
+                    type: 1,    //弹出层类型，页面层
+                    title:'用户详情',    //标题
+                    content: $('#form1'),    //弹出层内容，可以是一个dom，可以是字符串
+                    area: ['500px','500px'],        //宽高
+                    //shade:0,        遮罩
+                    btn:["关闭"],     //按钮
+                    btn1:function (index,layero) {            //第一个按钮，函数是被点击的回调函数，参数一是当前弹出层的index，参数二是当前层的do
+                        $("#form1").hide();
+                        layer.close(index);
+                    },
+                    cancel:function(index,layero){    //右上角关闭按钮被点击时回调函数
+                        $("#form1").hide();
+                        return true;
+                    }
+                });
+            }else if (event == 'edit'){
+
+                $.ajax({
+                    type:"GET",
+                    async:false,
+                    url:'/security/user/get/'+data.id,
+                    success:function(result) {
+                        if (result.code == 2000) {
+                            user = result.data;
+                        } else {
+                            layer.msg(result.msg, {icon: 2});
+                        }
+                    }
+                });
+                if(user == undefined){
+                    return;
+                }
+                resetForm1(user, false, false);
+                layer.open({
+                    type: 1,    //弹出层类型，页面层
+                    title:'编辑用户',    //标题
+                    content: $('#form1'),    //弹出层内容，可以是一个dom，可以是字符串
+                    area: ['500px','500px'],        //宽高
+                    //shade:0,        遮罩
+                    btn:["提交","重置"],     //按钮
+                    btn1:function (index,layero) {            //第一个按钮，函数是被点击的回调函数，参数一是当前弹出层的index，参数二是当前层的do
+                        var form1 = form.val("form1");
+                        var param = {
+                            id :  data.id,
+                            name : form1.form1_name,
+                            password:form1.form1_password,
+                            age:form1.form1_age
+                        }
+                        $.ajax({
+                            type:"PUT",
+                            url:'/security/user/update',
+                            contentType:"application/json",
+                            data:JSON.stringify(param),
+                            success:function(result) {
+                                if (result.code == 2000) {
+                                    layer.msg("修改用户", {icon: 1});
+                                    dataList(1, 10, false);
+                                    $("#form1").hide();
+                                    layer.close(index);
+                                } else {
+                                    layer.msg(result.msg, {icon: 2});
+                                }
+                            }
+                        });
+                    },
+                    btn2:function (index,layero) {    //第二个按钮
+                        var o = {name:"",createdAt:"",password: "",age:""};
+                        resetForm1(o, false , false);
+                        return false;    //return false则不关闭，return true则关闭
+                    },
+                    cancel:function(index,layero){    //右上角关闭按钮被点击时回调函数
+                        $("#form1").hide();
+                        return true;
+                    }
+                });
+            }else if (event == 'del'){
+                layer.confirm('删除数据后将不可恢复，是否删除?',function(index){
+                    $.ajax({
+                        type:"DELETE",
+                        url:'/security/user/del/'+data.id,
+                        success:function(result) {
+                            if (result.code == 2000) {
+                                layer.msg("删除成功", {icon: 1});
+                                dataList(1, 10, false);
+                            } else {
+                                layer.msg(result.msg, {icon: 2});
+                            }
+                        }
+                    });
+                    layer.close(index);
+                });
+            }
+        });
+    }
+    //设置弹窗表单
+    function resetForm1(obj,disabled,createdTime){
+        $("input[name='form1_name']").val(obj.name);
+        $("input[name='form1_password']").val(obj.password);
+        $("input[name='form1_age']").val(obj.age);
+        $("input[name='form1_createdAt']").val(timestampToDateStr(obj.createdAt));
+        if(disabled) {
+            $("input[name='form1_name']").attr("disabled",true);
+            $("input[name='form1_password']").attr("disabled",true);
+            $("input[name='form1_age']").attr("disabled",true);
+            $("input[name='form1_createdAt']").attr("disabled",true);
+        }else{
+            $("input[name='form1_name']").attr("disabled",false);
+            $("input[name='form1_password']").attr("disabled",false);
+            $("input[name='form1_age']").attr("disabled",false);
+            $("input[name='form1_createdAt']").attr("disabled",false);
+        }
+        if(createdTime) {
+            $("#form1_createdAt").show();
+        }else{
+            $("#form1_createdAt").hide();
+        }
+
+    }
+
+    //事件方法
+    $(function () {
+        $("#add").click(function () {
+            var obj = {name:"",createdAt:"",age: "",password:""};
+            resetForm1(obj, false , false);
+            layer.open({
+                type: 1,    //弹出层类型，页面层
+                title:'新增用户',    //标题
+                content: $('#form1'),    //弹出层内容，可以是一个dom，可以是字符串
+                area: ['500px','500px'],        //宽高
+                //shade:0,        遮罩
+                btn:["提交","重置"],     //按钮
+                btn1:function (index,layero) {            //第一个按钮，函数是被点击的回调函数，参数一是当前弹出层的index，参数二是当前层的do
+                    var data = form.val("form1");
+                    var param = {
+                        name : data.form1_name,
+                        password:data.form1_password,
+                        age:data.form1_age
+                    }
+                    $.ajax({
+                        type:"POST",
+                        url: '/security/user/add',
+                        data:JSON.stringify(param),
+                        contentType:"application/json",
+                        success:function(result) {
+                            if (result.code == 2000) {
+                                layer.msg("新增用户成功", {icon: 1});
+                                dataList(1, 10, false);
+                                $("#form1").hide();
+                                layer.close(index);
+                            } else {
+                                layer.msg(result.msg, {icon: 2});
+                            }
+                        }
+                    });
+                },
+                btn2:function (index,layero) {    //第二个按钮
+                    resetForm1(obj, false , false);
+                    return false;    //return false则不关闭，return true则关闭
+                },
+                cancel:function(index,layero){    //右上角关闭按钮被点击时回调函数
+                    $("#form1").hide();
+                    return true;
+                }
+            });
+        });
+    });
+
+
+</script>
+<!--列表页操作栏-->
+<script type="text/html" id="operation">
+    <a class="layui-btn layui-btn-xs" lay-event="detail">查看</a>
+    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+</html>

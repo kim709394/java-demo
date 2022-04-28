@@ -69,13 +69,18 @@ public class UserServiceImpl implements UserService {
     }
 
     public void add( User user){
+        user.setCreatedAt(new Date());
+        Integer max = users.keySet().stream().max(Integer::compareTo).get();
+        user.setId(max+1);
+        user.setPassword(bcryptPassword(user.getPassword()));
         users.put(user.getId(),user);
     }
 
 
     public void update(User user){
-
-        add(user);
+        user.setCreatedAt(new Date());
+        user.setPassword(bcryptPassword(user.getPassword()));
+        users.put(user.getId(),user);
     }
 
     public User get(Integer id){
