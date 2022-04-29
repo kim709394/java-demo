@@ -32,4 +32,7 @@ public class FrontController {
         return "userlist";
     }
 
+    @GetMapping("aaa")
+    public String aaa(){return "aaa";}
+
 }

@@ -14,6 +14,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -26,7 +27,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
  * @description 登录、认证、授权、鉴权配置类
  * @date 2022/4/20
  */
-@SpringBootConfiguration
+@EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)  //开启方法注解授权支持
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
@@ -63,8 +64,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity web) throws Exception {
-        //忽略静态资源,放行前端页面
-        web.ignoring().antMatchers("/login1/**","/css/**","/js/**","/**.js","/security/front/**");
+        //忽略静态资源,不能放行前端页面，否则sec标签不生效
+        web.ignoring().antMatchers("/login1/**","/css/**","/js/**","/**.js");
     }
 
     @Override

@@ -1,10 +1,11 @@
-<html lang="en" xmlns:th="http://www.thymeleaf.org/">
+<html lang="en" xmlns:th="http://www.thymeleaf.org/"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <div th:fragment="header">
     <div class="layui-logo">spring security demo</div>
 <link rel="stylesheet" href="/css/layui.css">
     <script type="text/javascript" src="/js/jquery-1.11.1.min.js"></script>
-    <ul class="layui-nav layui-layout-right">
-        <li class="layui-nav-item"><a href="javascript:">欢迎您，<span id="currentUser" ></span></a></li>
+    <ul class="layui-nav layui-layout-right">               <!--获取当前登录用户-->
+        <li class="layui-nav-item"><a href="javascript:">欢迎您，<span sec:authentication="name"></span></a></li>
         <li class="layui-nav-item"><a href="javascript:exit()">登出</a></li>
     </ul>
 <script src="/layui.js"></script>
@@ -51,7 +52,7 @@
             '/security/user/current',
             function(result){
                 if (result.code == 2000){
-                    $("#currentUser").text(result.data.name);
+                    //$("#currentUser").text(result.data.name);
                 }
             }
         );

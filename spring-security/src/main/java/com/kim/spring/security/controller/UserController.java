@@ -34,7 +34,7 @@ public class UserController {
 
 
     @GetMapping("/list")
-    //方法执行之前进行权限校验
+    //方法执行之前进行权限校验，有user:list权限才能访问
     @PreAuthorize("hasAuthority('user:list')")
     public ResultVO list() {
         return ResultVO.success(userService.list());
@@ -54,14 +54,14 @@ public class UserController {
 
     @PostMapping("/add")
     //方法执行之前进行权限校验
-    @PreAuthorize("hasRole('admin') or hasAuthority('user:add')")   //需要有admin的角色才能访问
+    @PreAuthorize("hasRole('admin') or hasAuthority('user:add')")   //需要有admin的角色或者有user:add权限才能访问
     public ResultVO add(@RequestBody User user) {
         userService.add(user);
         return ResultVO.success();
     }
 
     @PutMapping("/update")
-    @PreAuthorize("hasAnyAuthority('user:update','user:list')") //有update或者list权限才能访问
+    @PreAuthorize("hasAnyAuthority('user:update')") //有update权限才能访问
     public ResultVO update(@RequestBody User user) {
         userService.update(user);
         return ResultVO.success();

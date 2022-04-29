@@ -57,12 +57,18 @@
             <groupId>com.github.whvcse</groupId>
             <artifactId>easy-captcha</artifactId>
         </dependency>
-<!--        会话由redis管理包，实现分布式集中会话管理-->
+        <!--        会话由redis管理包，实现分布式集中会话管理-->
         <dependency>
             <groupId>org.springframework.session</groupId>
             <artifactId>spring-session-data-redis</artifactId>
         </dependency>
+        <!--添加thymeleaf为SpringSecurity提供的标签 依赖 -->
+        <dependency>
+            <groupId>org.thymeleaf.extras</groupId>
+            <artifactId>thymeleaf-extras-springsecurity5</artifactId>
+        </dependency>
     </dependencies>
+
 
     <build>
         <plugins>

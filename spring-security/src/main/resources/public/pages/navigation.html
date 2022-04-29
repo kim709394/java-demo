@@ -1,9 +1,10 @@
-<html lang="en" xmlns:th="http://www.thymeleaf.org/">
-<div th:fragment="navigation">
+<html lang="en" xmlns:th="http://www.thymeleaf.org/"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<div th:fragment="navigation" sec:authorize="isAuthenticated()"><!--登录认证后的用户才显示 sec:authorize="isAuthenticated()"-->
 
         <ul class="layui-nav layui-nav-tree"  lay-filter="test">
-
-            <li class="layui-nav-item layui-nav-itemed">
+            <!--拥有user:list权限的用户才能显示用户列表-->
+            <li class="layui-nav-item layui-nav-itemed" sec:authorize="hasAuthority('user:list')"><!--sec:authorize="hasAuthority('user:list')"-->
                 <a class="" href="javascript:;">人员管理</a>
                 <dl class="layui-nav-child">
                     <dd><a href="/security/front/user">用户列表</a></dd>

@@ -94,6 +94,7 @@
         <glassfish.web.version>2.2.6</glassfish.web.version>
         <hibernate.relative.version>5.4.0.Final</hibernate.relative.version>
         <easy.captcha.version>1.6.2</easy.captcha.version>
+        <thymeleaf.extra.version>3.0.4.RELEASE</thymeleaf.extra.version>
     </properties>
 
     <dependencyManagement>
@@ -534,6 +535,12 @@
                 <groupId>com.github.whvcse</groupId>
                 <artifactId>easy-captcha</artifactId>
                 <version>${easy.captcha.version}</version>
+            </dependency>
+            <!--添加thymeleaf为SpringSecurity提供的标签 依赖 -->
+            <dependency>
+                <groupId>org.thymeleaf.extras</groupId>
+                <artifactId>thymeleaf-extras-springsecurity5</artifactId>
+                <version>${thymeleaf.extra.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
