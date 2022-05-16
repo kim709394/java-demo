@@ -95,6 +95,7 @@
         <hibernate.relative.version>5.4.0.Final</hibernate.relative.version>
         <easy.captcha.version>1.6.2</easy.captcha.version>
         <thymeleaf.extra.version>3.0.4.RELEASE</thymeleaf.extra.version>
+        <sqlservr.version>8.2.2.jre8</sqlservr.version>
     </properties>
 
     <dependencyManagement>
@@ -541,6 +542,12 @@
                 <groupId>org.thymeleaf.extras</groupId>
                 <artifactId>thymeleaf-extras-springsecurity5</artifactId>
                 <version>${thymeleaf.extra.version}</version>
+            </dependency>
+            <!--        sqlserver 驱动-->
+            <dependency>
+                <groupId>com.microsoft.sqlserver</groupId>
+                <artifactId>mssql-jdbc</artifactId>
+                <version>${sqlserver.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
