@@ -95,7 +95,7 @@
         <hibernate.relative.version>5.4.0.Final</hibernate.relative.version>
         <easy.captcha.version>1.6.2</easy.captcha.version>
         <thymeleaf.extra.version>3.0.4.RELEASE</thymeleaf.extra.version>
-        <sqlservr.version>8.2.2.jre8</sqlservr.version>
+        <sqlserver.version>8.2.2.jre8</sqlserver.version>
     </properties>
 
     <dependencyManagement>
