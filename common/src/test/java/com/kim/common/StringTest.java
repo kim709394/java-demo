@@ -19,4 +19,19 @@ public class StringTest {
         System.out.println(arr);
     }
 
+    @Test
+    @DisplayName("字符串常量池")
+    public void testFinal(){
+
+        final String str1 = "str";
+        //运行时才能知道值，所以编译时不会初始化进字符串常量池
+        final String str2 = getStr();
+        String c = "str" + "ing";// 常量池中的对象
+        String d = str1 + str2; // 在堆上创建的新的对象
+        System.out.println(c == d);// false
+
+    }
+    public static String getStr() {
+        return "ing";
+    }
 }

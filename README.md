@@ -31,6 +31,7 @@ java应用下的各种api、工具类、第三方jar包使用、框架，等等�
 - #### JavassistTest                        Javassis生成类框架demo
 - #### StringTest                           字符串处理
 - #### ExcelTest                            Excel导入导出demo
+- #### NumberTest                           数字类型数据处理
 #### 工具类  com.kim.common.util
 - ##### AesUtil                             Aes对称算法加解密
 - ##### ExecCmdUtil                         java执行cmd/sh命令
@@ -43,6 +44,7 @@ java应用下的各种api、工具类、第三方jar包使用、框架，等等�
 - ##### UnicodeUtil                         万国码编解码
 - ##### HttpClientUtils                     httpclient工具类
 - ##### HttpClientPoolUtils                 HttpClientPoolUtils连接池工具类
+- ##### BigDecimalUtil                      浮点型数字处理工具类
 ### freeswitch-cli                          软电话交换引擎(PBX)客户端
 ### true-license                            证书生成和安装，用于检测被部署应用的客户机的一些参数或者有效期是否合法,[查看使用说明](./TRUE-LICENSE.md)
 - #### true-license-server                  服务端，用于生成证书
