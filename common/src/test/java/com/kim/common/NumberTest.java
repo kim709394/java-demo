@@ -95,6 +95,23 @@ public class NumberTest {
 
     }
 
+    @Test
+    @DisplayName("位移")
+    public void displacement(){
+        //将5转化为二进制后整体向左移动两位，左边丢弃，右边补0，等值运算：5*2的移位位数次方：5*2的2次方
+        int a = 5 << 2;
+        //将11转化为二进制后整体向右移动2位，右边丢弃，左边补符号位，即1，等值运算：11/2的移位位数次方：11/2的2次方
+        int b = 11 >> 2;
+        System.out.println("带符号左移："+a);
+        System.out.println("带符号右移："+b);
+        //类似于 >>，区别是补0而不是补符号位
+        int c = 10 >>> 2;
+        System.out.println("无符号右移:"+c);
 
+        //将10000*100用位运算来替代
+        int d = (10000 << 6) + (10000 << 5) + (10000 << 2);
+        System.out.println("10000*100="+d);
+
+    }
 
 }
