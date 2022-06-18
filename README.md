@@ -53,7 +53,6 @@ java应用下的各种api、工具类、第三方jar包使用、框架，等等�
 ### spring-quartz                           quartz定时器demo
 ### grpc-java                               grpc集成java的demo,[使用说明](./GRPC-JAVA.md)
 ### mongodb-java                            springboot.data.mongodb&&mongodb.plus mogodb-java客户端demo
-### spring-springmvc                        spring以及springmvc的基本用法
 ### mybatis                                 mybatis原生框架的应用demo
 ### springboot-mybatis-plus                 mybatis-plus与springboot整合
 ### spring-framework                        spring原生框架demo
