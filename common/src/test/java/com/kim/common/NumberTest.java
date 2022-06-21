@@ -111,7 +111,7 @@ public class NumberTest {
         //将10000*100用位运算来替代
         int d = (10000 << 6) + (10000 << 5) + (10000 << 2);
         System.out.println("10000*100="+d);
-
     }
+
 
 }

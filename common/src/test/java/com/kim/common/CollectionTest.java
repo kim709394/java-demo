@@ -93,6 +93,9 @@ public class CollectionTest {
         //用新元素替换旧元素
         Collections.replaceAll(list,10,8);
         System.out.println("被替换后的list:"+list);
+        //判断空，不要使用size() == 0 方法
+        boolean empty = list.isEmpty();
+        System.out.println("集合是否为空"+empty);
 
         /**
          * 最好不要用下面这些方法，效率非常低，需要线程安全的集合类型时请考虑使用 JUC 包下的并发集合。
