@@ -40,7 +40,7 @@
         <spring.cloud.version>Hoxton.SR3</spring.cloud.version>
         <mp.version>3.4.3.4</mp.version>
         <druid.spring.boot.starter.version>1.1.17</druid.spring.boot.starter.version>
-        <mysql.connector>8.0.23</mysql.connector>
+        <mysql.connector>8.0.28</mysql.connector>
         <hutool.all.version>5.3.2</hutool.all.version>
         <common.lang3.version>3.3.2</common.lang3.version>
         <common.io.version>1.3.2</common.io.version>
