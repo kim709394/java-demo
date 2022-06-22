@@ -36,11 +36,12 @@ public class ThreadTest {
      * 线程池业务接口使用
      * */
     @Test
+    @DisplayName("不推荐此方式创建线程池，因为队列大小为Integer.Max_Value,太大会堆积太多请求")
     public void ExecutorService() throws ExecutionException, InterruptedException {
         //实例一个固定大小的线程池
         ExecutorService executorService= Executors.newFixedThreadPool(5);
         //使用Runnable提交匿名线程，不能接收到返回值
-        executorService.submit(() -> {
+        executorService.execute(() -> {
             System.out.println("执行匿名线程");
         });
         //使用Callable接口提交匿名线程，可以接收返回值
@@ -109,7 +110,7 @@ public class ThreadTest {
     }
 
     @Test
-    @DisplayName("线程池测试")
+    @DisplayName("线程池测试，推荐使用构造方法实例化线程池")
     public void testThreadPool() throws InterruptedException {
 
         ThreadPoolExecutor threadPoolExecutor=new ThreadPoolExecutor(10,30,5,
