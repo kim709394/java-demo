@@ -39,17 +39,12 @@ public class ThreadTest {
     public void ExecutorService() throws ExecutionException, InterruptedException {
         //实例一个固定大小的线程池
         ExecutorService executorService= Executors.newFixedThreadPool(5);
-        //提交匿名线程，不能接收到返回值
-        Future<?> future=executorService.submit(() -> {
+        //使用Runnable提交匿名线程，不能接收到返回值
+        executorService.submit(() -> {
             System.out.println("执行匿名线程");
         });
         //使用Callable接口提交匿名线程，可以接收返回值
-        Future<Object> submit = executorService.submit(new Callable<Object>() {
-            @Override
-            public Object call() throws Exception {
-                return null;
-            }
-        });
+        Future<Integer> submit = executorService.submit(() -> 10);
         System.out.println("返回值:"+submit.get());
     }
 
