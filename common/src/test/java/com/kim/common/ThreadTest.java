@@ -21,15 +21,51 @@ public class ThreadTest {
      * 同步代码块写法
      * */
     @Test
-    public void testSync(){
+    @DisplayName("锁对象")
+    public void testSyncObj(){
 
         int count=0;
         for (int i=0;i<4;i++){
-            synchronized (""){
+            /**
+             * 给当前对象加锁，两个以上线程同时访问同一对象实例的静态代码块时需要获取对象锁
+             * 否则将会阻塞
+             * */
+            synchronized (this){
                 count++;
             }
         }
         System.out.println(count);
+    }
+
+    @Test
+    @DisplayName("锁class")
+    public void testSyncClass(){
+        synchronized (ThreadTest.class){
+            //两个以上线程同时访问该静态代码块，无论是否同一对象实例，需要获取该类的class锁，否则将会阻塞
+            System.out.println("锁class");
+        }
+    }
+
+    @Test
+    @DisplayName("锁非静态方法")
+    public void testSyncMethod(){
+        //两个以上线程访问同一对象实例的该方法，需要获取方法锁，否则将会阻塞
+        syncMethod();
+    }
+
+    public synchronized void syncMethod(){
+        System.out.println("锁方法");
+    }
+
+    @Test
+    @DisplayName("锁静态方法")
+    public void testSyncStaticMethod(){
+        //两个以上线程访问该静态方法，无论是否同一对象实例，都需要获取静态方法锁，否则将会阻塞
+        syncStaticMethod();
+    }
+
+    public static synchronized void syncStaticMethod(){
+        System.out.println("锁静态方法");
     }
 
     /**
