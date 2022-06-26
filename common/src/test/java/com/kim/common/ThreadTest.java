@@ -1,6 +1,7 @@
 package com.kim.common;
 
 import com.google.common.util.concurrent.RateLimiter;
+import com.kim.common.entity.C;
 import org.apache.commons.validator.Var;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -203,6 +204,87 @@ public class ThreadTest {
         }
     }
 
+    /**
+     * 信号量测试
+     */
+    private Semaphore seamphore;
+
+    @Test
+    public void semaphoreTest() {
+        seamphore = new Semaphore(5);  //实例化一个信号量,每次只有5个线程同时执行
+        ExecutorService executorService = Executors.newFixedThreadPool(100);
+        List<Future<?>> futures = new ArrayList<>();
+        for (int i = 0; i < 50; i++) {
+            int finalI = i;
+            Future<?> submit = executorService.submit(() -> {
+                try {
+                    seamphore.acquire();  //打开信号灯
+                    System.out.println(finalI); //执行线程任务
+                    Thread.sleep(3000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } finally {
+                    seamphore.release();  //释放限流开关
+                }
+            });
+            futures.add(submit);
+        }
+        ThreadPoolExecutor executor = (ThreadPoolExecutor) executorService;
+        while (true) {
+            if (executor.getCompletedTaskCount() == 50) {
+                break;
+            }
+        }
+    }
+
+    /**
+     * 倒计时器CountDownLatch
+     * */
+    @Test
+    @DisplayName("主线程等待所有子线程执行完毕才往下执行")
+    public void masterAwait() throws InterruptedException {
+        int count=10;
+        //实例化一个CountDownLatch，倒计时10个线程
+        CountDownLatch countDownLatch=new CountDownLatch(count);
+        for(int i = 0;i<count;i++){
+            int finalI = i;
+            new Thread(() -> {
+                System.out.println("thread"+ finalI);
+                //调用countDown()方法，使倒计时-1
+                countDownLatch.countDown();
+            },"thread"+i).start();
+        }
+        //主线程调用await()方法等待倒计时器倒计时为0时才往下执行，这个过程是在阻塞中等待所欲线程执行完毕
+        countDownLatch.await();
+
+        System.out.println("finish");
+    }
+
+    @Test
+    @DisplayName("阻塞所有子线程，主线程统一释放倒计时器，让所有子线程在同一起跑线同时运行")
+    public void currentHandle() throws InterruptedException {
+        int count=1;
+        SimpleDateFormat format=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:ms");
+        //实例化一个CountDownLatch，倒计时1个线程
+        CountDownLatch countDownLatch=new CountDownLatch(count);
+        for(int i = 0;i<10;i++){
+            int finalI = i;
+            new Thread(() -> {
+                //调用countDown()方法，使倒计时-1
+                try {
+                    countDownLatch.await();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                System.out.println(String.format("thread%s,执行时间是:%s",finalI,format.format(new Date())));
+            },"thread"+i).start();
+        }
+        Thread.sleep(1000L);
+        countDownLatch.countDown();
+        Thread.sleep(1000L);
+    }
+
+
     /****************************************cas原理*********************************************/
     //带有版本号的cas原子类，初始值为1，版本号为1
     private AtomicStampedReference<Integer> atomicStampedReference = new AtomicStampedReference<>(1, 1);
@@ -311,38 +393,7 @@ public class ThreadTest {
         countDownLatch.await();
     }
 
-    /**
-     * 信号量测试
-     */
-    private Semaphore seamphore;
 
-    @Test
-    public void semaphoreTest() {
-        seamphore = new Semaphore(5);  //实例化一个信号量,每次只有5个线程同时执行
-        ExecutorService executorService = Executors.newFixedThreadPool(100);
-        List<Future<?>> futures = new ArrayList<>();
-        for (int i = 0; i < 50; i++) {
-            int finalI = i;
-            Future<?> submit = executorService.submit(() -> {
-                try {
-                    seamphore.acquire();  //打开信号灯
-                    System.out.println(finalI); //执行线程任务
-                    Thread.sleep(3000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } finally {
-                    seamphore.release();  //释放限流开关
-                }
-            });
-            futures.add(submit);
-        }
-        ThreadPoolExecutor executor = (ThreadPoolExecutor) executorService;
-        while (true) {
-            if (executor.getCompletedTaskCount() == 50) {
-                break;
-            }
-        }
-    }
 
     /**
      * google.guava限流
