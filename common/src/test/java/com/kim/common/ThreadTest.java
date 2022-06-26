@@ -1,6 +1,7 @@
 package com.kim.common;
 
 import com.google.common.util.concurrent.RateLimiter;
+import org.apache.commons.validator.Var;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -9,6 +10,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicStampedReference;
 
 /**
  * @Author kim
@@ -17,20 +20,22 @@ import java.util.concurrent.*;
  */
 public class ThreadTest {
 
+
+    /****************************************synchronized关键字***********************************************/
     /**
      * 同步代码块写法
-     * */
+     */
     @Test
     @DisplayName("锁对象")
-    public void testSyncObj(){
+    public void testSyncObj() {
 
-        int count=0;
-        for (int i=0;i<4;i++){
+        int count = 0;
+        for (int i = 0; i < 4; i++) {
             /**
              * 给当前对象加锁，两个以上线程同时访问同一对象实例的静态代码块时需要获取对象锁
              * 否则将会阻塞
              * */
-            synchronized (this){
+            synchronized (this) {
                 count++;
             }
         }
@@ -39,8 +44,8 @@ public class ThreadTest {
 
     @Test
     @DisplayName("锁class")
-    public void testSyncClass(){
-        synchronized (ThreadTest.class){
+    public void testSyncClass() {
+        synchronized (ThreadTest.class) {
             //两个以上线程同时访问该静态代码块，无论是否同一对象实例，需要获取该类的class锁，否则将会阻塞
             System.out.println("锁class");
         }
@@ -48,145 +53,254 @@ public class ThreadTest {
 
     @Test
     @DisplayName("锁非静态方法")
-    public void testSyncMethod(){
+    public void testSyncMethod() {
         //两个以上线程访问同一对象实例的该方法，需要获取方法锁，否则将会阻塞
         syncMethod();
     }
 
-    public synchronized void syncMethod(){
+    public synchronized void syncMethod() {
         System.out.println("锁方法");
     }
 
     @Test
     @DisplayName("锁静态方法")
-    public void testSyncStaticMethod(){
+    public void testSyncStaticMethod() {
         //两个以上线程访问该静态方法，无论是否同一对象实例，都需要获取静态方法锁，否则将会阻塞
         syncStaticMethod();
     }
 
-    public static synchronized void syncStaticMethod(){
+    public static synchronized void syncStaticMethod() {
         System.out.println("锁静态方法");
     }
 
+
+    /******************************************juc包**********************************************/
+
     /**
      * 线程池业务接口使用
-     * */
+     */
     @Test
     @DisplayName("不推荐此方式创建线程池，因为队列大小为Integer.Max_Value,太大会堆积太多请求")
     public void ExecutorService() throws ExecutionException, InterruptedException {
         //实例一个固定大小的线程池
-        ExecutorService executorService= Executors.newFixedThreadPool(5);
+        ExecutorService executorService = Executors.newFixedThreadPool(5);
         //使用Runnable提交匿名线程，不能接收到返回值
         executorService.execute(() -> {
             System.out.println("执行匿名线程");
         });
         //使用Callable接口提交匿名线程，可以接收返回值
         Future<Integer> submit = executorService.submit(() -> 10);
-        System.out.println("返回值:"+submit.get());
+        System.out.println("返回值:" + submit.get());
     }
 
-    /**
-     * google.guava限流
-     * */
+
     @Test
-    public void rateLimiter(){
-        //开启一个每秒发放10个令牌的限流器，每秒指的是整秒，下一秒的话重新清零计算。
-        RateLimiter rateLimiter= RateLimiter.create(10);
-        ExecutorService executorService= Executors.newFixedThreadPool(100);
-        ThreadPoolExecutor executor=(ThreadPoolExecutor)executorService;
-        for(int i=0;i<50;i++){
-            int finalI = i;
-            executor.execute(new Runnable() {
-                @Override
-                public void run() {
-                    //得到令牌许可，参数传入permits代表每秒允许的请求数中每获得一个许可需要等待的permits*100毫秒数
-                    rateLimiter.acquire();
-                    System.out.println("Accessing:,"+ finalI +":"
-                            + new SimpleDateFormat("yy-MM-dd HH:mm:ss:SSS").format(new Date()));
-                }
-            });
+    @DisplayName("线程池测试，推荐使用构造方法实例化线程池")
+    public void testThreadPool() throws InterruptedException {
+
+        ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(10, 30, 5, TimeUnit.SECONDS, new LinkedBlockingDeque<>(10));   //创建一个线程池
+
+        for (int i = 0; i < 31; i++) {
+            MyTask myTask = new MyTask(i); //创建一个线程任务
+            threadPoolExecutor.execute(myTask);    //将这个任务加入线程池
+            System.out.println("线程池的数目大小：" + threadPoolExecutor.getPoolSize() + ",队列中正在等待的缓存任务数目" + threadPoolExecutor.getQueue().size() + ",已执行完的线程数量：" + threadPoolExecutor.getCompletedTaskCount());
         }
-        while(true){
-            if(executor.getCompletedTaskCount()==50){
-                break;
+
+        Thread.sleep(4000);
+        System.out.println("4秒后，线程池任务已全部执行完，线程池的数目大小：" + threadPoolExecutor.getPoolSize() + ",队列中正在等待的缓存任务数目" + threadPoolExecutor.getQueue().size() + ",已执行完的线程数量：" + threadPoolExecutor.getCompletedTaskCount());
+
+        Thread.sleep(5000);
+        System.out.println("9秒后，线程池的数目大小：" + threadPoolExecutor.getPoolSize() + ",队列中正在等待的缓存任务数目" + threadPoolExecutor.getQueue().size() + ",已执行完的线程数量：" + threadPoolExecutor.getCompletedTaskCount());
+
+        threadPoolExecutor.shutdown();  //销毁线程池
+
+        MyTask myTask = new MyTask(709394); //创建一个线程任务
+        threadPoolExecutor.execute(myTask);
+
+        System.out.println("销毁线程池后：线程池的数目大小：" + threadPoolExecutor.getPoolSize() + ",队列中正在等待的缓存任务数目" + threadPoolExecutor.getQueue().size() + ",已执行完的线程数量：" + threadPoolExecutor.getCompletedTaskCount());
+    }
+
+    public static class MyTask implements Runnable {
+
+        private Integer i;
+
+        public MyTask(Integer i) {
+
+        }
+
+        @Override
+        public void run() {
+            System.out.println(i);
+        }
+    }
+
+    /****************************************cas原理*********************************************/
+    //带有版本号的cas原子类，初始值为1，版本号为1
+    private AtomicStampedReference<Integer> atomicStampedReference = new AtomicStampedReference<>(1, 1);
+
+    @Test
+    @DisplayName("通过添加修改版本号解决ABA问题")
+    public void resloveABA() throws InterruptedException {
+        CountDownLatch countDownLatch = new CountDownLatch(2);
+        new Thread(() -> {
+
+            int stamp = atomicStampedReference.getStamp();
+            System.out.println("初始版本为：" + stamp);
+            try {
+                Thread.sleep(1000L);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
-        }
+            boolean setResult = atomicStampedReference.compareAndSet(1, 2, stamp, stamp + 1);
+            System.out.println("thread1:value=" + atomicStampedReference.getReference() + ",stamp=" + atomicStampedReference.getStamp() + ",setResult:" + setResult);
+            setResult = atomicStampedReference.compareAndSet(2, 1, atomicStampedReference.getStamp(), atomicStampedReference.getStamp() + 1);
+            System.out.println("thread1:value=" + atomicStampedReference.getReference() + ",stamp=" + atomicStampedReference.getStamp() + ",setResult:" + setResult);
+            countDownLatch.countDown();
+        }, "thread1").start();
+
+        new Thread(() -> {
+            int stamp = atomicStampedReference.getStamp();
+            System.out.println("初始版本为：" + stamp);
+            try {
+                Thread.sleep(2000L);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            //版本号与内存值不一致，修改失败
+            boolean setResult = atomicStampedReference.compareAndSet(1, 4, stamp, stamp + 1);
+            System.out.println("thread2:value=" + atomicStampedReference.getReference() + ",stamp=" + atomicStampedReference.getStamp() + ",setResult:" + setResult);
+
+            countDownLatch.countDown();
+        }, "thread2").start();
+        countDownLatch.await();
+    }
+
+    private AtomicInteger atomicInteger=new AtomicInteger(10);
+
+    @Test
+    @DisplayName("原子类Integer cas修改")
+    public void atomicIntegerCasUpdate() throws InterruptedException {
+        CountDownLatch countDownLatch=new CountDownLatch(2);
+        new Thread(() -> {
+            int i = atomicInteger.get();
+            System.out.println("thread1初始值："+i);
+            try {
+                Thread.sleep(1000L);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            boolean result = atomicInteger.compareAndSet(i, 20);
+            System.out.println("thread1:"+atomicInteger.get()+",result:"+result);
+            countDownLatch.countDown();
+
+        },"thread1").start();
+
+        new Thread(() -> {
+            int i = atomicInteger.get();
+            System.out.println("thread2初始值："+i);
+            try {
+                Thread.sleep(2000L);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            //由于线程1先把共享变量atomicInteger修改为20，因此线程2获取的初始值与内存值不同，修改失败
+            boolean result = atomicInteger.compareAndSet(i, 30);
+            System.out.println("thread2:"+atomicInteger.get()+",result:"+result);
+            countDownLatch.countDown();
+
+        },"thread2").start();
+        countDownLatch.await();
+    }
+
+    @Test
+    @DisplayName("原子类Integer cas新增")
+    public void atomicIntegerCasAdd() throws InterruptedException {
+        CountDownLatch countDownLatch=new CountDownLatch(2);
+        new Thread(() -> {
+            System.out.println("thread1初始值："+atomicInteger.get());
+            //根据JMM内存模型，线程1先拷贝一份共享变量atomicInteger的初始值为10，然后对比atomicInteger内存的值，相等则新增10并更新内存的值为20
+            int i = atomicInteger.addAndGet(10);
+            System.out.println("thread1新增10之后value="+i);
+            countDownLatch.countDown();
+        },"thread1").start();
+
+        new Thread(() -> {
+            System.out.println("thread2初始值："+atomicInteger.get());
+            try {
+                Thread.sleep(1000L);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            /*
+              线程2也是先拷贝一份共享变量atomicInteger的初始值为10，然后对比atomicInteger内存的值，发现被其他线程变更为20，则
+              启用自旋锁循环获取更新后共享变量atomicInteger内存的值，然后再比对内存真实的值，在新增10并更新内存的值为30
+              */
+            int i = atomicInteger.addAndGet(10);
+            System.out.println("thread2新增10之后value="+i);
+            countDownLatch.countDown();
+        },"thread2").start();
+        countDownLatch.await();
     }
 
     /**
      * 信号量测试
-     * */
+     */
     private Semaphore seamphore;
 
     @Test
-    public void semaphoreTest(){
-        seamphore=new Semaphore(5);  //实例化一个信号量,每次只有5个线程同时执行
-        ExecutorService executorService= Executors.newFixedThreadPool(100);
-        List<Future<?>> futures =new ArrayList<>();
-        for(int i=0;i<50;i++){
+    public void semaphoreTest() {
+        seamphore = new Semaphore(5);  //实例化一个信号量,每次只有5个线程同时执行
+        ExecutorService executorService = Executors.newFixedThreadPool(100);
+        List<Future<?>> futures = new ArrayList<>();
+        for (int i = 0; i < 50; i++) {
             int finalI = i;
             Future<?> submit = executorService.submit(() -> {
                 try {
                     seamphore.acquire();  //打开信号灯
                     System.out.println(finalI); //执行线程任务
                     Thread.sleep(3000);
-                    seamphore.release();  //释放限流开关
                 } catch (InterruptedException e) {
                     e.printStackTrace();
+                } finally {
+                    seamphore.release();  //释放限流开关
                 }
             });
             futures.add(submit);
         }
-        ThreadPoolExecutor executor=(ThreadPoolExecutor)executorService;
-        while(true){
-            if(executor.getCompletedTaskCount()==50){
+        ThreadPoolExecutor executor = (ThreadPoolExecutor) executorService;
+        while (true) {
+            if (executor.getCompletedTaskCount() == 50) {
                 break;
             }
         }
     }
 
+    /**
+     * google.guava限流
+     */
     @Test
-    @DisplayName("线程池测试，推荐使用构造方法实例化线程池")
-    public void testThreadPool() throws InterruptedException {
-
-        ThreadPoolExecutor threadPoolExecutor=new ThreadPoolExecutor(10,30,5,
-                TimeUnit.SECONDS,new LinkedBlockingDeque<>(10));   //创建一个线程池
-
-        for (int i=0;i<31;i++){
-            MyTask myTask=new MyTask(i); //创建一个线程任务
-            threadPoolExecutor.execute(myTask);    //将这个任务加入线程池
-            System.out.println("线程池的数目大小："+threadPoolExecutor.getPoolSize()+",队列中正在等待的缓存任务数目"+
-                    threadPoolExecutor.getQueue().size()+",已执行完的线程数量："+threadPoolExecutor.getCompletedTaskCount());
+    public void rateLimiter() {
+        //开启一个每秒发放10个令牌的限流器，每秒指的是整秒，下一秒的话重新清零计算。
+        RateLimiter rateLimiter = RateLimiter.create(10);
+        ExecutorService executorService = Executors.newFixedThreadPool(100);
+        ThreadPoolExecutor executor = (ThreadPoolExecutor) executorService;
+        for (int i = 0; i < 50; i++) {
+            int finalI = i;
+            executor.execute(new Runnable() {
+                @Override
+                public void run() {
+                    //得到令牌许可，参数传入permits代表每秒允许的请求数中每获得一个许可需要等待的permits*100毫秒数
+                    rateLimiter.acquire();
+                    System.out.println("Accessing:," + finalI + ":" + new SimpleDateFormat("yy-MM-dd HH:mm:ss:SSS").format(new Date()));
+                }
+            });
         }
-
-        Thread.sleep(4000);
-        System.out.println("4秒后，线程池任务已全部执行完，线程池的数目大小："+threadPoolExecutor.getPoolSize()+",队列中正在等待的缓存任务数目"+
-                threadPoolExecutor.getQueue().size()+",已执行完的线程数量："+threadPoolExecutor.getCompletedTaskCount());
-
-        Thread.sleep(5000);
-        System.out.println("9秒后，线程池的数目大小："+threadPoolExecutor.getPoolSize()+",队列中正在等待的缓存任务数目"+
-                threadPoolExecutor.getQueue().size()+",已执行完的线程数量："+threadPoolExecutor.getCompletedTaskCount());
-
-        threadPoolExecutor.shutdown();  //销毁线程池
-
-        MyTask myTask=new MyTask(709394); //创建一个线程任务
-        threadPoolExecutor.execute(myTask);
-
-        System.out.println("销毁线程池后：线程池的数目大小："+threadPoolExecutor.getPoolSize()+",队列中正在等待的缓存任务数目"+
-                threadPoolExecutor.getQueue().size()+",已执行完的线程数量："+threadPoolExecutor.getCompletedTaskCount());
-    }
-
-    public static class MyTask implements Runnable{
-
-        private Integer i;
-
-        public MyTask(Integer i){
-
-        }
-        @Override
-        public void run() {
-            System.out.println(i);
+        while (true) {
+            if (executor.getCompletedTaskCount() == 50) {
+                break;
+            }
         }
     }
+
 
 }
