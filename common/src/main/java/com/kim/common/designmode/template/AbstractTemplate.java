@@ -15,7 +15,7 @@ public abstract class AbstractTemplate {
     protected void doHook(){}
 
     //私有方法
-    private void defMethod(){
+    protected final void defMethod(){
         System.out.println("私有逻辑，不必实现");
     }
 
