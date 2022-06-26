@@ -73,6 +73,75 @@ public class ThreadTest {
         System.out.println("锁静态方法");
     }
 
+    /*********************************************volatile关键字************************************************/
+
+    private boolean nonVolatile=false;
+    private volatile boolean withVolatile=false;
+
+    @Test
+    @DisplayName("未加volatile关键字，多线程对全局变量进行修改")
+    public void nonVolatile() throws InterruptedException {
+        CountDownLatch countDownLatch=new CountDownLatch(2);
+        new Thread(() -> {
+            System.out.println("thread1:全局变量初始值："+nonVolatile);
+            int i = 0;
+            while(!nonVolatile){
+                i++;
+                //线程二修改了全局变量nonVolatile，但是线程1不可见，因此会一直无限循环
+                //笔者自己测试发现，在循环内调用System.out.println()或Thread.sleep()方法会导致即使不加volatile关键字的全局变量也会变成马上可见
+                //具体原因未知
+            }
+            System.out.println(String.format("thread1循环%s次",i));
+            countDownLatch.countDown();
+        },"thread1").start();
+
+        new Thread(() -> {
+            System.out.println("thread2:全局变量初始值："+nonVolatile);
+
+            try {
+                Thread.sleep(2000L);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            nonVolatile = true;
+            countDownLatch.countDown();
+        },"thread2").start();
+
+        countDownLatch.await();
+
+    }
+
+    @Test
+    @DisplayName("加volatile关键字，多线程对全局变量进行修改")
+    public void withVolatile() throws InterruptedException {
+        CountDownLatch countDownLatch=new CountDownLatch(2);
+        new Thread(() -> {
+            System.out.println("thread1:全局变量初始值："+withVolatile);
+            int i = 0;
+            while(!withVolatile){
+                i++;
+                //线程二修改了全局变量withVolatile，由于withVolatile是可见的，因此线程1的withVolatile变量会立即被修改，所以会跳出循环
+            }
+            System.out.println(String.format("thread1循环%s次",i));
+            countDownLatch.countDown();
+        },"thread1").start();
+
+        new Thread(() -> {
+            System.out.println("thread2:全局变量初始值："+withVolatile);
+
+            try {
+                Thread.sleep(2000L);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            withVolatile = true;
+            countDownLatch.countDown();
+        },"thread2").start();
+
+        countDownLatch.await();
+
+    }
+
 
     /******************************************juc包**********************************************/
 
