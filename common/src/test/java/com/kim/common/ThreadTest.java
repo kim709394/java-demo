@@ -239,6 +239,7 @@ public class ThreadTest {
 
     /**
      * 倒计时器CountDownLatch
+     * 不足：中途不能对倒计时数再次设置，只能使用一次便不能再次使用
      * */
     @Test
     @DisplayName("主线程等待所有子线程执行完毕才往下执行")
