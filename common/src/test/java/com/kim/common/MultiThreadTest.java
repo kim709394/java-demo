@@ -7,13 +7,12 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicStampedReference;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  * @Author kim
@@ -671,11 +670,61 @@ public class MultiThreadTest {
             }
             countDownLatch.countDown();
         });
-
         countDownLatch.await();
     }
 
 
+    //默认非公平锁
+    ReentrantReadWriteLock readWriteLock=new ReentrantReadWriteLock();
+    @Test
+    @DisplayName("读写锁")
+    public void ReentrantReadWriteLock() throws InterruptedException {
+
+        //读读不互斥，读写、写写互斥
+        ExecutorService executorService = Executors.newFixedThreadPool(10);
+        int count=50;
+        CountDownLatch countDownLatch=new CountDownLatch(count);
+        for(int i=0;i<count;i++){
+            int finalI = i;
+            executorService.execute(() -> {
+                if (finalI % 2 != 0) {
+                    get();
+                } else {
+                    put();
+                }
+                countDownLatch.countDown();
+
+            });
+        }
+        countDownLatch.await();
+
+    }
+
+    private void get(){
+        try {
+            readWriteLock.readLock().lock();
+            System.out.println("read ready");
+            Thread.sleep(1000L);
+            System.out.println("read end");
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            readWriteLock.readLock().unlock();
+        }
+    }
+
+    private void put(){
+        try {
+            readWriteLock.writeLock().lock();
+            System.out.println("write ready");
+           Thread.sleep(1000L);
+            System.out.println("write end");
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            readWriteLock.writeLock().unlock();
+        }
+    }
 
 
     /****************************************cas原理*********************************************/
