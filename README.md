@@ -15,7 +15,7 @@ java应用下的各种api、工具类、第三方jar包使用、框架，等等�
 - #### RsaTest                              Rsa非对称加密算法
 - #### SpringThreadPoolTest                 spring线程与线程池
 - #### StrToCodeExeTest                     字符串专为java代码执行
-- #### ThreadTest                           线程
+- #### MultiThreadTest                      多线程demo
 - #### ZipTest                              zip压缩包处理
 - #### CmdTest                              java执行cmd/sh命令
 - #### JschTest                             java连接ssh工具包  
