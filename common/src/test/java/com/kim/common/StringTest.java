@@ -34,4 +34,26 @@ public class StringTest {
     public static String getStr() {
         return "ing";
     }
+
+    @Test
+    @DisplayName("字符串常量池2")
+    public void testFinal2(){
+
+        String a="ab";
+        String b="ab";
+        String c=new String("ab");
+
+        System.out.println(a==b);//true
+        System.out.println(a==c);//false
+
+        String d=new String("cd");
+        String e="cd";
+        String f="cd";
+        System.out.println(d==e);
+        System.out.println(e==f);
+
+    }
+
+
+
 }
