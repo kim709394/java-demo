@@ -4,6 +4,7 @@ import com.kim.common.service.LamService;
 import lombok.Data;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -18,6 +19,7 @@ import java.util.stream.Stream;
  * @Since 2021/4/21
  * lambda表达式和流编程测试
  */
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class Jdk8LambdaAndStreamTest {
 
     /**
@@ -123,11 +125,18 @@ public class Jdk8LambdaAndStreamTest {
     }
 
     /**
-     * 流编程的使用
+     * 过滤出符合条件的对象
      * */
     @Test
     public void stream(){
 
+        List<Integer> list=new ArrayList<>();
+        for(int i=0;i<10;i++){
+            list.add(i);
+        }
+        Optional<Integer> first = list.stream().filter(integer -> integer == -1).findFirst();
+
+        System.out.println(first.isPresent());
 
 
     }
