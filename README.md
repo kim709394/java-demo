@@ -9,7 +9,7 @@ java应用下的各种api、工具类、第三方jar包使用、框架，等等�
 - #### HashCodeTest                         哈希值
 - #### ImgTest                              图片处理
 - #### JsonTest                             json处理
-- #### Jdk8LamdaAndStreamTest              jdk8 lambda和表达式stream流编程
+- #### Jdk8NewFeatureTest                   jdk8新特性
 - #### ObjectPoolTest                       对象池
 - #### ReflectTest                          反射
 - #### RsaTest                              Rsa非对称加密算法

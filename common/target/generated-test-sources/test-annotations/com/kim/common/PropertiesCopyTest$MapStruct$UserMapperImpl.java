@@ -7,12 +7,12 @@ import com.kim.common.PropertiesCopyTest.MapStruct.UserVO;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-import javax.annotation.processing.Generated;
+import javax.annotation.Generated;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2022-06-13T21:50:31+0800",
-    comments = "version: 1.5.0.Beta1, compiler: javac, environment: Java 11.0.15.1 (Oracle Corporation)"
+    date = "2022-08-23T11:26:57+0800",
+    comments = "version: 1.5.0.Beta1, compiler: javac, environment: Java 1.8.0_221 (Oracle Corporation)"
 )
 public class PropertiesCopyTest$MapStruct$UserMapperImpl implements UserMapper {
 

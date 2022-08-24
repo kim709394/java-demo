@@ -4,12 +4,12 @@ import com.kim.common.PropertiesCopyTest.MapStruct.Car;
 import com.kim.common.PropertiesCopyTest.MapStruct.CarMapper;
 import com.kim.common.PropertiesCopyTest.MapStruct.Engine;
 import com.kim.common.PropertiesCopyTest.MapStruct.Wheel;
-import javax.annotation.processing.Generated;
+import javax.annotation.Generated;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2022-06-13T21:50:31+0800",
-    comments = "version: 1.5.0.Beta1, compiler: javac, environment: Java 11.0.15.1 (Oracle Corporation)"
+    date = "2022-08-23T11:26:58+0800",
+    comments = "version: 1.5.0.Beta1, compiler: javac, environment: Java 1.8.0_221 (Oracle Corporation)"
 )
 public class PropertiesCopyTest$MapStruct$CarMapperImpl implements CarMapper {
 
