@@ -83,6 +83,16 @@ public class MultiThreadTest {
     @DisplayName("未加volatile关键字，多线程对全局变量进行修改")
     public void nonVolatile() throws InterruptedException {
         CountDownLatch countDownLatch = new CountDownLatch(2);
+        /**
+         * 注意：
+         * 这里的线程不可见，指的是线程1获取完全局变量nonVolatile之后，尚未执行完，
+         * 此时这个全局变量nonVolatile被线程2修改后线程1仍不可见，
+         * 如果线程2修改了之后，线程1才开始获取全局变量nonVolatile，
+         * 那么线程1获取的是线程2修改了之后的值，此时相当于是“可见的”
+         * 因此可见与不可见是针对于两个线程都在执行过程中从主内存复制全局变量
+         * 到各自工作内存中后，其中一个线程对全局变量进行了修改之后，另外一个
+         * 线程是否可见而言
+         * */
         new Thread(() -> {
             System.out.println("thread1:全局变量初始值：" + nonVolatile);
             int i = 0;
@@ -105,8 +115,10 @@ public class MultiThreadTest {
                 e.printStackTrace();
             }
             nonVolatile = true;
+            System.out.println("nonVolatile变量已修改为true");
             countDownLatch.countDown();
         }, "thread2").start();
+
 
         countDownLatch.await();
 
