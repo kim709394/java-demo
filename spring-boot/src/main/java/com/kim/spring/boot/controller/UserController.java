@@ -1,6 +1,7 @@
 package com.kim.spring.boot.controller;
 
 import com.kim.spring.boot.pojo.User;
+import org.springframework.context.annotation.Profile;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,6 +15,7 @@ import java.util.Date;
  */
 @RestController
 @RequestMapping("/user")
+@Profile("dev")     //dev环境下生效
 public class UserController {
 
 
