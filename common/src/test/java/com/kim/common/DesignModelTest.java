@@ -15,6 +15,7 @@ import com.kim.common.designmode.group.safe.SafeRoot;
 import com.kim.common.designmode.iterator.ArrayList;
 import com.kim.common.designmode.iterator.Iterator;
 import com.kim.common.designmode.iterator.List;
+import com.kim.common.designmode.observe.*;
 import com.kim.common.designmode.pojo.Car;
 import com.kim.common.designmode.builder.CarBuilder;
 import com.kim.common.designmode.pojo.Computer;
@@ -272,6 +273,21 @@ public class DesignModelTest {
         template.base();
     }
 
+    @Test
+    @DisplayName("观察者模式")
+    public void observer(){
+        Subject mySubject=new MySubject();
+        Observer o1=new MyObserver1();
+        Observer o2=new MyObserver2();
+        mySubject.registerObsderver(o1);
+        mySubject.registerObsderver(o2);
+        mySubject.notifyObservers("事件1");
+        System.out.println("--------注销观察者2之后");
+        mySubject.unregisterObserver(o2);
+        mySubject.notifyObservers("事件2");
+
+
+    }
 
 
 }
