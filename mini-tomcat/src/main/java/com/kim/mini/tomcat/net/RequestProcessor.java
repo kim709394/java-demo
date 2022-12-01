@@ -24,9 +24,8 @@ public class RequestProcessor implements Runnable {
     @Override
     public void run() {
 
-        try{
-            InputStream inputStream = socket.getInputStream();
-            OutputStream outputStream = socket.getOutputStream();
+        try(InputStream inputStream = socket.getInputStream();
+            OutputStream outputStream = socket.getOutputStream();){
             Request request = new Request(inputStream);
             Response response=new Response(outputStream);
             ServletContext servletContext = ServletContext.getInstance();
@@ -39,6 +38,13 @@ public class RequestProcessor implements Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            if(socket != null){
+                socket.close();
+            }
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
