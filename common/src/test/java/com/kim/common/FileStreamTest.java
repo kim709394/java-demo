@@ -1,6 +1,9 @@
 package com.kim.common;
 
 import com.kim.common.consts.FileType;
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.io.SAXReader;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.Resource;
@@ -9,10 +12,7 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.util.FileCopyUtils;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -52,8 +52,21 @@ public class FileStreamTest {
         for(Resource r: res){
             InputStream in = r.getInputStream();
         }
+    }
 
-
+    @Test
+    @DisplayName("获取项目根目录下的文件")
+    public void readRootFile() throws Exception {
+        String projectPath = System.getProperty("user.dir");
+        System.out.println(projectPath);
+        InputStream rootStream = new FileInputStream(projectPath+"\\root.xml");
+        String path = this.getClass().getResource("/").getPath();
+        //获取类路径绝对路径
+        System.out.println(path);
+        SAXReader reader=new SAXReader();
+        Document document = reader.read(rootStream);
+        String field = document.getRootElement().element("configuration").attributeValue("field");
+        System.out.println(field);
     }
 
     /**
