@@ -40,7 +40,14 @@ public class GuavaCacheTest {
 
     @Test
     public void cacheExample(){
-
+        /**
+         *若不希望缓存被无故垃圾回收时，以下选项不建议设置
+         * weigher
+         * maximumWeight(150)
+         * weakKeys()
+         * weakValues()
+         * softValues()
+         */
         Cache<String,Object> cache=CacheBuilder.newBuilder()
                 .concurrencyLevel(Runtime.getRuntime().availableProcessors())
                 .initialCapacity(100)
