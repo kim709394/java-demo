@@ -28,6 +28,7 @@
         <module>spring-security</module>
         <module>mini-tomcat</module>
         <module>web-demo</module>
+        <module>spring-data-redis</module>
     </modules>
     <properties>
         <!--jdk编译版本和编码格式-->
