@@ -7,7 +7,7 @@ spring:
     redis:
       namespace: spring:session   #session在redis存储的key值
   redis:    #连接redis
-    host: localhost
+    host: vm-ubuntu
     port: 6379
     database: 0
 
