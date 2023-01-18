@@ -1,0 +1,9 @@
+server:
+  port: 8080
+spring:
+  application:
+    name: springboot-redisson
+  redis:    #连接redis
+    host: localhost
+    port: 6379
+    database: 0

@@ -29,6 +29,7 @@
         <module>mini-tomcat</module>
         <module>web-demo</module>
         <module>springboot-data-redis</module>
+        <module>springboot-redisson</module>
     </modules>
     <properties>
         <!--jdk编译版本和编码格式-->
