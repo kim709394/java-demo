@@ -8,6 +8,7 @@ import com.kim.common.entity.ExcelData;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.io.*;
@@ -136,6 +137,7 @@ public class ExcelTest {
     private String fileName="C:\\Users\\WT-0906\\Desktop\\easyexcel.xlsx";
 
     @Test
+    @DisplayName("easyExcel读取")
     public void testPageRead(){
         pageRead();
     }
