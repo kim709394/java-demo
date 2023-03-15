@@ -2,6 +2,7 @@ package com.kim.common;
 
 import com.google.common.util.concurrent.RateLimiter;
 import com.kim.common.entity.C;
+import lombok.SneakyThrows;
 import org.apache.poi.ss.formula.functions.Count;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -845,6 +846,100 @@ public class MultiThreadTest {
             countDownLatch.countDown();
         }, "thread2").start();
         countDownLatch.await();
+    }
+
+    /***
+     * Exchanger
+     * 用于多个线程之间交换数据
+     */
+    @Test
+    @DisplayName("线程交换数据")
+    public void exchanger() throws InterruptedException {
+        //实例化Exchanger对象
+        Exchanger<String> exchanger=new Exchanger<>();
+        for(int i=0;i<3;i++){
+            int finalI = i;
+            new Thread(() -> {
+                while(true){
+                    String exchange = null;
+                    try {
+                        /***
+                         * 当前线程传递参数进Exchanger对象，如果有其他线程调用exchange方法则得到其他线程
+                         * 传入的参数作为返回值，其他线程将得到本线程传递的参数。
+                         * 如果没有其他线程调用exchange方法则阻塞
+                         */
+                        exchange = exchanger.exchange("交换数据" + finalI);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    System.out.println(Thread.currentThread().getName()+"得到=>"+exchange);
+                }
+            },"线程"+finalI).start();
+        }
+        Thread.sleep(1000);
+
+    }
+
+    /**
+     * Phaser同步工具类
+     * 可替代CyclicBarrier和CountDownLatch
+     * */
+    @Test
+    @DisplayName("Phaser替代CountDownLatch")
+    public void phaserInsteadCountDownLatch(){
+        int threadCount = 5;
+        //初始化计数值
+        Phaser phaser=new Phaser(threadCount);
+        for(int i =0; i <threadCount;i++){
+            new Thread(() -> {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                System.out.println(Thread.currentThread().getName()+"执行完成");
+                //计数值减一
+                phaser.arrive();
+            },"线程"+i).start();
+        }
+        //阻塞等待所有计数值归零则放行主线程
+        phaser.awaitAdvance(phaser.getPhase());
+        System.out.println("等待所有子线程执行完成");
+    }
+
+    @Test
+    @DisplayName("Phaser替代CyclicBarrier作为循环栅栏使用")
+    public void phaserInsteadCyclicBarrier(){
+        int threadCount= 5;
+        Phaser phaser=new Phaser(threadCount);
+        for(int i =0;i<threadCount;i++){
+            new Thread(() -> {
+                System.out.println(Thread.currentThread().getName()+"：started");
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                //等待其他所有线程一起执行
+                phaser.arriveAndAwaitAdvance();
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                System.out.println(Thread.currentThread().getName()+"：ended");
+                phaser.arriveAndAwaitAdvance();
+            },"线程"+i).start();
+        }
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        phaser.awaitAdvance(phaser.getPhase());
+        System.out.println("阻塞等待所有子线程结束");
+
+
     }
 
 

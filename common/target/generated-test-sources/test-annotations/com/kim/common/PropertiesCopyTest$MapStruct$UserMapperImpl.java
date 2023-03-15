@@ -11,7 +11,7 @@ import javax.annotation.Generated;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2022-12-01T21:18:06+0800",
+    date = "2023-03-13T17:25:21+0800",
     comments = "version: 1.5.0.Beta1, compiler: javac, environment: Java 1.8.0_221 (Oracle Corporation)"
 )
 public class PropertiesCopyTest$MapStruct$UserMapperImpl implements UserMapper {
