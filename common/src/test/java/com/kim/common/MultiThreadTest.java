@@ -6,12 +6,12 @@ import lombok.SneakyThrows;
 import org.apache.poi.ss.formula.functions.Count;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.context.TestPropertySource;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicStampedReference;
+import java.util.concurrent.atomic.*;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -740,7 +740,7 @@ public class MultiThreadTest {
     }
 
 
-    /****************************************cas原理*********************************************/
+    /****************************************cas原理、原子类*********************************************/
     //带有版本号的cas原子类，初始值为1，版本号为1
     private AtomicStampedReference<Integer> atomicStampedReference = new AtomicStampedReference<>(1, 1);
 
@@ -847,6 +847,92 @@ public class MultiThreadTest {
         }, "thread2").start();
         countDownLatch.await();
     }
+
+    @Test
+    @DisplayName("AtomicBoolean 布尔值原子类")
+    public void atomicBoolean(){
+        //初始值为false
+        AtomicBoolean atomicBoolean=new AtomicBoolean(false);
+        boolean b1 = atomicBoolean.compareAndSet(false, true);
+        System.out.println("第一次修改后的值："+atomicBoolean.get()+","+(b1?"修改成功":"修改失败"));
+        boolean b2 = atomicBoolean.compareAndSet(false, false);
+        System.out.println("第二次修改后的值："+atomicBoolean.get()+","+(b2?"修改成功":"修改失败"));
+
+    }
+
+    @Test
+    @DisplayName("AtomicReference 不带版本号的泛型原子类")
+    public void atomicReference(){
+        AtomicReference<String> atomicStr=new AtomicReference<>("s1");
+        boolean b1 = atomicStr.compareAndSet("s1", "s2");
+        System.out.println("第二次修改后的值："+atomicStr.get()+","+(b1?"修改成功":"修改失败"));
+        boolean b2 = atomicStr.compareAndSet("s1", "s3");
+        System.out.println("第二次修改后的值："+atomicStr.get()+","+(b2?"修改成功":"修改失败"));
+    }
+
+    @Test
+    @DisplayName("AtomicMarkableReference:带泛型的原子类，只有true和false两种版本号，不能解决ABA问题")
+    public void atomicMarkableReference(){
+        AtomicMarkableReference<Integer> markableReference=new AtomicMarkableReference<>(10,true);
+        boolean b = markableReference.compareAndSet(10, 20, true, false);
+        System.out.println("原子修改后的值："+markableReference.getReference()+","+(b?"修改成功":"修改失败"));
+    }
+
+    /**
+     * AtomicIntegerFieldUpdater、AtomicLongFieldUpdater、AtomicReferenceFieldUpdater
+     * 这三个类功能类似
+     * 如果一个类是自己编写的，则只需要成员变量使用atomic原子类即可
+     * 如果这个类不是自己写的，那么可以用AtomicIntegerFieldUpdater来实现成员变量的原子操作
+     * 要想使用AtomicIntegerFieldUpdater修改成员变量，成员变量必须是volatile的int类型（不能是
+     * Integer包装类），该限制从其构造方法中可以看到。
+     * */
+    private volatile int field = 10;
+    @Test
+    @DisplayName("AtomicIntegerFieldUpdater")
+    public void atomicIntegerFieldUpdater(){
+        AtomicIntegerFieldUpdater<MultiThreadTest> fieldUpdater=AtomicIntegerFieldUpdater.newUpdater(MultiThreadTest.class,"field");
+        boolean b = fieldUpdater.compareAndSet(this, 10, 20);
+        System.out.println("原子修改后的值："+fieldUpdater.get(this)+","+(b?"修改成功":"修改失败"));
+    }
+
+    /**
+     * AtomicIntegerArray、AtomicLongArray和AtomicReferenceArray
+     * 数组原子类，不是针对整个数组原子操作而是针对数组中的某个元素原子操作
+     * */
+    @Test
+    @DisplayName("AtomicIntegerArray")
+    public void atomicIntegerArray(){
+        int[] arr=new int[10];
+        AtomicIntegerArray atomicArr=new AtomicIntegerArray(arr);
+        boolean b = atomicArr.compareAndSet(0, 0, 10);
+        System.out.println("原子修改后的值："+atomicArr.get(0)+","+(b?"修改成功":"修改失败"));
+
+    }
+
+    /**
+     * LongAdder、LongAccumulator、DoubleAdder与DoubleAccumulator
+     * atomicInteger进行累加的时候采用cas效率不够高。
+     * LongAdder进行累加的时候采用一个base基础变量和扩展的cell数组进行多线程分段相加，最终进行求和累加
+     * 同时解决了伪共享和缓存行填充问题，大大提高效率。
+     * LongAccumulator类似，只是功能更加强大
+     * DoubleAdder与DoubleAccumulator使用native方法将double转化为long类型在进行操作
+     */
+    @Test
+    @DisplayName("LongAdder")
+    public void longAdder() throws InterruptedException {
+        LongAdder longAdder=new LongAdder();
+        for(int i=0;i<10;i++){
+            new Thread(() -> {
+                longAdder.add(10);
+            },"thread"+i).start();
+        }
+        Thread.sleep(1000);
+        long sum = longAdder.sum();
+        System.out.println("longAdder在10次并发累加求和后："+sum);
+
+
+    }
+
 
     /***
      * Exchanger
