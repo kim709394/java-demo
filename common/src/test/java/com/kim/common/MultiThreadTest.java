@@ -1,15 +1,13 @@
 package com.kim.common;
 
 import com.google.common.util.concurrent.RateLimiter;
-import com.kim.common.entity.C;
-import lombok.SneakyThrows;
-import org.apache.poi.ss.formula.functions.Count;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.test.context.TestPropertySource;
 
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.*;
 import java.util.concurrent.locks.ReentrantLock;
@@ -30,7 +28,6 @@ public class MultiThreadTest {
     @Test
     @DisplayName("锁对象")
     public void testSyncObj() {
-
         int count = 0;
         for (int i = 0; i < 4; i++) {
             /**
