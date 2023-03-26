@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.*;
+import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -734,6 +735,75 @@ public class MultiThreadTest {
         } finally {
             readWriteLock.writeLock().unlock();
         }
+    }
+
+    /**
+     * Condition
+     * 必须结合lock一起使用，用法和wait/notify结合synchtonized类似
+     * 用来对获取锁的线程分类阻塞或者释放
+     */
+    @Test
+    @DisplayName("Condition")
+    public void condition() throws InterruptedException {
+        ReentrantLock lock=new ReentrantLock();
+        Condition condition1 = lock.newCondition();
+        Condition condition2 = lock.newCondition();
+        new Thread(() -> {
+            lock.lock();
+            try {
+                //条件一释放锁并进入阻塞状态
+                System.out.println("线程1通过条件1释放锁并进入阻塞状态");
+                condition1.await();
+                Thread.sleep(1000);
+                System.out.println("线程1从阻塞状态恢复");
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }finally {
+                lock.unlock();
+            }
+        },"线程1").start();
+        new Thread(() -> {
+            lock.lock();
+            try {
+                //条件二释放锁并进入阻塞状态
+                System.out.println("线程2通过条件2释放锁并进入阻塞状态");
+                condition2.await();
+                Thread.sleep(1000);
+                System.out.println("线程2从阻塞状态恢复");
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }finally {
+                lock.unlock();
+            }
+        },"线程2").start();;
+        Thread.sleep(1000);
+        new Thread(() -> {
+            lock.lock();
+            try {
+                //条件一唤醒阻塞状态的线程
+                condition1.signal();
+                System.out.println("唤醒条件1的阻塞线程");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }finally {
+                lock.unlock();
+            }
+        },"线程3").start();;
+        new Thread(() -> {
+            lock.lock();
+            try {
+                //条件二唤醒阻塞的线程
+                condition2.signal();
+                System.out.println("唤醒条件2的阻塞线程");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }finally {
+                lock.unlock();
+            }
+        },"线程4").start();
+
+        Thread.sleep(2000);
+
     }
 
 
