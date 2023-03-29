@@ -13,6 +13,7 @@ import java.util.concurrent.atomic.*;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.concurrent.locks.StampedLock;
 
 /**
  * @Author kim
@@ -804,6 +805,75 @@ public class MultiThreadTest {
 
         Thread.sleep(2000);
 
+    }
+
+    private Integer foo = 10;
+    /**
+     * StampedLock
+     * 读读不互斥、读写不互斥、写写互斥
+     */
+    @Test
+    @DisplayName("StampedLock")
+    public void stampedLock() throws InterruptedException {
+        StampedLock lock=new StampedLock();
+        new Thread(() -> {
+            //乐观读，此时读写不互斥
+            long stamp = lock.tryOptimisticRead();
+            Integer currentFoo = foo;
+            System.out.println("第一次乐观读读到的foo变量是："+currentFoo);
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            //判断读的过程，共享变量是否被更改，如果被更改，则进行"悲观读"（读写互斥）
+            if(!lock.validate(stamp)){
+                //获取悲观读锁
+                stamp = lock.readLock();
+                try {
+                    Thread.sleep(1000);
+                    currentFoo = foo;
+                    System.out.println("最终读取的foo变量是："+currentFoo);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } finally {
+                    //释放悲观读锁
+                    lock.unlockRead(stamp);
+                }
+            }
+
+        },"线程1").start();
+
+        new Thread(() -> {
+            //  获取写锁
+            long stamp = lock.writeLock();
+            try {
+                Thread.sleep(500);
+                //修改共享变量
+                foo++;
+                System.out.println("foo第一次被修改为"+foo);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }finally {
+                //释放写锁
+                lock.unlockWrite(stamp);
+            }
+        },"线程2").start();
+
+        new Thread(() -> {
+            long stamp=0;
+            try {
+                Thread.sleep(1500);
+                stamp= lock.writeLock();
+                foo++;
+                System.out.println("第二次修改后的foo变量为："+foo);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }finally {
+                lock.unlockWrite(stamp);
+            }
+        },"线程3").start();
+        Thread.sleep(2500);
     }
 
 
