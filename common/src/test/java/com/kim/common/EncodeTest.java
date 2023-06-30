@@ -1,9 +1,12 @@
 package com.kim.common;
 
 import com.kim.common.util.UnicodeUtil;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 
 /**
  * @Author kim
@@ -32,5 +35,14 @@ public class EncodeTest {
         System.out.println(UnicodeUtil.cnToUnicode(str2));
     }
 
+
+    @DisplayName("url编码")
+    @Test
+    public void urlEncode() throws UnsupportedEncodingException {
+        String encode = URLEncoder.encode("http://localhost:8080/oauth/authorize?client_id=user&secret=s1", "UTF-8");
+        System.out.println(encode); //http%3A%2F%2Flocalhost%3A8080%2Foauth%2Fauthorize%3Fclient_id%3Duser%26secret%3Ds1
+        String decode = URLDecoder.decode(encode, "UTF-8");
+        System.out.println(decode);
+    }
 
 }
