@@ -1,12 +1,21 @@
 package com.kim.common;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.parser.ParserConfig;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kim.common.entity.User;
+import lombok.Data;
 import org.junit.jupiter.api.Test;
 
+import java.text.SimpleDateFormat;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 /**
  * @Author kim
@@ -45,6 +54,22 @@ public class JsonTest {
         System.out.println(s);
         System.out.println(newUser);
         System.out.println(newUser.get(0).getT().getColor());
+
+    }
+
+    @Data
+    static class Foo{
+        private Date time;
+    }
+
+    @Test
+    public void fastJsonTimeZone(){
+        //TimeZone.setDefault(TimeZone.getTimeZone(ZoneId.of("Asia/Shanghai")));
+        ParserConfig.getGlobalInstance().setSafeMode(true);
+        Foo foo = JSON.parseObject("{\"time\":\"2023-10-16\"}",Foo.class);
+        SimpleDateFormat format=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        System.out.println(format.format(foo.getTime()));
+
 
     }
 
